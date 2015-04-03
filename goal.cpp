@@ -22,12 +22,31 @@ public:
         return Collection<return_type>(list);
     };
 
-    template<typename Function>
     T
-    fold(Function func) {
+    fold(std::function<T(T)> func) {
         // TODO: bounds checking
         T val = func(Data[0], Data[1]);
         for (int i = 2; i < Data.size(); i++)
+            val = func(val, Data[i]);
+
+        return val;
+    };
+
+    template<typename Function, typename U>
+    typename std::result_of<Function(U, T)>::type
+    reduce(Function func, U init) {
+        using return_type = U;
+        static_assert(
+            std::is_same<
+                decltype(func),
+                std::function<U(U, T)>
+            >::value,
+               // (std::function<U(U, T)>)func::first_argument_type::type == return_type::type,
+               "Reduce fn must return the same type as the initial value");
+
+        // TODO: bounds checking
+        return_type val = func(init, Data[0]);
+        for (int i = 1; i < Data.size(); i++)
             val = func(val, Data[i]);
 
         return val;
@@ -55,9 +74,30 @@ int main() {
     std::cout << std::endl;
 
 
+    /*
     auto add = [](int x, int y) {return x+y;};
     std::vector<int> ints = {1, 2, 3, 4, 5};
     auto i = Collection<int>(ints).fold(add);
     std::cout << i << std::endl;
+    */
+
+    auto add = [](int x, int y) {return x+y;};
+    // std::cout << typename decltype(add) << std::endl;
+    /*
+    std::vector<int> ints = {2, 3, 4, 5};
+    Collection<int> ints2 = Collection<int>(ints);
+
+    auto i = ints2.reduce(add, 1);
+    std::cout << i << std::endl;
+    */
+
+
+    /*
+    auto wrong = [](bool x, int y) {return x+y;};
+
+    auto b = Collection<int>(ints).reduce(wrong, 1);
+    std::cout << b << std::endl;
+    */
+
 }
 
