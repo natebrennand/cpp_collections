@@ -12,7 +12,8 @@ public:
     };
 
     template<typename Function>
-    Collection<typename std::result_of<Function(T)>::type> map(Function func) {
+    Collection<typename std::result_of<Function(T)>::type>
+    map(Function func) {
         using return_type = typename std::result_of<Function(T)>::type;
 
         std::vector<return_type> list;
@@ -21,7 +22,16 @@ public:
         return Collection<return_type>(list);
     };
 
+    template<typename Function>
+    T
+    fold(Function func) {
+        // TODO: bounds checking
+        T val = func(Data[0], Data[1]);
+        for (int i = 2; i < Data.size(); i++)
+            val = func(val, Data[i]);
 
+        return val;
+    };
 };
 
 int main() {
@@ -44,11 +54,10 @@ int main() {
         std::cout << i << std::endl;
     std::cout << std::endl;
 
-    /*
-    std::vector<char> chars = {'a', 'b', 'c', 'd'};
-    for (int i: chars)
-        std::cout << i;
-    std::cout << std::endl;
-    */
+
+    auto add = [](int x, int y) {return x+y;};
+    std::vector<int> ints = {1, 2, 3, 4, 5};
+    auto i = Collection<int>(ints).fold(add);
+    std::cout << i << std::endl;
 }
 
