@@ -1,5 +1,4 @@
 #!/bin/bash
-
 success="TEST_SUCCESS"
 had_failures="0"
 tmp_file=".tmp_err_output"  # stderr of parser stored here
@@ -19,9 +18,19 @@ run_test() {
     outcome=`cat $tmp_file`
     # empty if compiled, errors otherwise
 
-    if [[ $should_fail && $outcome ]] ||  [[ ! $should_fail && ! $outcome ]]
+    if [[ ! $should_fail && ! $outcome ]]
     then
-        echo "success: $test_name"
+        $(./a.out &> /dev/null)
+        if [ $? -ne 0 ]
+        then
+            had_failures="1"
+            echo "FAIL:    $test_name"
+        else
+            echo "SUCCESS: $test_name"
+        fi
+    elif [[ $should_fail && $outcome ]]
+    then
+        echo "SUCCESS: $test_name"
     else
         echo "FAIL:    $test_name"
         echo "$outcome"
@@ -29,10 +38,9 @@ run_test() {
     fi
 }
 
-find tests -name *\.cpp
-
 test_files=$(find tests -name "*.cpp")
-echo "CHECKING LIBRARY ERRORS"
+echo "checking library errors"
+echo "=========================="
 for file in $test_files
 do
     reduce_path_to_test_name "$file"

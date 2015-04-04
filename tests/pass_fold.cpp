@@ -1,5 +1,7 @@
 #include <vector>
 #include <iostream>
+#include <cassert>
+
 
 #include "../collections.h"
 
@@ -10,5 +12,6 @@ int main(){
     auto add = [](int x, int y) {return x+y;};
     int i = Collection<int>(ints).fold(add);
 
-    std::cout << i << std::endl;
+    assert(i == 15);
+    assert(false);
 }
