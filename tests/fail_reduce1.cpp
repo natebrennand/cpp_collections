@@ -1,20 +1,14 @@
 #include <vector>
 #include <iostream>
-
-
+#include "../collections.h"
 
 
 int main() {
-    std::vector<int> ints = {2, 3, 4, 5};
-    Collection<int> ints2 = Collection<int>(ints);
+    Collection<int> ints = Collection<int>(std::vector<int> {2, 3, 4, 5});
 
-    auto i = ints2.reduce(add, 1);
-    std::cout << i << std::endl;
+    bool wrong = [](bool x, bool y) {return x && y;};
 
-
-    auto wrong = [](bool x, int y) {return x+y;};
-
-    auto b = Collection<int>(ints).reduce(wrong, 1);
+    int b = ints.reduce(wrong, 1);
     std::cout << b << std::endl;
 }
 

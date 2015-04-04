@@ -27,7 +27,7 @@ public:
     };
 
     T
-    fold(std::function<T(T)> func) {
+    fold(std::function<T(T, T)> func) {
         // TODO: bounds checking
         T val = func(Data[0], Data[1]);
         for (int i = 2; i < Data.size(); i++)
@@ -40,13 +40,14 @@ public:
     typename std::result_of<Function(U, T)>::type
     reduce(Function func, U init) {
         using return_type = U;
+        /*
         static_assert(
             std::is_same<
                 decltype(func),
                 std::function<U(U, T)>
             >::value,
-               // (std::function<U(U, T)>)func::first_argument_type::type == return_type::type,
                "Reduce fn must return the same type as the initial value");
+        */
 
         // TODO: bounds checking
         return_type val = func(init, Data[0]);
