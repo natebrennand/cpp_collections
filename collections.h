@@ -1,6 +1,10 @@
+
+#ifndef COLLECTIONS_H
+#define COLLECTIONS_H
+
 #include <vector>
-#include <iostream>
 #include <functional>
+
 
 template<typename T>
 class Collection {
@@ -52,3 +56,7 @@ public:
         return val;
     };
 };
+
+
+#endif
+
