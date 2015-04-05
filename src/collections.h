@@ -27,10 +27,9 @@ public:
 
     Collection<T>
     range(T low, T high) {
-        std::vector<T> list;
-        for (auto i : Data)
-            if (i >= low && i <= high)
-                list.push_back(i);
+        std::vector<T> list(high-low);
+        for (int i = 0; i < high-low; i++)
+            list[i] = low+i;
         return Collection<T>(list);
     };
 
@@ -79,6 +78,11 @@ public:
     T
     operator[] (const int index) {
         return Data[index];
+    }
+
+    int
+    size() {
+        return Data.size();
     }
 
     void

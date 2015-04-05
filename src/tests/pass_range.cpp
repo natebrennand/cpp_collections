@@ -11,5 +11,5 @@ int main() {
     auto ints2 = ints.range(2,4);
     assert(ints2[0] == 2);
     assert(ints2[1] == 3);
-    assert(ints2[2] == 4);
+    assert(ints2.size() == 2);
 }
