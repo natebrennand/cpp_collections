@@ -145,7 +145,7 @@ template<typename T>
 T
 Collection<T>::operator[] (const int index) {
     return Data[index];
-}
+};
 
 
 template<typename T>
@@ -165,7 +165,7 @@ template<typename T>
 int
 Collection<T>::size() {
     return Data.size();
-}
+};
 
 
 #endif
