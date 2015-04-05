@@ -56,9 +56,9 @@ public:
     map(Function func) {
         using return_type = typename std::result_of<Function(T)>::type;
 
-        std::vector<return_type> list;
-        for (int i = 0; i < Data.size(); i++)
-            list.push_back(func(Data[i]));
+        std::vector<return_type> list(size());
+        for (int i = 0; i < size(); i++)
+            list[i] = func(Data[i]);
         return Collection<return_type>(list);
     };
 
@@ -106,9 +106,12 @@ public:
     void
     print() {
         std::cout << "[";
+
         for (int i = 0; i < Data.size() - 1; i++)
             std::cout << Data[i] << ",";
-        std::cout << Data[Data.size() - 1] << "]" << std::endl;
+        std::cout << Data[Data.size() - 1];
+
+        std::cout << "]" << std::endl;
     };
 
 };
