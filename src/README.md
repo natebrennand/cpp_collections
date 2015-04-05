@@ -30,4 +30,17 @@ make test
 ```
 
 
+### Subsets
+
+A subset of the tests can be run by utilizing the `run_tests.sh` script directly.
+If an argument is provided, only the tests matching it will be run.
+
+
+Ex. Run all tests matching reduce:
+
+```bash
+./run_tests.sh reduce
+```
+
+
 

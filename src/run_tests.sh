@@ -3,7 +3,6 @@ success="TEST_SUCCESS"
 had_failures="0"
 tmp_file=".tmp_err_output"  # stderr of parser stored here
 
-
 reduce_path_to_test_name () {
     local fullpath=$1
     local filename="${fullpath##*/}" # strip the preceding path
@@ -38,8 +37,19 @@ run_test() {
     fi
 }
 
-test_files=$(find tests -name "*.cpp")
-echo "checking library errors"
+
+
+if [ -z "$1" ] # if there's no argument0
+then
+    # run all tests
+    echo "checking full library"
+    test_files=$(find tests -name "*.cpp")
+else
+    # run whatever tests match
+    echo "checking library fn's matching '$1'"
+    test_files=$(find tests -name "*.cpp" | grep "$1")
+fi
+
 echo "=========================="
 for file in $test_files
 do
