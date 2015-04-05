@@ -14,6 +14,24 @@ public:
     Collection<T>(std::vector<T> d){
         Data = d;
     };
+  
+    Collection<T>
+    filter(std::function<bool(T)> func) {
+        std::vector<T> list;
+        for (auto i : Data)
+            if (func(i))
+                list.push_back(i);
+        return Collection<T>(list);
+    };
+
+    Collection<T>
+    range(T low, T high) {
+        std::vector<T> list;
+        for (auto i : Data)
+            if (i >= low && i <= high)
+                list.push_back(i);
+        return Collection<T>(list);
+    };
 
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
@@ -56,6 +74,15 @@ public:
 
         return val;
     };
+
+    void
+    print() {
+        std::cout << "[";
+        for (int i = 0; i < Data.size() - 1; i++)
+            std::cout << Data[i] << ",";
+        std::cout << Data[Data.size() - 1] << "]" << std::endl;
+    };
+
 };
 
 
