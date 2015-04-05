@@ -56,6 +56,11 @@ public:
     void 
     pop_front();
 
+    Collection<T>(std::list<T> d) {
+        for (auto i : d)
+            Data.push_back(i);       
+    }
+
     Collection<T>
     filter(std::function<bool(T)> func);
 
