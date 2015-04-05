@@ -2,7 +2,7 @@
 ## Compilation
 
 ```
-g++ -std=c++11 -Wall src/<FILE>.cpp
+g++ -std=c++11 -Wall tests/<FILE>.cpp
 ```
 
 

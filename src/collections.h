@@ -4,17 +4,18 @@
 
 #include <vector>
 #include <functional>
+#include <iostream>
 
 
 template<typename T>
 class Collection {
 private:
-public:
     std::vector<T> Data;
+public:
     Collection<T>(std::vector<T> d){
         Data = d;
     };
-  
+
     Collection<T>
     filter(std::function<bool(T)> func) {
         std::vector<T> list;
@@ -74,6 +75,11 @@ public:
 
         return val;
     };
+
+    T
+    operator[] (const int index) {
+        return Data[index];
+    }
 
     void
     print() {

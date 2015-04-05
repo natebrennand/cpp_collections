@@ -3,9 +3,7 @@ CC=g++
 CFLAGS=-std=c++11 -Wall
 
 
-lib: collections.h
-
-test: lib
+test:
 	@./run_tests.sh
 
 default: test
