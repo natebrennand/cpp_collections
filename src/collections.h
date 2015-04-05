@@ -20,7 +20,15 @@ public:
     filter(std::function<bool(T)> func);
 
     Collection<T>
-    range(T low, T high);
+    slice(int low, int high);
+
+    static
+    Collection<T>
+    range(int size);
+
+    static
+    Collection<T>
+    range(int low, int high);
 
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
@@ -35,6 +43,9 @@ public:
 
     T
     operator[] (const int index);
+
+    int
+    size();
 
     void
     print();
@@ -52,13 +63,33 @@ Collection<T>::filter(std::function<bool(T)> func) {
     return Collection<T>(list);
 };
 
+
 template<typename T>
 Collection<T>
-Collection<T>::range(T low, T high) {
-    std::vector<T> list;
-    for (auto i : Data)
-        if (i >= low && i <= high)
-            list.push_back(i);
+Collection<T>::slice(int low, int high) {
+    std::vector<T> list(high-low);
+    for (int i = 0; i < high-low; i++)
+        list[i] = Data[i+low];
+    return Collection<T>(list);
+};
+
+
+template<typename T>
+Collection<T>
+Collection<T>::range(int size) {
+    std::vector<T> list(size);
+    for (int i = 0; i < size; i++)
+        list[i] = T(i);
+    return Collection<T>(list);
+};
+
+
+template<typename T>
+Collection<T>
+Collection<T>::range(int low, int high) {
+    std::vector<T> list(high-low);
+    for (int i = 0; i < high-low; i++)
+        list[i] = T(low + i);
     return Collection<T>(list);
 };
 
@@ -68,11 +99,12 @@ Collection<typename std::result_of<Function(T)>::type>
 Collection<T>::map(Function func) {
     using return_type = typename std::result_of<Function(T)>::type;
 
-    std::vector<return_type> list;
+    std::vector<return_type> list(size());
     for (int i = 0; i < Data.size(); i++)
         list.push_back(func(Data[i]));
     return Collection<return_type>(list);
 };
+
 
 template<typename T>
 T
@@ -84,6 +116,7 @@ Collection<T>::fold(std::function<T(T, T)> func) {
 
     return val;
 };
+
 
 template<typename T>
 template<typename Function, typename U>
@@ -107,19 +140,31 @@ Collection<T>::reduce(Function func, U init) {
     return val;
 };
 
+
 template<typename T>
 T
 Collection<T>::operator[] (const int index) {
     return Data[index];
-}
+};
+
 
 template<typename T>
 void
 Collection<T>::print() {
     std::cout << "[";
+
     for (int i = 0; i < Data.size() - 1; i++)
         std::cout << Data[i] << ",";
-    std::cout << Data[Data.size() - 1] << "]" << std::endl;
+    std::cout << Data[Data.size() - 1];
+
+    std::cout << "]" << std::endl;
+};
+
+
+template<typename T>
+int
+Collection<T>::size() {
+    return Data.size();
 };
 
 
