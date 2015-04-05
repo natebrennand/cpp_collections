@@ -26,11 +26,29 @@ public:
     };
 
     Collection<T>
-    range(T low, T high) {
+    slice(int low, int high) {
+        std::vector<T> list(high-low);
+        for (int i = low; i < high; i++)
+            list[i-low] = Data[i];
+        return Collection<T>(list);
+    };
+
+    static
+    Collection<T>
+    range(int low, int high) {
         std::vector<T> list(high-low);
         for (int i = 0; i < high-low; i++)
-            list[i] = low+i;
+            list[i] = low + i;
         return Collection<T>(list);
+    };
+
+    static
+    Collection<int>
+    range(int size) {
+        std::vector<int> list(size);
+        for (int i = 0; i < size; i++)
+            list[i] = i;
+        return Collection<int>(list);
     };
 
     template<typename Function>
