@@ -3,6 +3,7 @@
 #define COLLECTIONS_H
 
 #include <vector>
+#include <list>
 #include <functional>
 #include <iostream>
 #include <utility>
@@ -15,6 +16,11 @@ private:
 public:
     Collection<T>(std::vector<T> d) {
         Data = d;
+    }
+
+    Collection<T>(std::list<T> d) {
+        for (auto i : d)
+            Data.push_back(i);       
     }
 
     Collection<T>
