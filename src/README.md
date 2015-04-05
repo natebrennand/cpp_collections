@@ -14,7 +14,7 @@ g++ -std=c++11 -Wall tests/<FILE>.cpp
 ## Tests
 
 The test suite is composed of tests to check that we stop all errors at the compilation stage, not at runtime.
-Files places in the `tests/` directory will be compiled against `collections.h`.
+Files placed in the `tests/` directory will be compiled against `collections.h`.
 
 Files with `fail_` at the start of the filename will be expected to fail.
 
