@@ -13,5 +13,4 @@ int main(){
     int i = Collection<int>(ints).fold(add);
 
     assert(i == 15);
-    assert(false);
 }

@@ -1,4 +1,15 @@
 
+## Compilation
+
+```
+g++ -std=c++11 -Wall src/<FILE>.cpp
+```
+
+
+
+
+
+
 
 ## Tests
 
@@ -10,6 +21,7 @@ Files with `fail_` at the start of the filename will be expected to fail.
 Those without will be expected to build.
 Buildable files will also be executed.
 They should include assertions to insure the library is executing as desired.
+Passing tests should not include any output to stdout/stderr.
 
 
 Executable with `make`:
