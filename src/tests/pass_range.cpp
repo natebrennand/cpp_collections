@@ -16,4 +16,8 @@ int main() {
     assert(ints2[1] == 3);
     assert(ints2.size() == 2);
 
+    Collection<float> floats = Collection<float>::range(4);
+    assert(floats[0] == 0.0);
+    assert(floats.size() == 4);
+
 }
