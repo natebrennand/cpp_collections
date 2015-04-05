@@ -5,6 +5,7 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <utility>
 
 
 template<typename T>
@@ -36,6 +37,14 @@ public:
 
     T
     fold(std::function<T(T, T)> func);
+
+    template<typename U>
+    Collection<std::pair<T, U>>
+    zip(Collection<U> other_list);
+
+    template<typename Function, typename U>
+    Collection<typename std::result_of<Function(T, U)>::type>
+    zipWith(Function func, Collection<U> other_list);
 
     template<typename Function, typename U>
     typename std::result_of<Function(U, T)>::type
@@ -115,6 +124,34 @@ Collection<T>::fold(std::function<T(T, T)> func) {
         val = func(val, Data[i]);
 
     return val;
+};
+
+
+template<typename T>
+template<typename U>
+Collection<std::pair<T, U>>
+Collection<T>::zip(Collection<U> other_list) {
+    // TODO: list size checking 
+    using return_type = std::pair<T, U>;
+
+    std::vector<return_type> list(Data.size());
+    for (int i = 0; i < Data.size(); i++)
+        list[i] = std::make_pair(Data[i], other_list[i]);
+    return Collection<return_type>(list);
+};
+
+
+template<typename T>
+template<typename Function, typename U>
+Collection<typename std::result_of<Function(T, U)>::type>
+Collection<T>::zipWith(Function func, Collection<U> other_list) {
+    // TODO: list size checking
+    using return_type = typename std::result_of<Function(T, U)>::type;
+
+    std::vector<return_type> list(Data.size());
+    for (int i = 0; i < Data.size(); i++)
+        list[i] = func(Data[i], other_list[i]);
+    return Collection<return_type>(list);        
 };
 
 
