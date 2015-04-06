@@ -19,7 +19,7 @@ public:
     // std::vector constructor
     Collection<T>(std::vector<T> d) {
         Data = d;
-    }
+    };
 
     // std::list constructor
     Collection<T>(std::list<T> d) {
@@ -27,7 +27,7 @@ public:
         int index = 0;
         for (auto i : d)
             Data[index++] = i;
-    }
+    };
 
     // std::array constructor
     template<size_t N>
@@ -36,12 +36,12 @@ public:
         int index = 0;
         for (auto i : d)
             Data[index++] = i;
-    }
+    };
 
     // C-style array constructor (requires length)
     Collection<T>(T d[], int len) {
         Data.assign(d, d + len);
-    }
+    };
 
     Collection<T>
     filter(std::function<bool(T)> func);
