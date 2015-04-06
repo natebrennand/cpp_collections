@@ -20,7 +20,7 @@ public:
     Collection<T>(std::vector<T> d) {
         Data = d;
     };
-    
+
     // std::list constructor
     Collection<T>(std::list<T> d) {
         Data = std::vector<T>(d.size());
@@ -28,7 +28,7 @@ public:
         for (auto i : d)
             Data[index++] = i;
     };
-    
+
     // std::array constructor
     template<std::size_t SIZE>
     Collection<T>(std::array<T, SIZE> d) {
@@ -48,7 +48,7 @@ public:
 
     std::list<T>
     list();
-    
+
     Collection<T>
     filter(std::function<bool(T)> func);
 
