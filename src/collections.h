@@ -2,7 +2,10 @@
 #ifndef COLLECTIONS_H
 #define COLLECTIONS_H
 
+#include <array>
 #include <vector>
+#include <list>
+#include <iterator>
 #include <functional>
 #include <iostream>
 
@@ -12,9 +15,39 @@ class Collection {
 private:
     std::vector<T> Data;
 public:
+
+    // std::vector constructor
     Collection<T>(std::vector<T> d) {
         Data = d;
-    }
+    };
+
+    // std::list constructor
+    Collection<T>(std::list<T> d) {
+        Data = std::vector<T>(d.size());
+        int index = 0;
+        for (auto i : d)
+            Data[index++] = i;
+    };
+
+    // std::array constructor
+    template<std::size_t SIZE>
+    Collection<T>(std::array<T, SIZE> d) {
+        Data = std::vector<T>(SIZE);
+        int index = 0;
+        for (auto i : d)
+            Data[index++] = i;
+    };
+
+    // C-style array constructor (requires length)
+    Collection<T>(T d[], int len) {
+        Data.assign(d, d + len);
+    };
+
+    std::vector<T>
+    vector();
+
+    std::list<T>
+    list();
 
     Collection<T>
     filter(std::function<bool(T)> func);
@@ -50,6 +83,20 @@ public:
     void
     print();
 
+};
+
+
+template<typename T>
+std::vector<T>
+Collection<T>::vector() {
+    return Data;
+};
+
+
+template<typename T>
+std::list<T>
+Collection<T>::list() {
+    return std::list<T>(std::begin(Data), std::end(Data));
 };
 
 
