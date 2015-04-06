@@ -15,11 +15,12 @@ class Collection {
 private:
     std::vector<T> Data;
 public:
+
     // std::vector constructor
     Collection<T>(std::vector<T> d) {
         Data = d;
     };
-
+    
     // std::list constructor
     Collection<T>(std::list<T> d) {
         Data = std::vector<T>(d.size());
@@ -27,11 +28,11 @@ public:
         for (auto i : d)
             Data[index++] = i;
     };
-
+    
     // std::array constructor
-    template<size_t N>
-    Collection<T>(std::array<T, N> d) {
-        Data = std::vector<T>(N);
+    template<std::size_t SIZE>
+    Collection<T>(std::array<T, SIZE> d) {
+        Data = std::vector<T>(SIZE);
         int index = 0;
         for (auto i : d)
             Data[index++] = i;
@@ -42,6 +43,16 @@ public:
         Data.assign(d, d + len);
     };
 
+    std::vector<T>
+    vector();
+
+    std::list<T>
+    list();
+    
+    template<std::size_t SIZE>
+    std::array<T, SIZE> 
+    array();
+    
     Collection<T>
     filter(std::function<bool(T)> func);
 
@@ -77,6 +88,31 @@ public:
     print();
 
 };
+
+
+template<typename T>
+std::vector<T>
+Collection<T>::vector() {
+    return Data;
+};
+
+
+template<typename T>
+std::list<T>
+Collection<T>::list() {
+    return std::list<T>(std::begin(Data), std::end(Data));
+};
+
+
+template<typename T>
+template<std::size_t SIZE>
+std::array<T, SIZE>
+Collection<T>::array() {
+    std::array<T, Data.size()> array;
+    for (int i = 0; i < SIZE; i++)
+        array[i] = Data[i]; 
+    return array;
+}
 
 
 template<typename T>
