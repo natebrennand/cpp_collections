@@ -23,15 +23,19 @@ public:
 
     // std::list constructor
     Collection<T>(std::list<T> d) {
+        Data = std::vector<T>(d.size());
+        int index = 0;
         for (auto i : d)
-            Data.push_back(i);       
+            Data[index++] = i;
     }
 
     // std::array constructor
     template<size_t N>
     Collection<T>(std::array<T, N> d) {
+        Data = std::vector<T>(N);
+        int index = 0;
         for (auto i : d)
-            Data.push_back(i);       
+            Data[index++] = i;
     }
 
     // C-style array constructor (requires length)
