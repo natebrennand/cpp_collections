@@ -206,8 +206,9 @@ Collection<T>::zip(Collection<U>... other_list) {
     // TODO: list size checking
     using return_type = std::tuple<U...>;
 
-    std::vector<return_type> list;
-    for (int i = 0, e = std::min({other_list.size()...}); i < e; i++) {
+    int size = std::min({other_list.size()...});
+    std::list<return_type> list;
+    for (int i = 0; i < size; i++) {
         list.emplace_back(std::move(other_list.front())...);
         [](...){} ((other_list.pop_front(), 0)...); 
     }
@@ -223,8 +224,9 @@ Collection<T>::zipWith(Function func, Collection<U>... other_list) {
     // TODO: check that func takes as many arguments as there are lists
     using return_type = typename std::result_of<Function(U...)>::type;
 
-    std::vector<return_type> list;
-    for (int i = 0, e = std::min({other_list.size()...}); i < e; i++) {
+    int size = std::min({other_list.size()...});
+    std::list<return_type> list;
+    for (int i = 0; i < size; i++) {
         list.emplace_back(func(other_list.front()...));
         [](...){} ((other_list.pop_front(), 0)...);
     }
