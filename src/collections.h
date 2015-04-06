@@ -50,6 +50,12 @@ public:
     std::list<T>
     list();
 
+    T
+    front();
+
+    void 
+    pop_front();
+
     Collection<T>
     filter(std::function<bool(T)> func);
 
@@ -71,13 +77,16 @@ public:
     T
     fold(std::function<T(T, T)> func);
 
-    template<typename U>
-    Collection<std::tuple<T, U>>
-    zip(Collection<U> other_list);
+    template<typename ...U>
+    static
+    Collection<std::tuple<U...>>
+    zip(Collection<U>... other_list);
 
-    template<typename Function, typename U>
-    Collection<typename std::result_of<Function(T, U)>::type>
-    zipWith(Function func, Collection<U> other_list);
+
+    template<typename Function, typename ...U>
+    static
+    Collection<typename std::result_of<Function(U...)>::type>
+    zipWith(Function func, Collection<U>... other_list);
 
     template<typename Function, typename U>
     typename std::result_of<Function(U, T)>::type
@@ -106,6 +115,22 @@ template<typename T>
 std::list<T>
 Collection<T>::list() {
     return std::list<T>(std::begin(Data), std::end(Data));
+};
+
+
+template<typename T>
+T
+Collection<T>::front() {
+    // TODO: add emptiness checking
+    return Data[0];
+};
+
+
+template<typename T>
+void
+Collection<T>::pop_front() {
+    // TODO: add emptiness checking
+    Data.erase(Data.begin());
 };
 
 
@@ -175,29 +200,34 @@ Collection<T>::fold(std::function<T(T, T)> func) {
 
 
 template<typename T>
-template<typename U>
-Collection<std::tuple<T, U>>
-Collection<T>::zip(Collection<U> other_list) {
+template<typename ...U>
+Collection<std::tuple<U...>>
+Collection<T>::zip(Collection<U>... other_list) {
     // TODO: list size checking
-    using return_type = std::tuple<T, U>;
+    using return_type = std::tuple<U...>;
 
-    std::vector<return_type> list(Data.size());
-    for (int i = 0; i < Data.size(); i++)
-        list[i] = std::make_tuple(Data[i], other_list[i]);
+    std::vector<return_type> list;
+    for (int i = 0, e = std::min({other_list.size()...}); i < e; i++) {
+        list.emplace_back(std::move(other_list.front())...);
+        [](...){} ((other_list.pop_front(), 0)...); 
+    }
     return Collection<return_type>(list);
 };
 
 
 template<typename T>
-template<typename Function, typename U>
-Collection<typename std::result_of<Function(T, U)>::type>
-Collection<T>::zipWith(Function func, Collection<U> other_list) {
+template<typename Function, typename ...U>
+Collection<typename std::result_of<Function(U...)>::type>
+Collection<T>::zipWith(Function func, Collection<U>... other_list) {
     // TODO: list size checking
-    using return_type = typename std::result_of<Function(T, U)>::type;
+    // TODO: check that func takes as many arguments as there are lists
+    using return_type = typename std::result_of<Function(U...)>::type;
 
-    std::vector<return_type> list(Data.size());
-    for (int i = 0; i < Data.size(); i++)
-        list[i] = func(Data[i], other_list[i]);
+    std::vector<return_type> list;
+    for (int i = 0, e = std::min({other_list.size()...}); i < e; i++) {
+        list.emplace_back(func(other_list.front()...));
+        [](...){} ((other_list.pop_front(), 0)...);
+    }
     return Collection<return_type>(list);
 };
 

@@ -10,7 +10,7 @@ int main() {
 
     auto add = [](int x, int y) { return x + y; };
 
-    auto ints2 = ints.zipWith(add, ints1);
+    auto ints2 = Collection<int>::zipWith(add, ints, ints1);
     assert(ints2[0] == 2);
     assert(ints2[1] == 4);
     assert(ints2[2] == 6);
