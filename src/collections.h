@@ -49,10 +49,6 @@ public:
     std::list<T>
     list();
     
-    template<std::size_t SIZE>
-    std::array<T, SIZE> 
-    array();
-    
     Collection<T>
     filter(std::function<bool(T)> func);
 
@@ -102,17 +98,6 @@ std::list<T>
 Collection<T>::list() {
     return std::list<T>(std::begin(Data), std::end(Data));
 };
-
-
-template<typename T>
-template<std::size_t SIZE>
-std::array<T, SIZE>
-Collection<T>::array() {
-    std::array<T, Data.size()> array;
-    for (int i = 0; i < SIZE; i++)
-        array[i] = Data[i]; 
-    return array;
-}
 
 
 template<typename T>

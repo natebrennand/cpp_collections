@@ -24,10 +24,4 @@ int main() {
         sum += i;
     assert(sum == 14);
     assert(lst.size() == 4);
-
-    sum = 0;
-    std::array<int, 4> arr = ints.array<4>();
-    assert(arr[0] == 2);
-    assert(arr[3] == 5);
-    assert(arr.size() == 4);
 }
