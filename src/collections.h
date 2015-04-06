@@ -44,6 +44,18 @@ public:
         Data.assign(d, d + len);
     };
 
+    // std::array constructor
+    template<size_t N>
+    Collection<T>(std::array<T, N> d) {
+        for (auto i : d)
+            Data.push_back(i);       
+    }
+
+    // C-style array constructor (requires length)
+    Collection<T>(T d[], int len) {
+        Data.assign(d, d + len);
+    }
+
     std::vector<T>
     vector();
 
@@ -60,18 +72,6 @@ public:
     Collection<T>(std::list<T> d) {
         for (auto i : d)
             Data.push_back(i);       
-    }
-
-    // std::array constructor
-    template<size_t N>
-    Collection<T>(std::array<T, N> d) {
-        for (auto i : d)
-            Data.push_back(i);       
-    }
-
-    // C-style array constructor (requires length)
-    Collection<T>(T d[], int len) {
-        Data.assign(d, d + len);
     }
 
     Collection<T>
