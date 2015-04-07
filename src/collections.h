@@ -143,12 +143,14 @@ Collection<T>::list() {
     return std::list<T>(std::begin(Data), std::end(Data));
 };
 
+
 template<typename T>
 T
 Collection<T>::head() {
     // TODO: add emptiness checking
     return Data[0];
 };
+
 
 template<typename T>
 T
@@ -157,12 +159,14 @@ Collection<T>::last() {
     return Data[Data.size() - 1];
 };
 
+
 template<typename T>
 Collection<T>
 Collection<T>::init() {
     // TODO: add emptiness checking
     return Collection<T>(std::vector<T>(Data.begin(), Data.end() - 1));
 };
+
 
 template<typename T>
 Collection<T>
