@@ -53,6 +53,18 @@ public:
     T
     front();
 
+    T
+    head();
+
+    T
+    last();
+
+    Collection<T>
+    init();
+
+    Collection<T>
+    tail();
+
     void 
     pop_front();
 
@@ -95,6 +107,11 @@ public:
     T
     operator[] (const int index);
 
+    bool
+    operator==(const Collection<T> other) {
+        return Data == other.Data;
+    }
+
     int
     size();
 
@@ -117,6 +134,33 @@ Collection<T>::list() {
     return std::list<T>(std::begin(Data), std::end(Data));
 };
 
+template<typename T>
+T
+Collection<T>::head() {
+    // TODO: add emptiness checking
+    return Data[0];
+};
+
+template<typename T>
+T
+Collection<T>::last() {
+    // TODO: add emptiness checking
+    return Data[Data.size() - 1];
+};
+
+template<typename T>
+Collection<T>
+Collection<T>::init() {
+    // TODO: add emptiness checking
+    return Collection<T>(std::vector<T>(Data.begin(), Data.end() - 1));
+};
+
+template<typename T>
+Collection<T>
+Collection<T>::tail() {
+    // TODO: add emptiness checking
+    return Collection<T>(std::vector<T>(Data.begin() + 1, Data.end()));
+};
 
 template<typename T>
 T
