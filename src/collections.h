@@ -53,7 +53,7 @@ public:
     T
     front();
 
-    void 
+    void
     pop_front();
 
     Collection<T>
@@ -94,6 +94,18 @@ public:
 
     T
     operator[] (const int index);
+
+    friend std::ostream&
+    operator<<(std::ostream& stream, const Collection<T>& f) {
+        stream << "[";
+
+        for (int i = 0; i < f.Data.size() - 1; i++)
+            stream << f.Data[i] << ",";
+        stream << f.Data[f.Data.size() - 1];
+
+        stream << "]";
+        return stream;
+    }
 
     int
     size();
@@ -267,13 +279,7 @@ Collection<T>::operator[] (const int index) {
 template<typename T>
 void
 Collection<T>::print() {
-    std::cout << "[";
-
-    for (int i = 0; i < Data.size() - 1; i++)
-        std::cout << Data[i] << ",";
-    std::cout << Data[Data.size() - 1];
-
-    std::cout << "]" << std::endl;
+    std::cout << *this << std::endl;
 };
 
 
