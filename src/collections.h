@@ -51,9 +51,6 @@ public:
     list();
 
     T
-    front();
-
-    T
     head();
 
     T
@@ -66,7 +63,7 @@ public:
     tail();
 
     void 
-    pop_front();
+    pop_head();
 
     Collection<T>
     filter(std::function<bool(T)> func);
@@ -162,17 +159,10 @@ Collection<T>::tail() {
     return Collection<T>(std::vector<T>(Data.begin() + 1, Data.end()));
 };
 
-template<typename T>
-T
-Collection<T>::front() {
-    // TODO: add emptiness checking
-    return Data[0];
-};
-
 
 template<typename T>
 void
-Collection<T>::pop_front() {
+Collection<T>::pop_head() {
     // TODO: add emptiness checking
     Data.erase(Data.begin());
 };
@@ -251,10 +241,10 @@ Collection<T>::zip(Collection<U>... other_list) {
     using return_type = std::tuple<U...>;
 
     int size = std::min({other_list.size()...});
-    std::list<return_type> list;
+    std::vector<return_type> list;
     for (int i = 0; i < size; i++) {
-        list.emplace_back(std::move(other_list.front())...);
-        [](...){} ((other_list.pop_front(), 0)...); 
+        list.emplace_back(std::move(other_list.head())...);
+        [](...){} ((other_list.pop_head(), 0)...); 
     }
     return Collection<return_type>(list);
 };
@@ -269,10 +259,10 @@ Collection<T>::zipWith(Function func, Collection<U>... other_list) {
     using return_type = typename std::result_of<Function(U...)>::type;
 
     int size = std::min({other_list.size()...});
-    std::list<return_type> list;
+    std::vector<return_type> list;
     for (int i = 0; i < size; i++) {
-        list.emplace_back(func(other_list.front()...));
-        [](...){} ((other_list.pop_front(), 0)...);
+        list.emplace_back(func(other_list.head()...));
+        [](...){} ((other_list.pop_head(), 0)...);
     }
     return Collection<return_type>(list);
 };
