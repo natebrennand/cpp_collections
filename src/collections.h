@@ -230,9 +230,9 @@ Collection<typename std::result_of<Function(T)>::type>
 Collection<T>::map(Function func) {
     using return_type = typename std::result_of<Function(T)>::type;
 
-    std::vector<return_type> list(size());
+    std::vector<return_type> list(Data.size());
     for (int i = 0; i < Data.size(); i++)
-        list.push_back(func(Data[i]));
+        list[i] = func(Data[i]);
     return Collection<return_type>(list);
 };
 
