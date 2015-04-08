@@ -3,12 +3,13 @@
 #define COLLECTIONS_H
 
 #include <array>
-#include <vector>
-#include <list>
-#include <iterator>
 #include <functional>
 #include <iostream>
+#include <iterator>
+#include <list>
+#include <memory>
 #include <tuple>
+#include <vector>
 
 
 template<typename T>
@@ -105,7 +106,7 @@ public:
     operator[] (const int index);
 
     bool
-    operator==(const Collection<T> other) {
+    operator==(const Collection<T>& other) {
         return Data == other.Data;
     }
 
@@ -224,6 +225,7 @@ Collection<T>::range(int low, int high) {
     return Collection<T>(list);
 };
 
+
 template<typename T>
 template<typename Function>
 Collection<typename std::result_of<Function(T)>::type>
@@ -257,9 +259,12 @@ Collection<T>::zip(Collection<U>... other_list) {
     using return_type = std::tuple<U...>;
 
     int size = std::min({other_list.size()...});
-    std::vector<return_type> list;
+    std::vector<return_type> list(size);
+    std::allocator<return_type> alloc;
     for (int i = 0; i < size; i++) {
-        list.emplace_back(std::move(other_list.head())...);
+        return_type *tmp = alloc.allocate(1);
+        alloc.construct(tmp, std::move(other_list.head())...);
+        list[i] = *tmp;
         [](...){} ((other_list.pop_head(), 0)...); 
     }
     return Collection<return_type>(list);
@@ -275,9 +280,12 @@ Collection<T>::zipWith(Function func, Collection<U>... other_list) {
     using return_type = typename std::result_of<Function(U...)>::type;
 
     int size = std::min({other_list.size()...});
-    std::vector<return_type> list;
+    std::vector<return_type> list(size);
+    std::allocator<return_type> alloc;
     for (int i = 0; i < size; i++) {
-        list.emplace_back(func(other_list.head()...));
+        return_type *tmp = alloc.allocate(1);
+        alloc.construct(tmp, func(other_list.head()...));
+        list[i] = *tmp;
         [](...){} ((other_list.pop_head(), 0)...);
     }
     return Collection<return_type>(list);
