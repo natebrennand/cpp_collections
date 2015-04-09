@@ -9,6 +9,7 @@
 #include <functional>
 #include <iostream>
 #include <tuple>
+#include <thread>
 
 
 template<typename T>
@@ -83,6 +84,20 @@ public:
     Collection<typename std::result_of<Function(T)>::type>
     map(Function func);
 
+    template<typename Function>
+    Collection<typename std::result_of<Function(T)>::type>
+    conmap(Function func, int threads);
+
+    void
+    foo();
+
+    void
+    bar();
+
+    template<typename Function>
+    void
+    conmapT(Function func, Collection<typename std::result_of<Function(T)>::type>& list, int beg, int end);
+
     T
     fold(std::function<T(T, T)> func);
 
@@ -90,7 +105,6 @@ public:
     static
     Collection<std::tuple<U...>>
     zip(Collection<U>... other_list);
-
 
     template<typename Function, typename ...U>
     static
@@ -233,6 +247,44 @@ Collection<T>::map(Function func) {
     std::vector<return_type> list(size());
     for (int i = 0; i < Data.size(); i++)
         list.push_back(func(Data[i]));
+    return Collection<return_type>(list);
+};
+
+void
+foo() {
+    std::cout << "hello" << std::endl;
+};
+
+template<typename T>
+void
+bar() {
+    std::thread t1(&Collection<T>::foo);
+    t1.join();
+};
+
+template<typename T>
+template<typename Function>
+void
+Collection<T>::conmapT(Function func, Collection<typename std::result_of<Function(T)>::type>& list, int beg, int end) {
+    std::cout << "hello from a thread" << std::endl;
+    for (int i = beg; i < end; i++)
+        list[i] = func(Data[i]);
+};
+
+
+template<typename T>
+template<typename Function>
+Collection<typename std::result_of<Function(T)>::type>
+Collection<T>::conmap(Function func, int threads) {
+    using return_type = typename std::result_of<Function(T)>::type;
+    
+    std::vector<return_type> list(size());
+    std::thread t1(&Collection<T>::foo, this);
+    //std::thread t1((&Collection<T>::conmapT, this), list, 0, 10);
+    //std::thread t2((&Collection<T>::conmapT, this), list, 5, 10);
+    //std::thread t2([this]() { *this.conmapT(list, 5, 10); });
+    t1.join();
+    //t2.join();
     return Collection<return_type>(list);
 };
 
