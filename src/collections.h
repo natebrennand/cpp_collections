@@ -281,18 +281,25 @@ Collection<T>::conmap(Function func, int threads) {
     std::vector<thread_data> thread_data_pool;
 
     int chunk = Data.size() / threads;
+    int extra = Data.size() - chunk*threads;
+
+    std::vector<int> indices(extra, chunk+1);
+    std::vector<int> normal(threads-extra, chunk);
+    indices.insert(indices.end(), normal.begin(), normal.end());
+
+    int start = 0;
     for (int i = 0; i < threads; i++) {
-        int cur = i * chunk;
         pthread_t pid;
         thread_pool[i] = pid;
 
-        thread_data td = { &Data, func, cur, (cur + chunk)};
+        int end = start + indices[i];
+        std::cout << start << " " << end << std::endl;
+        thread_data td = { &Data, func, start, end};
         thread_data_pool.push_back(td);
+        start = end;
     }
 
     for (int i = 0; i < threads; i++) {
-        printf("thread_data_pool[%d] begin is %d\n", i, thread_data_pool[i].begin);
-        printf("thread_data_pool[%d] end is %d\n", i, thread_data_pool[i].end);
         pthread_create(&(thread_pool[i]), NULL, foo<T, Function>, &(thread_data_pool[i]));
     }
 
