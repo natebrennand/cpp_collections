@@ -1,0 +1,9 @@
+language: cpp
+
+before_install:
+  - apt-get update
+
+# Change this to your needs
+script:
+  - cd src && make
+
