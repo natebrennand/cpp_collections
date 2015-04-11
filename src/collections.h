@@ -9,6 +9,8 @@
 #include <memory>
 #include <tuple>
 #include <vector>
+#include <pthread.h>
+#include <stdio.h>
 
 
 template<typename T>
@@ -82,6 +84,10 @@ public:
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
     map(Function func);
+
+    template<typename Function>
+    Collection<typename std::result_of<Function(T)>::type>
+    pmap(Function func, int threads);
 
     T
     fold(std::function<T(T, T)> func);
@@ -235,6 +241,62 @@ Collection<T>::map(Function func) {
     for (int i = 0; i < Data.size(); i++)
         list[i] = func(Data[i]);
     return Collection<return_type>(list);
+};
+
+
+template<typename T, typename Function>
+void *
+pmap_thread(void *arg) {
+    struct thread_data {
+        std::vector<T> *list;
+        Function func;
+        int begin;
+        int end;
+    };
+    thread_data *data = ((struct thread_data *)arg);
+    for (int i = data->begin; i < data->end && i < (*(data->list)).size(); i++)
+        (*(data->list))[i] = (data->func)((*(data->list))[i]);
+    pthread_exit(NULL);
+};
+
+
+template<typename T>
+template<typename Function>
+Collection<typename std::result_of<Function(T)>::type>
+Collection<T>::pmap(Function func, int threads) {
+    struct thread_data {
+        std::vector<T> *list;
+        Function func;
+        int begin;
+        int end;
+    };
+    std::vector<pthread_t> thread_pool(threads);
+    std::vector<thread_data> thread_data_pool;
+
+    int chunk = Data.size() / threads;
+    int extra = Data.size() - chunk*threads;
+    std::vector<int> indices(extra, chunk+1);
+    std::vector<int> normal(threads-extra, chunk);
+    indices.insert(indices.end(), normal.begin(), normal.end());
+
+    int start = 0;
+    for (int i = 0; i < threads; i++) {
+        pthread_t pid;
+        thread_pool[i] = pid;
+
+        int end = start + indices[i];
+        thread_data td = { &Data, func, start, end};
+        thread_data_pool.push_back(td);
+        start = end;
+    }
+
+    for (int i = 0; i < threads; i++)
+        pthread_create(&(thread_pool[i]), NULL, pmap_thread<T, Function>, &(thread_data_pool[i]));
+
+    for (pthread_t i : thread_pool)
+        pthread_join(i, NULL);
+
+    return Collection<T>(Data);
 };
 
 
