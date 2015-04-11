@@ -1,4 +1,3 @@
-
 #ifndef COLLECTIONS_H
 #define COLLECTIONS_H
 
@@ -258,14 +257,14 @@ Collection<T>::zip(Collection<U>... other_list) {
     // TODO: list size checking
     using return_type = std::tuple<U...>;
 
-    int size = std::min({other_list.size()...});
+    int size = std::min(other_list.size()...);
     std::vector<return_type> list(size);
     std::allocator<return_type> alloc;
     for (int i = 0; i < size; i++) {
         return_type *tmp = alloc.allocate(1);
         alloc.construct(tmp, std::move(other_list.head())...);
         list[i] = *tmp;
-        [](...){} ((other_list.pop_head(), 0)...); 
+        [](...){} ((other_list.pop_head(), 0)...);
     }
     return Collection<return_type>(list);
 };
@@ -279,7 +278,7 @@ Collection<T>::zipWith(Function func, Collection<U>... other_list) {
     // TODO: check that func takes as many arguments as there are lists
     using return_type = typename std::result_of<Function(U...)>::type;
 
-    int size = std::min({other_list.size()...});
+    int size = std::min(other_list.size()...);
     std::vector<return_type> list(size);
     std::allocator<return_type> alloc;
     for (int i = 0; i < size; i++) {
