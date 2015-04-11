@@ -13,5 +13,7 @@ install:
 
 # Change this to your needs
 script:
-  - cd src && make
+  - cd src
+  - bash run_tests.sh
+  - bash run_benchmarks.sh
 
