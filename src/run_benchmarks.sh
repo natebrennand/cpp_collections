@@ -11,7 +11,7 @@ reduce_path_to_test_name () {
 
 run_bench() {
     # stdout of parser
-    $(g++ -std=c++11 -pthread $file &> $tmp_file)
+    $(g++ -std=c++0x -pthread $file &> $tmp_file)
     outcome=`cat $tmp_file`
     # empty if compiled, errors otherwise
 
