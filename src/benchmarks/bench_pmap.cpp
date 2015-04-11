@@ -21,7 +21,7 @@ int main() {
 
     // concurrent map
     auto start = std::chrono::steady_clock::now();
-    auto result = ints.conmap(incr, 10);
+    auto result = ints.pmap(incr, 10);
     auto diff = std::chrono::steady_clock::now() - start;
 
     assert(result == Collection<int>(output));

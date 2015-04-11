@@ -85,14 +85,9 @@ public:
     Collection<typename std::result_of<Function(T)>::type>
     map(Function func);
 
-    //template<typename Function>
-    //static
-    //void *
-    //foo(void *arg);
-
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
-    conmap(Function func, int threads);
+    pmap(Function func, int threads);
 
     T
     fold(std::function<T(T, T)> func);
@@ -251,7 +246,7 @@ Collection<T>::map(Function func) {
 
 template<typename T, typename Function>
 void *
-conmap_thread(void *arg) {
+pmap_thread(void *arg) {
     struct thread_data {
         std::vector<T> *list;
         Function func;
@@ -268,7 +263,7 @@ conmap_thread(void *arg) {
 template<typename T>
 template<typename Function>
 Collection<typename std::result_of<Function(T)>::type>
-Collection<T>::conmap(Function func, int threads) {
+Collection<T>::pmap(Function func, int threads) {
     struct thread_data {
         std::vector<T> *list;
         Function func;
@@ -296,7 +291,7 @@ Collection<T>::conmap(Function func, int threads) {
     }
 
     for (int i = 0; i < threads; i++)
-        pthread_create(&(thread_pool[i]), NULL, conmap_thread<T, Function>, &(thread_data_pool[i]));
+        pthread_create(&(thread_pool[i]), NULL, pmap_thread<T, Function>, &(thread_data_pool[i]));
 
     for (pthread_t i : thread_pool)
         pthread_join(i, NULL);
