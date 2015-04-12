@@ -7,7 +7,6 @@
 
 
 int main() {
-
     // timing concurrent map on a vector of size 100,000
     std::vector<int> input(100000);
     for (int i = 0; i < 100000; i++)

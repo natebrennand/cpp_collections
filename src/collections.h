@@ -64,7 +64,7 @@ public:
     Collection<T>
     tail();
 
-    void 
+    void
     pop_head();
 
     Collection<T>
