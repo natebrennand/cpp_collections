@@ -8,21 +8,13 @@
 
 int main() {
     // timing map on a vector of size 100,000
-    std::vector<int> input(100000);
-    for (int i = 0; i < 100000; i++)
-        input[i] = i;
-
+    auto input = Collection<int>::range(0, 100000);
     auto inc = [](int x) {return x+1;};
-    Collection<int> ints = Collection<int>(input);
 
     auto result = bench([&](){
-        return ints.map(inc);
+        return input.map(inc);
     });
 
-
-    std::vector<int> expectedOutput(100000);
-    for (int i = 0; i < 100000; i++)
-        expectedOutput[i] = i + 1;
-
+    auto expectedOutput = Collection<int>::range(1, 100001);
     assert(result == Collection<int>(expectedOutput));
 }
