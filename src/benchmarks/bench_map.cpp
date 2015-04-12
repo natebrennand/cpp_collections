@@ -1,8 +1,6 @@
 #include <cassert>
-#include <chrono>
 #include <iostream>
 #include <vector>
-#include <functional>
 
 #include "../collections.h"
 #include "benchmark.h"
