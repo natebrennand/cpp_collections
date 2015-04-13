@@ -33,8 +33,10 @@ bench(Gen g, Func f, int trials, std::string name){
         auto input = g();
 
         auto start = std::chrono::steady_clock::now();
-        auto res = f(input);
-        total = total + (std::chrono::steady_clock::now() - start);
+        f(input);
+        auto end = std::chrono::steady_clock::now();
+
+        total = total + (end - start);
     }
 
     std::cout << "\t" << std::setprecision(5) << total.count()/trials << " milliseconds | ";

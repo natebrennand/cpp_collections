@@ -1,4 +1,3 @@
-#include <cassert>
 #include <iostream>
 #include <vector>
 
@@ -41,5 +40,4 @@ int main() {
     bench(rand_input, [&](Collection<int> i){
         return i.pmap(inc, 10);
     }, trials, "pmap: parallel map w/ random data");
-
 }
