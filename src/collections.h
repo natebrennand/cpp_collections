@@ -98,8 +98,8 @@ public:
     Collection<typename std::result_of<Function(T)>::type>
     map(Function func);
 
-    // An alternative implementation of map that multiple concurrent threads to
-    // speed up processing
+    // An alternative implementation of map that uses multiple concurrent 
+    // threads to speed up processing
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
     pmap(Function func, int threads);
@@ -113,6 +113,13 @@ public:
     // adjacent pairs of elements in the Collection, starting from the right
     T
     reduceRight(std::function<T(T, T)> func);
+
+    // An alternative implementation of reduce that uses multiple concurrent
+    // threads to speed up processing (note that the function passed to
+    // preduce must be commutative to achieve accurate result)
+    T
+    preduce(std::function<T(T, T)> func, int threads);
+   
   
     // Return a Collection of tuples, where each tuple contains the elements of 
     // the zipped lists that occur at the same position
@@ -374,6 +381,71 @@ Collection<T>::reduceRight(std::function<T(T, T)> func) {
 
 
 template<typename T>
+void *
+preduce_thread(void *arg) {
+    struct thread_data {
+        std::vector<T> *list;
+        std::function<T(T, T)> func;
+        int begin;
+        int end;
+        T retval;
+    };
+    thread_data *data = ((struct thread_data *)arg);
+    std::vector<T> list = *(data->list);
+
+    T val = (data->func)(list[data->begin], list[data->begin + 1]);
+    for (int i = data->begin + 2; i < data->end && i < list.size(); i++)
+        val = (data->func)(val, list[i]);
+    data->retval = val;
+    pthread_exit(NULL);
+};
+
+
+template<typename T>
+T
+Collection<T>::preduce(std::function<T(T, T)> func, int threads) {
+    struct thread_data {
+        std::vector<T> *list;
+        std::function<T(T, T)> func;
+        int begin;
+        int end;
+        T retval;
+    };
+    std::vector<pthread_t> thread_pool(threads);
+    std::vector<thread_data> thread_data_pool;
+
+    int chunk = Data.size() / threads;
+    int extra = Data.size() - chunk*threads;
+    std::vector<int> indices(extra, chunk+1);
+    std::vector<int> normal(threads-extra, chunk);
+    indices.insert(indices.end(), normal.begin(), normal.end());
+
+    int start = 0;
+    for (int i = 0; i < threads; i++) {
+        pthread_t pid;
+        thread_pool[i] = pid;
+
+        int end = start + indices[i];
+        thread_data td = { &Data, func, start, end};
+        thread_data_pool.push_back(td);
+        start = end;
+    }
+
+    for (int i = 0; i < threads; i++)
+        pthread_create(&(thread_pool[i]), NULL, preduce_thread<T>, &(thread_data_pool[i]));
+
+    for (pthread_t i : thread_pool)
+        pthread_join(i, NULL);
+
+    T val = func(thread_data_pool[0].retval, thread_data_pool[1].retval);
+    for (int i = 2; i < threads; i++)
+        val = func(val, thread_data_pool[i].retval);
+
+    return val;
+};
+
+
+template<typename T>
 template<typename ...U>
 Collection<std::tuple<U...>>
 Collection<T>::zip(Collection<U>... other_list) {
@@ -418,15 +490,9 @@ template<typename T>
 template<typename Function, typename U>
 typename std::result_of<Function(U, T)>::type
 Collection<T>::foldLeft(Function func, U init) {
-    using return_type = U;
-    /*
-    static_assert(
-        std::is_same<
-            decltype(func),
-            std::function<U(U, T)>
-        >::value,
-           "Reduce fn must return the same type as the initial value");
-    */
+    using return_type = typename std::result_of<Function(U, T)>::type;
+    static_assert(std::is_same<return_type, U>::value, 
+        "Fold fn must return the same type as the initial value");
 
     // TODO: bounds checking
     return_type val = func(init, Data[0]);
@@ -441,15 +507,9 @@ template<typename T>
 template<typename Function, typename U>
 typename std::result_of<Function(U, T)>::type
 Collection<T>::foldRight(Function func, U init) {
-    using return_type = U;
-    /*
-    static_assert(
-        std::is_same<
-            decltype(func),
-            std::function<U(U, T)>
-        >::value,
-           "Reduce fn must return the same type as the initial value");
-    */
+    using return_type = typename std::result_of<Function(U, T)>::type;
+    static_assert(std::is_same<return_type, U>::value, 
+        "Fold fn must return the same type as the initial value");
 
     // TODO: bounds checking
     return_type val = func(init, Data[Data.size() - 1]);
@@ -464,16 +524,15 @@ template<typename T>
 template<typename Function, typename U>
 Collection<typename std::result_of<Function(U, T)>::type>
 Collection<T>::scanLeft(Function func, U init) {
-    /*
-    static_assert(std::is_same<decltype(func), std::function<U(U, T)>>::value,
+    using return_type = typename std::result_of<Function(U, T)>::type;
+    static_assert(std::is_same<return_type, U>::value, 
         "Scan fn must return the same type as the initial value");
-    */
 
-    std::vector<U> list(Data.size() + 1);
+    std::vector<return_type> list(Data.size() + 1);
     list[0] = init;
     for (int i = 0; i < Data.size(); i++)
         list[i + 1] = func(list[i], Data[i]);
-    return Collection<U>(list);
+    return Collection<return_type>(list);
 };
 
 
@@ -481,16 +540,15 @@ template<typename T>
 template<typename Function, typename U>
 Collection<typename std::result_of<Function(U, T)>::type>
 Collection<T>::scanRight(Function func, U init) {
-    /*
-    static_assert(std::is_same<decltype(func), std::function<U(U, T)>>::value,
+    using return_type = typename std::result_of<Function(U, T)>::type;
+    static_assert(std::is_same<return_type, U>::value, 
         "Scan fn must return the same type as the initial value");
-    */
 
-    std::vector<U> list(Data.size() + 1);
+    std::vector<return_type> list(Data.size() + 1);
     list[list.size() - 1] = init;
     for (int i = list.size() - 2; i >= 0; i--)
         list[i] = func(list[i + 1], Data[i]);
-    return Collection<U>(list);
+    return Collection<return_type>(list);
 };
 
 
