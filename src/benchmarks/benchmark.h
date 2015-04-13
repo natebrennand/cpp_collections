@@ -3,20 +3,43 @@
 
 #include <chrono>
 #include <iostream>
+#include <string>
+#include <random>
 #include <functional>
+#include <iomanip>
 
 
-template<typename Func>
-typename std::result_of<Func()>::type
-bench(Func f){
-    auto start = std::chrono::steady_clock::now();
-    auto res = f();
-    auto diff = std::chrono::steady_clock::now() - start;
+// random_generator creates a functor for generation of a random number in a range.
+class random_generator{
+    std::mt19937 mt;
+public:
+    int operator()(int range){ return std::uniform_int_distribution<int> (0, range-1)(mt); }
+    random_generator(){ mt = std::mt19937(std::chrono::system_clock::now().time_since_epoch().count()); }
+};
 
-    std::cout << std::chrono::duration <double, std::milli> (diff).count();
-    std::cout << " milliseconds" << std::endl;
 
-    return res;
+// bench wraps a function and it's input generator to benchmark the performance.
+// g: a generator that returns the input for function, f
+// f: a function that is being benchmarked
+// trials: the number of trials to run
+// name: a short name of the test being run
+template<typename Gen, typename Func>
+void
+bench(Gen g, Func f, int trials, std::string name){
+    typedef std::chrono::duration<double, std::milli> time;
+    time total;
+
+    for (int i = 0; i < trials; i++) {
+        auto input = g();
+
+        auto start = std::chrono::steady_clock::now();
+        auto res = f(input);
+        total = total + (std::chrono::steady_clock::now() - start);
+    }
+
+    std::cout << "\t" << std::setprecision(5) << total.count()/trials << " milliseconds | ";
+    std::cout << name;
+    std::cout << " | " << trials << " trials" << std::endl;
 };
 
 #endif
