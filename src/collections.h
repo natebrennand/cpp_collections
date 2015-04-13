@@ -46,66 +46,115 @@ public:
         Data.assign(d, d + len);
     };
 
+    // Return Collection as a std::vector
     std::vector<T>
     vector();
 
+    // Return Collection as a std::list
     std::list<T>
     list();
 
+    // Return the first element
     T
     head();
 
+    // Return the last element
     T
     last();
 
+    // Return all the elements except the last
     Collection<T>
     init();
 
+    // Return all the elements except the head
     Collection<T>
     tail();
 
+    // Remove the head 
     void
     pop_head();
 
+    // Return the elements that pass a predicate function
     Collection<T>
     filter(std::function<bool(T)> func);
 
+    // Return the elements whose indices are within the range [low, high)
     Collection<T>
     slice(int low, int high);
 
+    // Return Collection of numeric types over the range [0, size)
     static
     Collection<T>
     range(int size);
 
+    // Return Collection of numeric types over the range [low, high)
     static
     Collection<T>
     range(int low, int high);
 
+    // Return the Collection that results from the transformation of each
+    // element in the original Collection
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
     map(Function func);
 
+    // An alternative implementation of map that multiple concurrent threads to
+    // speed up processing
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
     pmap(Function func, int threads);
 
+    // Return the result of the application of the same binary operator on
+    // adjacent pairs of elements in the Collection, starting from the left
     T
-    fold(std::function<T(T, T)> func);
+    reduceLeft(std::function<T(T, T)> func);
 
+    // Return the result of the application of the same binary operator on
+    // adjacent pairs of elements in the Collection, starting from the right
+    T
+    reduceRight(std::function<T(T, T)> func);
+  
+    // Return a Collection of tuples, where each tuple contains the elements of 
+    // the zipped lists that occur at the same position
     template<typename ...U>
     static
     Collection<std::tuple<U...>>
     zip(Collection<U>... other_list);
 
-
+    // Generalizes zip by zipping with the function given as the first argument
+    // instead of a tupling function
     template<typename Function, typename ...U>
     static
     Collection<typename std::result_of<Function(U...)>::type>
     zipWith(Function func, Collection<U>... other_list);
 
+    // Return the result of the application of the same binary operator on
+    // all elements in the Collection as well as an initial value, starting 
+    // from the left 
     template<typename Function, typename U>
     typename std::result_of<Function(U, T)>::type
-    reduce(Function func, U init);
+    foldLeft(Function func, U init);
+
+    // Return the result of the application of the same binary operator on
+    // all elements in the Collection as well as an initial value, starting 
+    // from the right 
+    template<typename Function, typename U>
+    typename std::result_of<Function(U, T)>::type
+    foldRight(Function func, U init);
+
+    // Returns the intermediate results of the binary cumulation of the 
+    // elements in a Collection as well as an initial value, starting from the
+    // left
+    template<typename Function, typename U>
+    Collection<typename std::result_of<Function(U, T)>::type>
+    scanLeft(Function func, U init);
+
+    // Returns the intermediate results of the binary cumulation of the 
+    // elements in a Collection as well as an initial value, starting from the
+    // right 
+    template<typename Function, typename U>
+    Collection<typename std::result_of<Function(U, T)>::type>
+    scanRight(Function func, U init);
 
     T
     operator[] (const int index);
@@ -302,10 +351,22 @@ Collection<T>::pmap(Function func, int threads) {
 
 template<typename T>
 T
-Collection<T>::fold(std::function<T(T, T)> func) {
+Collection<T>::reduceLeft(std::function<T(T, T)> func) {
     // TODO: bounds checking
     T val = func(Data[0], Data[1]);
     for (int i = 2; i < Data.size(); i++)
+        val = func(val, Data[i]);
+
+    return val;
+};
+
+
+template<typename T>
+T
+Collection<T>::reduceRight(std::function<T(T, T)> func) {
+    // TODO: bounds checking
+    T val = func(Data[Data.size() - 1], Data[Data.size() - 2]);
+    for (int i = Data.size() - 3; i >= 0; i--)
         val = func(val, Data[i]);
 
     return val;
@@ -356,7 +417,7 @@ Collection<T>::zipWith(Function func, Collection<U>... other_list) {
 template<typename T>
 template<typename Function, typename U>
 typename std::result_of<Function(U, T)>::type
-Collection<T>::reduce(Function func, U init) {
+Collection<T>::foldLeft(Function func, U init) {
     using return_type = U;
     /*
     static_assert(
@@ -373,6 +434,63 @@ Collection<T>::reduce(Function func, U init) {
         val = func(val, Data[i]);
 
     return val;
+};
+
+
+template<typename T>
+template<typename Function, typename U>
+typename std::result_of<Function(U, T)>::type
+Collection<T>::foldRight(Function func, U init) {
+    using return_type = U;
+    /*
+    static_assert(
+        std::is_same<
+            decltype(func),
+            std::function<U(U, T)>
+        >::value,
+           "Reduce fn must return the same type as the initial value");
+    */
+
+    // TODO: bounds checking
+    return_type val = func(init, Data[Data.size() - 1]);
+    for (int i = Data.size() - 2; i >= 0; i--)
+        val = func(val, Data[i]);
+
+    return val;
+};
+
+
+template<typename T>
+template<typename Function, typename U>
+Collection<typename std::result_of<Function(U, T)>::type>
+Collection<T>::scanLeft(Function func, U init) {
+    /*
+    static_assert(std::is_same<decltype(func), std::function<U(U, T)>>::value,
+        "Scan fn must return the same type as the initial value");
+    */
+
+    std::vector<U> list(Data.size() + 1);
+    list[0] = init;
+    for (int i = 0; i < Data.size(); i++)
+        list[i + 1] = func(list[i], Data[i]);
+    return Collection<U>(list);
+};
+
+
+template<typename T>
+template<typename Function, typename U>
+Collection<typename std::result_of<Function(U, T)>::type>
+Collection<T>::scanRight(Function func, U init) {
+    /*
+    static_assert(std::is_same<decltype(func), std::function<U(U, T)>>::value,
+        "Scan fn must return the same type as the initial value");
+    */
+
+    std::vector<U> list(Data.size() + 1);
+    list[list.size() - 1] = init;
+    for (int i = list.size() - 2; i >= 0; i--)
+        list[i] = func(list[i + 1], Data[i]);
+    return Collection<U>(list);
 };
 
 

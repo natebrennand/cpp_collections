@@ -10,6 +10,6 @@ int main() {
 
     auto ints2 = Collection<int>(std::vector<int> {2, 3, 4, 5});
 
-    auto i = ints2.reduce(add, 1);
+    auto i = ints2.foldLeft(add, 1);
     assert(i == 15);
 }

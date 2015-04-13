@@ -8,7 +8,7 @@ int main() {
 
     bool wrong = [](bool x, bool y) {return x && y;};
 
-    int b = ints.reduce(wrong, 1);
+    int b = ints.foldRight(wrong, 1);
     std::cout << b << std::endl;
 }
 
