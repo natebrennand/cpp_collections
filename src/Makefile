@@ -3,12 +3,10 @@ CC=g++
 CFLAGS=-std=c++11 -Wall -pthread
 
 
-test:
+default:
 	@./run_tests.sh
-
-default: test
+	@./run_benchmarks.sh
 
 clean:
 	rm -f *.o a.out
-
 

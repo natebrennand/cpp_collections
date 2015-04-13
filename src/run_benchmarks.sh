@@ -20,6 +20,9 @@ run_bench() {
         $(./a.out &> $tmp_file)
         outcome=`cat $tmp_file`
         echo "$test_name: $outcome"
+    else
+        echo "$test_name: didn't compile"
+        echo "$outcome"
     fi
 }
 

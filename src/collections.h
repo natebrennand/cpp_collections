@@ -74,11 +74,11 @@ public:
     slice(int low, int high);
 
     static
-    Collection<T>
+    Collection<T>&
     range(int size);
 
     static
-    Collection<T>
+    Collection<T>&
     range(int low, int high);
 
     template<typename Function>
@@ -212,22 +212,24 @@ Collection<T>::slice(int low, int high) {
 
 
 template<typename T>
-Collection<T>
+Collection<T>&
 Collection<T>::range(int size) {
     std::vector<T> list(size);
     for (int i = 0; i < size; i++)
         list[i] = T(i);
-    return Collection<T>(list);
+    static auto x = Collection<T>(list);
+    return x;
 };
 
 
 template<typename T>
-Collection<T>
+Collection<T>&
 Collection<T>::range(int low, int high) {
     std::vector<T> list(high-low);
     for (int i = 0; i < high-low; i++)
         list[i] = T(low + i);
-    return Collection<T>(list);
+    static auto x = Collection<T>(list);
+    return x;
 };
 
 
