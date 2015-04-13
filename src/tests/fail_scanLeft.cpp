@@ -6,9 +6,9 @@
 int main() {
     Collection<int> ints = Collection<int>(std::vector<int> {2, 3, 4, 5});
 
-    bool wrong = [](bool x, bool y) {return x && y;};
+    int wrong = [](char x, int y) {return y;};
 
-    int b = ints.reduce(wrong, 1);
+    int b = ints.scanLeft(wrong, 'a');
     std::cout << b << std::endl;
 }
 
