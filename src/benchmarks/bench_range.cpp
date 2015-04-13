@@ -20,7 +20,7 @@ int main() {
 
 
     bench(input1, [&](int i) {
-        return Collection<int>::range(i).vector();
+        return Collection<int>::range(i);
     }, trials, "range of " + std::to_string(size1));
 
     bench(input1, [&](int n) {
@@ -31,7 +31,7 @@ int main() {
     }, trials, "range of " + std::to_string(size1));
 
     bench(input2, [&](int i) {
-        return Collection<int>::range(i).vector();
+        return Collection<int>::range(i);
     }, trials, "range of " + std::to_string(size2));
 
     bench(input2, [&](int n) {

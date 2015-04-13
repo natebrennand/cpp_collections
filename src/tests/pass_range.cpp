@@ -20,4 +20,7 @@ int main() {
     assert(floats[0] == 0.0);
     assert(floats.size() == 4);
 
+    auto ints3 = Collection<int>::range(4).map([](int i){ return i+1; });
+    assert(ints3[0] == 1);
+    assert(ints3[1] == 2);
 }

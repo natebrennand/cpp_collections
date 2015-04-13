@@ -5,8 +5,8 @@
 #include "benchmark.h"
 
 
-#define size 100000
-#define trials 100
+#define size 1000000
+#define trials 50
 
 
 int main() {
@@ -30,7 +30,7 @@ int main() {
     }, trials, "map: linear map");
 
     bench(input, [&](Collection<int> i){
-        return i.pmap(inc, 10);
+        return i.pmap(inc, 4);
     }, trials, "pmap: parallel map");
 
     bench(rand_input, [&](Collection<int> i){
@@ -38,6 +38,6 @@ int main() {
     }, trials, "map: linear map w/ random data");
 
     bench(rand_input, [&](Collection<int> i){
-        return i.pmap(inc, 10);
+        return i.pmap(inc, 4);
     }, trials, "pmap: parallel map w/ random data");
 }
