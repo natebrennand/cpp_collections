@@ -149,14 +149,14 @@ public:
     typename std::result_of<Function(U, T)>::type
     foldRight(Function func, U init);
 
-    // Returns the intermediate results of the binary cumulation of the 
+    // Returns the intermediate results of the binary accumulation of the 
     // elements in a Collection as well as an initial value, starting from the
     // left
     template<typename Function, typename U>
     Collection<typename std::result_of<Function(U, T)>::type>
     scanLeft(Function func, U init);
 
-    // Returns the intermediate results of the binary cumulation of the 
+    // Returns the intermediate results of the binary accumulation of the 
     // elements in a Collection as well as an initial value, starting from the
     // right 
     template<typename Function, typename U>
@@ -329,6 +329,7 @@ Collection<T>::pmap(Function func, int threads) {
     std::vector<pthread_t> thread_pool(threads);
     std::vector<thread_data> thread_data_pool;
 
+    // TODO: add bounds checking
     int chunk = Data.size() / threads;
     int extra = Data.size() - chunk*threads;
     std::vector<int> indices(extra, chunk+1);
@@ -437,6 +438,7 @@ Collection<T>::preduce(std::function<T(T, T)> func, int threads) {
     for (pthread_t i : thread_pool)
         pthread_join(i, NULL);
 
+    // TODO: add bounds checking
     T val = func(thread_data_pool[0].retval, thread_data_pool[1].retval);
     for (int i = 2; i < threads; i++)
         val = func(val, thread_data_pool[i].retval);

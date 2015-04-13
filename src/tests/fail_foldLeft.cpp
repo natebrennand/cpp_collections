@@ -8,6 +8,9 @@ int main() {
 
     bool wrong = [](bool x, bool y) {return x && y;};
 
+    // foldLeft should fail here because the function passed to it returns a
+    // different type than the initial value that is passed to it
+
     int b = ints.foldLeft(wrong, 1);
     std::cout << b << std::endl;
 }

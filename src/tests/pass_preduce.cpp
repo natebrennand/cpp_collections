@@ -7,7 +7,7 @@
 
 
 int main(){
-    auto ints = Collection<int>(std::vector<int> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    auto ints = Collection<int>::range(1,11);
 
     auto add = [](int x, int y) {return x+y;};
     int i = ints.preduce(add, 3);
