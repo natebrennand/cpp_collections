@@ -5,8 +5,8 @@
 #include "benchmark.h"
 
 
-#define size 100000
-#define trials 100
+#define size 1000000
+#define trials 50
 
 
 int main() {
@@ -30,7 +30,7 @@ int main() {
     }, trials, "reduceLeft: linear reduceLeft");
 
     bench(input, [&](Collection<int> i){
-        return i.preduce(add, 10);
+        return i.preduce(add, 4);
     }, trials, "preduce: parallel reduce");
 
     bench(rand_input, [&](Collection<int> i){
@@ -38,6 +38,6 @@ int main() {
     }, trials, "reduceLeft: linear reduceLeft w/ random data");
 
     bench(rand_input, [&](Collection<int> i){
-        return i.preduce(add, 10);
+        return i.preduce(add, 4);
     }, trials, "preduce: parallel reduce w/ random data");
 }
