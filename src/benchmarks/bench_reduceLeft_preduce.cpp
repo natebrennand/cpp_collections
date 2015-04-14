@@ -4,14 +4,15 @@
 #include "../collections.h"
 #include "benchmark.h"
 
-
 #define size 1000000
 #define trials 50
+
+using namespace cpp_collections;
 
 
 int main() {
     // timing reduce on a vector of size 100,000
-    auto input = [](){ return Collection<int>::range(0, size); };
+    auto input = [](){ return range(0, size); };
     auto add = [](int x, int y) {return x+y;};
     random_generator rand_gen;
 
