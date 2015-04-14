@@ -4,14 +4,15 @@
 #include "../collections.h"
 #include "benchmark.h"
 
+#define size 1000000
+#define trials 50
 
-#define size 100000
-#define trials 100
+using namespace cpp_collections;
 
 
 int main() {
     // timing reduce on a vector of size 100,000
-    auto input = [](){ return Collection<int>::range(0, size); };
+    auto input = [](){ return range(0, size); };
     auto add = [](int x, int y) {return x+y;};
     random_generator rand_gen;
 
@@ -30,7 +31,7 @@ int main() {
     }, trials, "reduceLeft: linear reduceLeft");
 
     bench(input, [&](Collection<int> i){
-        return i.preduce(add, 10);
+        return i.preduce(add, 4);
     }, trials, "preduce: parallel reduce");
 
     bench(rand_input, [&](Collection<int> i){
@@ -38,6 +39,6 @@ int main() {
     }, trials, "reduceLeft: linear reduceLeft w/ random data");
 
     bench(rand_input, [&](Collection<int> i){
-        return i.preduce(add, 10);
+        return i.preduce(add, 4);
     }, trials, "preduce: parallel reduce w/ random data");
 }

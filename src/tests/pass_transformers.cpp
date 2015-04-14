@@ -6,6 +6,7 @@
 
 #include "../collections.h"
 
+using namespace cpp_collections;
 
 int main() {
     std::vector<int> int_vector {2, 3, 4, 5};

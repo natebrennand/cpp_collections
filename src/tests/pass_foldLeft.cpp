@@ -4,6 +4,7 @@
 
 #include "../collections.h"
 
+using namespace cpp_collections;
 
 int main() {
     auto add = [](int x, int y) {return x+y;};

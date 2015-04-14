@@ -2,8 +2,9 @@
 #include <iostream>
 #include <cassert>
 
-
 #include "../collections.h"
+
+using namespace cpp_collections;
 
 
 int main(){

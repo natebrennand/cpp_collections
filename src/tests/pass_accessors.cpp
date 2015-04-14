@@ -3,6 +3,7 @@
 
 #include "../collections.h"
 
+using namespace cpp_collections;
 
 int main() {
     auto ints = Collection<int>(std::vector<int> {1, 2, 3, 4, 5});

@@ -3,6 +3,8 @@
 
 #include "../collections.h"
 
+using namespace cpp_collections;
+
 int main() {
 
     // standard syntax
@@ -11,6 +13,5 @@ int main() {
         sum += i; 
 
     // Collection syntax
-    sum = Collection<int>::range(1,101)
-              .fold([](int x, int y) {return x + y;});
+    sum = range(1,101).reduceLeft([](int x, int y) {return x + y;});
 }

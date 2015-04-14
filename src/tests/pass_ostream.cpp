@@ -4,10 +4,11 @@
 
 #include "../collections.h"
 
+using namespace cpp_collections;
 
 int main() {
 
-    auto ints = Collection<int>::range(4);
+    auto ints = range(4);
 
     std::stringstream ss;
     ss << ints;

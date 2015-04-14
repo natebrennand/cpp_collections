@@ -6,6 +6,7 @@
 
 #include "../collections.h"
 
+using namespace cpp_collections;
 
 int main() {
     auto even = [](int x) { return x % 2 == 0; };
