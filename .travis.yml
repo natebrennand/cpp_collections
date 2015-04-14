@@ -15,5 +15,4 @@ install:
 script:
   - cd src
   - bash run_tests.sh
-  - bash run_benchmarks.sh
 
