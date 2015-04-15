@@ -113,6 +113,10 @@ namespace cpp_collections {
         // Remove the head 
         void
         pop_head();
+
+        // Apply a function to all the elements in the Collection
+        void
+        each(std::function<void(T)> func);
     
         // Return the elements that pass a predicate function
         Collection<T>
@@ -241,6 +245,13 @@ namespace cpp_collections {
     // --------------------------
     // ADVANCED OPERATIONS
     // --------------------------
+
+    template<typename T>
+    void
+    Collection<T>::each(std::function<void(T)> func) {
+        for (auto i : Data)
+            func(i);
+    }
 
     // Return the elements that pass a predicate function
     template<typename T>
