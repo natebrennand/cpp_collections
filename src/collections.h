@@ -10,6 +10,7 @@
 #include <memory>
 #include <pthread.h>
 #include <stdio.h>
+#include <thread>
 #include <tuple>
 #include <type_traits>
 #include <vector>
@@ -133,10 +134,16 @@ namespace cpp_collections {
         map(Function func);
     
         // An alternative implementation of map that uses multiple concurrent 
-        // threads to speed up processing
+        // pthreads to speed up processing
         template<typename Function>
         Collection<typename std::result_of<Function(T)>::type>
         pmap(Function func, int threads);
+
+        // An alternative implementation of map that uses multiple concurrent
+        // std::threads to speed up processing
+        template<typename Function>
+        Collection<typename std::result_of<Function(T)>::type>
+        tmap(Function func, int threads);
     
         // Return the result of the application of the same binary operator on
         // adjacent pairs of elements in the Collection, starting from the left
@@ -341,6 +348,45 @@ namespace cpp_collections {
     
         for (pthread_t i : thread_pool)
             pthread_join(i, NULL);
+    
+        return Collection<T>(Data);
+    }
+
+    template<typename T, typename Function>
+    void
+    tmap_thread(int begin, int end, Function func, std::vector<T>& list) {
+        for (int i = begin; i < end && i < list.size(); i++)
+            list[i] = func(list[i]);
+    }
+
+    // An alternative implementation of map that uses multiple concurrent
+    // std::threads to speed up processing
+    template<typename T>
+    template<typename Function>
+    Collection<typename std::result_of<Function(T)>::type>
+    Collection<T>::tmap(Function func, int threads) {
+        std::vector<std::thread> thread_pool(threads);
+    
+        // TODO: add bounds checking
+        int chunk = Data.size() / threads;
+        int extra = Data.size() - chunk*threads;
+        std::vector<int> indices(extra, chunk+1);
+        std::vector<int> normal(threads-extra, chunk);
+        indices.insert(indices.end(), normal.begin(), normal.end());
+    
+        int start = 0;
+        for (int i = 0; i < threads; i++) {
+            int end = start + indices[i];
+
+            thread_pool[i] = std::thread ([=]() {
+                tmap_thread(start, end, func, Data);
+            });
+
+            start = end;
+        }
+    
+        for (int i = 0; i < thread_pool.size(); i++)
+            thread_pool[i].join();
     
         return Collection<T>(Data);
     }
