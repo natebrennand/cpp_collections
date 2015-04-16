@@ -27,6 +27,14 @@ namespace cpp_collections {
         Collection<T>(std::vector<T> d) {
             Data = d;
         };
+
+        Collection<T>(int size) {
+            Data = std::vector<T>(size);
+        };
+
+        Collection<T>() {
+            Data = std::vector<T>();
+        };
         
         // std::list constructor
         Collection<T>(std::list<T> d) {
@@ -156,10 +164,16 @@ namespace cpp_collections {
         reduceRight(std::function<T(T, T)> func);
     
         // An alternative implementation of reduce that uses multiple concurrent
-        // threads to speed up processing (note that the function passed to
+        // pthreads to speed up processing (note that the function passed to
         // preduce must be commutative to achieve accurate result)
         T
         preduce(std::function<T(T, T)> func, int threads);
+
+        // An alternative implementation of reduce that uses multiple concurrent
+        // std::threads to speed up processing (note that the function passed to
+        // treduce must be commutative to achieve accurate result)
+        T
+        treduce(std::function<T(T, T)> func, int threads);
        
         // Return the result of the application of the same binary operator on
         // all elements in the Collection as well as an initial value, starting 
@@ -481,6 +495,53 @@ namespace cpp_collections {
         for (int i = 2; i < threads; i++)
             val = func(val, thread_data_pool[i].retval);
     
+        return val;
+    }
+
+    template<typename T>
+    void
+    treduce_thread(int tid, int begin, int end, std::function<T(T, T)> func,
+                   std::vector<T>& list, std::vector<T>& results) {
+        T val = func(list[begin], list[begin + 1]);
+        for (int i = begin + 2; i < end && i < list.size(); i++)
+            val = func(val, list[i]);
+        results[tid] = val; 
+    }
+    
+    // An alternative implementation of reduce that uses multiple concurrent
+    // threads to speed up processing (note that the function passed to
+    // treduce must be commutative to achieve accurate result)
+    template<typename T>
+    T
+    Collection<T>::treduce(std::function<T(T, T)> func, int threads) {
+        std::vector<std::thread> thread_pool(threads);
+        std::vector<T> results(threads);
+    
+        // TODO: add bounds checking
+        int chunk = Data.size() / threads;
+        int extra = Data.size() - chunk*threads;
+        std::vector<int> indices(extra, chunk+1);
+        std::vector<int> normal(threads-extra, chunk);
+        indices.insert(indices.end(), normal.begin(), normal.end());
+    
+        int start = 0;
+        for (int i = 0; i < threads; i++) {
+            int end = start + indices[i];
+
+            thread_pool[i] = std::thread ([=, &results]() {
+                treduce_thread(i, start, end, func, Data, results);
+            });
+
+            start = end;
+        }
+    
+        for (int i = 0; i < thread_pool.size(); i++)
+            thread_pool[i].join();
+    
+        // TODO: check that results has size greater than 1
+        T val = func(results[0], results[1]);
+        for (int i = 2; i < results.size(); i++)
+            val = func(val, results[i]);
         return val;
     }
     
