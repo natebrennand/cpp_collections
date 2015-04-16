@@ -117,6 +117,10 @@ namespace cpp_collections {
         // Apply a function to all the elements in the Collection
         void
         each(std::function<void(T)> func);
+
+        // Return the result of the concatenation of the Collection with other
+        Collection<T>
+        concat(Collection<T>& other);
     
         // Return the elements that pass a predicate function
         Collection<T>
@@ -251,6 +255,18 @@ namespace cpp_collections {
     Collection<T>::each(std::function<void(T)> func) {
         for (auto i : Data)
             func(i);
+    }
+
+    template<typename T>
+    Collection<T>
+    Collection<T>::concat(Collection<T>& other) {
+        std::vector<T> list(Data.size() + other.size());
+        for (int i = 0; i < Data.size() + other.size(); i++)
+            if (i < Data.size())
+                list[i] = Data[i];
+            else
+                list[i] = other[i - Data.size()];
+        return Collection<T>(list);
     }
 
     // Return the elements that pass a predicate function
@@ -518,7 +534,7 @@ namespace cpp_collections {
 
     // Return Collection of numeric types over the range [0, size)
     template<typename T>
-    Collection<T>&
+    Collection<T>
     range(T size) {
         static_assert(std::is_arithmetic<T>::value, 
             "You must pass range arithmetic type parameters");
@@ -526,13 +542,12 @@ namespace cpp_collections {
         std::vector<T> list(size);
         for (int i = 0; i < size; i++)
             list[i] = T(i);
-        static auto x = Collection<T>(list);
-        return x;
+        return Collection<T>(list);
     }
 
     // Return Collection of numeric types over the range [low, high)
     template<typename T>
-    Collection<T>&
+    Collection<T>
     range(T low, T high) {
         static_assert(std::is_arithmetic<T>::value, 
             "You must pass range arithmetic type parameters");
@@ -540,10 +555,8 @@ namespace cpp_collections {
         std::vector<T> list(high-low);
         for (int i = 0; i < high-low; i++)
             list[i] = T(low + i);
-        static auto x = Collection<T>(list);
-        return x;
+        return Collection<T>(list);
     }
-
 
     // Return a Collection of tuples, where each tuple contains the elements of 
     // the zipped lists that occur at the same position
