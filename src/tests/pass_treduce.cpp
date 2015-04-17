@@ -12,11 +12,8 @@ int main(){
 
     auto add = [](int x, int y) {return x+y;};
     int i = ints.treduce(add, 3);
-
-    std::cout << i << std::endl;
     assert(i == 55);
 
     int i2 = ints.treduce(add);
-    std::cout << i << std::endl;
-    assert(i == 55);
+    assert(i2 == 55);
 }
