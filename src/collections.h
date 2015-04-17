@@ -520,7 +520,6 @@ namespace cpp_collections {
     template<typename T>
     void
     concat_helper(std::vector<T>& list, Collection<T>& other_list, int& index) {
-        std::cout << index << std::endl;
         for (int i = 0; i < other_list.size(); i++)
             list[index++] = other_list[i];
     }
