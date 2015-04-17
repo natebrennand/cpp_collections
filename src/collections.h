@@ -261,6 +261,7 @@ namespace cpp_collections {
     // ADVANCED OPERATIONS
     // --------------------------
 
+    // Apply a function to all the elements in the Collection
     template<typename T>
     void
     Collection<T>::each(std::function<void(T)> func) {
@@ -336,7 +337,7 @@ namespace cpp_collections {
             start = end;
         }
 
-        for (int i = 0; i < thread_pool.size(); i++)
+        for (int i = 0; i < threads; i++)
             thread_pool[i].join();
 
         return Collection<T>(Data);
@@ -493,6 +494,30 @@ namespace cpp_collections {
     // NON-MEMBER FUNCTIONS
     // --------------------------
 
+    template<typename T>
+    void
+    concat_helper(std::vector<T>& list, Collection<T>& other_list, int& index) {
+        for (int i = 0; i < other_list.size(); i++)
+            list[index++] = other_list[i];
+    }
+
+    // Concatenate an arbitrary number of Collections
+    template<typename T, typename ...Collections>
+    Collection<T>
+    concat(Collection<T>& original, Collections... other_list) {
+        // TODO: Check that all arguments are Collections of the same type with
+        // a static_assert. However, note that this check is already being made
+        // implicitly by concat_helper 
+        int size = original.size();
+        int get_size[]{0, (size += other_list.size(), 0)...};
+        std::vector<T> list(size);
+
+        int index = 0;
+        concat_helper(list, original, index);
+        int concatenate[]{0, (concat_helper(list, other_list, index), 0)...};
+        return Collection<T>(list);
+    }
+
     // Return Collection of numeric types over the range [0, size)
     template<typename T>
     Collection<T>
@@ -503,8 +528,7 @@ namespace cpp_collections {
         std::vector<T> list(size);
         for (int i = 0; i < size; i++)
             list[i] = T(i);
-        static auto x = Collection<T>(list);
-        return x;
+        return Collection<T>(list);
     }
 
     // Return Collection of numeric types over the range [low, high)
@@ -517,8 +541,7 @@ namespace cpp_collections {
         std::vector<T> list(high-low);
         for (int i = 0; i < high-low; i++)
             list[i] = T(low + i);
-        static auto x = Collection<T>(list);
-        return x;
+        return Collection<T>(list);
     }
 
 
