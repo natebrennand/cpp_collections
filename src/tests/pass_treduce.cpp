@@ -14,6 +14,9 @@ int main(){
     int i = ints.treduce(add, 3);
 
     std::cout << i << std::endl;
+    assert(i == 55);
 
+    int i2 = ints.treduce(add);
+    std::cout << i << std::endl;
     assert(i == 55);
 }

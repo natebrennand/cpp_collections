@@ -15,7 +15,12 @@
 #include <type_traits>
 #include <vector>
 
+
+int detectedThreads = (std::thread::hardware_concurrency() == 0) ? \
+    std::thread::hardware_concurrency() : 4;
+
 namespace cpp_collections {
+
 
     template<typename T>
     class Collection {
@@ -28,10 +33,12 @@ namespace cpp_collections {
             Data = d;
         };
 
+        // construct an empty collection of size 'size'
         Collection<T>(int size) {
             Data = std::vector<T>(size);
         };
 
+        // construct an empty Collection
         Collection<T>() {
             Data = std::vector<T>();
         };
@@ -151,7 +158,7 @@ namespace cpp_collections {
         // std::threads to speed up processing
         template<typename Function>
         Collection<typename std::result_of<Function(T)>::type>
-        tmap(Function func, int threads);
+        tmap(Function func, int threads=detectedThreads);
 
         // Return the result of the application of the same binary operator on
         // adjacent pairs of elements in the Collection, starting from the left
@@ -173,7 +180,7 @@ namespace cpp_collections {
         // std::threads to speed up processing (note that the function passed to
         // treduce must be commutative to achieve accurate result)
         T
-        treduce(std::function<T(T, T)> func, int threads);
+        treduce(std::function<T(T, T)> func, int threads=detectedThreads);
 
         // Return the result of the application of the same binary operator on
         // all elements in the Collection as well as an initial value, starting
@@ -399,7 +406,7 @@ namespace cpp_collections {
             start = end;
         }
 
-        for (int i = 0; i < thread_pool.size(); i++)
+        for (int i = 0; i < threads; i++)
             thread_pool[i].join();
 
         return Collection<T>(Data);
