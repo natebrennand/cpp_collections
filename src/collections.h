@@ -386,6 +386,7 @@ namespace cpp_collections {
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
     Collection<T>::tmap(Function func, int threads) {
+        std::cout << "THREADS: " << threads << std::endl;
         std::vector<std::thread> thread_pool(threads);
 
         // TODO: add bounds checking
@@ -406,7 +407,7 @@ namespace cpp_collections {
             start = end;
         }
 
-        for (int i = 0; i < threads; i++)
+        for (int i = 0; i < thread_pool.size(); i++)
             thread_pool[i].join();
 
         return Collection<T>(Data);
@@ -632,7 +633,7 @@ namespace cpp_collections {
 
     // Return Collection of numeric types over the range [0, size)
     template<typename T>
-    Collection<T>&
+    Collection<T>
     range(T size) {
         static_assert(std::is_arithmetic<T>::value,
             "You must pass range arithmetic type parameters");
@@ -646,7 +647,7 @@ namespace cpp_collections {
 
     // Return Collection of numeric types over the range [low, high)
     template<typename T>
-    Collection<T>&
+    Collection<T>
     range(T low, T high) {
         static_assert(std::is_arithmetic<T>::value,
             "You must pass range arithmetic type parameters");
