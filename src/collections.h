@@ -246,6 +246,7 @@ namespace cpp_collections {
     // ADVANCED OPERATIONS
     // --------------------------
 
+    // Apply a function to all the elements in the Collection
     template<typename T>
     void
     Collection<T>::each(std::function<void(T)> func) {
@@ -518,19 +519,26 @@ namespace cpp_collections {
 
     template<typename T>
     void
-    concat_helper(std::vector<T>& list, Collection<T>& other_list) {
+    concat_helper(std::vector<T>& list, Collection<T>& other_list, int& index) {
+        std::cout << index << std::endl;
         for (int i = 0; i < other_list.size(); i++)
-            list.push_back(other_list[i]);
+            list[index++] = other_list[i];
     }
     
     // Concatenate an arbitrary number of Collections
     template<typename T, typename ...Collections>
     Collection<T>
     concat(Collection<T>& original, Collections... other_list) {
-        // TODO: Check that all arguments are of type Collection<T>&
-        std::vector<T> list;
-        concat_helper(list, original);
-        int unpack[]{0, (concat_helper(list, other_list), 0)...};
+        // TODO: Check that all arguments are Collections of the same type with
+        // a static_assert. However, note that this check is already being made
+        // implicitly by concat_helper 
+        int size = original.size();
+        int get_size[]{0, (size += other_list.size(), 0)...};
+        std::vector<T> list(size);
+
+        int index = 0;
+        concat_helper(list, original, index);
+        int concatenate[]{0, (concat_helper(list, other_list, index), 0)...};
         return Collection<T>(list);
     }
 
