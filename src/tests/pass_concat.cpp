@@ -13,6 +13,12 @@ int main() {
     Collection<int> a = range(5);
 
     Collection<int> b = range(5,11);
+    
+    Collection<int> c = range(11, 21);
 
-    assert(a.concat(b) == range(11));
+    Collection<int> d = concat(a, b, c);
+    
+    d.print();
+
+    assert(d == range(21));
 }

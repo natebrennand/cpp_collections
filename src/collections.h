@@ -118,10 +118,6 @@ namespace cpp_collections {
         void
         each(std::function<void(T)> func);
 
-        // Return the result of the concatenation of the Collection with other
-        Collection<T>
-        concat(Collection<T>& other);
-    
         // Return the elements that pass a predicate function
         Collection<T>
         filter(std::function<bool(T)> func);
@@ -255,18 +251,6 @@ namespace cpp_collections {
     Collection<T>::each(std::function<void(T)> func) {
         for (auto i : Data)
             func(i);
-    }
-
-    template<typename T>
-    Collection<T>
-    Collection<T>::concat(Collection<T>& other) {
-        std::vector<T> list(Data.size() + other.size());
-        for (int i = 0; i < Data.size() + other.size(); i++)
-            if (i < Data.size())
-                list[i] = Data[i];
-            else
-                list[i] = other[i - Data.size()];
-        return Collection<T>(list);
     }
 
     // Return the elements that pass a predicate function
@@ -531,6 +515,24 @@ namespace cpp_collections {
     // --------------------------
     // NON-MEMBER FUNCTIONS
     // --------------------------
+
+    template<typename T>
+    void
+    concat_helper(std::vector<T>& list, Collection<T>& other_list) {
+        for (int i = 0; i < other_list.size(); i++)
+            list.push_back(other_list[i]);
+    }
+    
+    // Concatenate an arbitrary number of Collections
+    template<typename T, typename ...Collections>
+    Collection<T>
+    concat(Collection<T>& original, Collections... other_list) {
+        // TODO: Check that all arguments are of type Collection<T>&
+        std::vector<T> list;
+        concat_helper(list, original);
+        int unpack[]{0, (concat_helper(list, other_list), 0)...};
+        return Collection<T>(list);
+    }
 
     // Return Collection of numeric types over the range [0, size)
     template<typename T>
