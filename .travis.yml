@@ -14,5 +14,7 @@ install:
 # Change this to your needs
 script:
   - cd src
+  - g++ -Wall -std=c++0x tests/pass_tmap.cpp
+  - g++ -Wall -std=c++0x tests/pass_treduce.cpp
   - bash run_tests.sh
 
