@@ -32,14 +32,6 @@ namespace cpp_collections {
             Gen  = gen;
         }
 
-        // Creates Stream: {n, n+1, n+2,...}
-        //Stream<T> 
-        //from(T n);
-
-        // Creates Stream: {n, n+step, n+(2*step),...} 
-        //Stream<T> 
-        //from(T n, T step);
-
         // Return a collection with n elements taken from the Stream
         Collection<T>
         take(int n);
@@ -50,7 +42,12 @@ namespace cpp_collections {
 
         // Create the tail Stream by removing the head
         Stream<T>
-        tail();
+        tail() const;
+
+        // Return a substream of elements of the Stream that match the
+        // predicate function
+        Stream<T>
+        filter(std::function<bool(T)> func) const;
 
     };
 
@@ -62,10 +59,24 @@ namespace cpp_collections {
 
     template<typename T>
     Stream<T>
-    Stream<T>::tail() {
+    Stream<T>::tail() const {
         if (Tail)
             return *Tail;
         return Gen();
+    }
+
+    template<typename T>
+    Stream<T>
+    Stream<T>::filter(std::function<bool(T)> func) const {
+
+        Stream<T> temp = tail();
+    
+        if (func(Head))
+            return Stream<T>(Head, [temp, func]() -> Stream<T> {
+                return temp.filter(func);
+            });
+
+        return temp.filter(func);
     }
 
     template<typename T>
