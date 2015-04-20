@@ -96,8 +96,9 @@ C-style array constructor. It requires length to use as well to create a collect
 
 #### Collection<T>(int size);
 Construct an empty collection of size 'size'. This Colleciton will return nothing but can be used with <section>Collection<T>.size()</section> to return a size.
+
 *Example*:
-```
+```cpp
 std::cout<< Collection<int>(5).size() << std::endl; 
 ```
 
@@ -110,7 +111,7 @@ std::cout<< Collection<int>(5).size() << std::endl;
 Construct an empty collection. This Colleciton will return nothing but can be used with <section>Collection<T>.size()</section> to return a size of 0.
 
 *Example*:
-```
+```cpp
 std::cout<< Collection<int>().size() << std::endl;
 ```
 
@@ -124,14 +125,14 @@ std::cout<< Collection<int>().size() << std::endl;
 #### ::init();
 
 **Method**:
-```
+```cpp
 Collection<T> init();
 ```
 
 This method is an intermediate operator which returns all elements except the last.
 
 *Example*:
-```
+```cpp
 auto col = range(1,101);
 std::cout<< col.init(); << "\n";
 ```
@@ -144,14 +145,14 @@ std::cout<< col.init(); << "\n";
 #### ::tail();
 
 **Method**:
-```
+```cpp
 Collection<T> tail();
 ```
 
 This method is an intermediate operator which returns all elements except the first.
 
 *Example*:
-```
+```cpp
 auto col = range(1,101);
 std::cout<< col.tail(); << "\n";
 ```
@@ -164,14 +165,14 @@ std::cout<< col.tail(); << "\n";
 #### ::pop_head
 
 **Method**:
-```
+```cpp
 void pop_head();
 ```
 
 This method removes the head by erasing the first element of the interal data vector.
 
 *Example*:
-```
+```cpp
 auto col = range(1,101);
 col.pop_head();
 col.print();
@@ -187,42 +188,42 @@ col.print();
 #### ::vector();
 
 **Method**:
-```
+```cpp
 std::vector<T> vector();
 ```
 
 Returns the Collection as a vector object. Since Collections are stored as vectors, this method simply returns the internal data object.
 
 *Example*:
-```
+```cpp
 std::vector<int> v = Collection<int>(5).vector(); //returns a vector of 5 zeros
 ```
 
 #### ::list();
 
 **Method**:
-```
+```cpp
 std::list<T> list();
 ```
 
 Returns the Collection as a list object. Since Collections are stored as vectors, this method simply returns the internal data object which is then converted to a list by using <section>std::begin(Data)</section> and <section>std::end(Data)</section> to a <section>std::list</section>.
 
 *Example*:
-```
+```cpp
 std::list<int> l = Collection<int>(5).list(); //returns a list of 5 zeros
 ```
 
 #### ::size();
 
 **Method**:
-```
+```cpp
 int size();
 ```
 
 Returns an <section>int</section> with the current size of the collection. This is executed by running the <section>size()</section> method on the internal vector which holds the internal data.
 
 *Example*:
-```
+```cpp
 auto col = Collection<int>(5);
 std::cout<< collec.size() << std::endl;
 ```
@@ -230,14 +231,14 @@ std::cout<< collec.size() << std::endl;
 #### ::print();
 
 **Method**:
-```
+```cpp
 void print();
 ```
 
 This method is also a terminal operator but does not return anything, but instead prints the Collection to the <section>std::cout</section>.
 
 *Example*:
-```
+```cpp
 auto col = Collection<int>(5);
 col.print();
 ```
@@ -250,14 +251,14 @@ col.print();
 #### ::head();
 
 **Method**:
-```
+```cpp
 T head();
 ```
 
 This method is a terminal operator which returns the first value of the Collection. It returns based on the type of the values stored on the Collection.
 
 *Example*:
-```
+```cpp
 auto col = range(1,101);
 std::cout<< col.head(); << "\n";
 ```
@@ -270,14 +271,14 @@ std::cout<< col.head(); << "\n";
 #### ::last();
 
 **Method**:
-```
+```cpp
 T last();
 ```
 
 This method is a terminal operator which returns the last value of the Collection. It returns based on the type of the values stored on the Collection.
 
 *Example*:
-```
+```cpp
 auto col = range(1,101);
 std::cout<< col.last(); << "\n";
 ```
