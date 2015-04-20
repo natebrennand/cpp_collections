@@ -31,7 +31,7 @@ C++ Collections is a C++ 11 library that provides lazy evaluation and functional
 
 ----
 ## What is C++ Collections?
-C++ Collections provides abstractions on a set of ordered data. All examples below assume that we are *using namespace cpp_collections*.
+C++ Collections provides abstractions on a set of ordered data. All examples below assume that we are `using namespace cpp_collections`.
 The Class collections is used to support functional style transformations as demonstrated above. Assume you would like to create a list of numbers from 1 to 100, sum them, and then store the value in an int. Functional operators allow these operations to happen in nearly one line of code.
 
 ```cpp
@@ -61,9 +61,14 @@ The main abstraction introduced by this library is Collection. The capitalizatio
 
 [mf]:http://martinfowler.com/bliki/FluentInterface.html
 
+This form of method cascading which originated in [Smalltalk][sm] allows a layer of syntactic sugar to be added to an otherwise repetitive piece of code. Cascasing prevents the need to list the object repeatedly as you can have numerous methods communicating exactly what they want to convey all acting on a single object by returning and propagating `this`.
+
+[sm]: http://en.wikipedia.org/wiki/Smalltalk
+
+
 ## Design
 
-The C++ Collection class uses *std::vector<T>* to store data internally. This allows a number of different constructors to transfer information to the vector to control pointer management and data organization. Additionally, this allows lists, arrays, and C-styled arrays to be stored and mapped to the C++ Collection. 
+The C++ Collection class uses `std::vector<T>` to store data internally. This allows a number of different constructors to transfer information to the vector to control pointer management and data organization. Additionally, this allows lists, arrays, and C-styled arrays to be stored and mapped to the C++ Collection. 
 
 Within the Collection, there are three main types of operations which are elaborated below: source operators, intermediate operators, and terminal operators. Source operators allow the creation of Collections. Intermediate operators work off Collections and return Collections. Finally, Terminal operators return a non-Collection object or no object in return. 
 
@@ -78,7 +83,7 @@ Collections themselves have three types of operations:
 
 All Collection pipelines are formed by a combination of a source operator, an either singular or multiple intermediate operators, and concluded with a terminal operator. These three operators work together to form a pipeline. Unlike pipelines in Java 8, our pipelines are executed after each individual function, and therefore we do not need to read the terminal operation before our pipeline is executed. 
 
-Additionally, unlike Java 8, despite syntax similarities, we do not use consumabale Collections. The data of a Collection is statefully stored inside a vector in the Collection called *std::vector<T> Data*. A Collection is an abstraction on an *std::vector<T> Data*, so many lazily evaluated function require the use of memoization by increasing memory costs to decrease speed.
+Additionally, unlike Java 8, despite syntax similarities, we do not use consumabale Collections. The data of a Collection is statefully stored inside a vector in the Collection called `std::vector<T> Data`. A Collection is an abstraction on an `std::vector<T> Data`, so many lazily evaluated function require the use of memoization by increasing memory costs to decrease speed.
 
 As mentioned above, the example where one would slice the first five consecutive integers from a list of 1000 numbers involves a new vector being instaniated internally to transfer the first five data elements of the Collection to a newly created list which gets converted into a Collection. The theory behinnd many of the functions utilized for the Collections library will be expanded upon in the documentation below.
 
@@ -86,6 +91,8 @@ As mentioned above, the example where one would slice the first five consecutive
 Below we will tour through the design, the style, and way different methods function and operate.
 
 ### Generators
+
+Generators are important in 
 
 #### Collection<T>()
 Construct an empty collection. This Colleciton will return nothing but can be used with <section>Collection<T>.size()</section> to return a size of 0.
@@ -154,13 +161,13 @@ std::cout<< Collection<int>(5).size() << std::endl;
 5
 ```
 
-#### ::concat
+#### ::concat()
 
 
 #### ::range()
 
 
-#### ::zip
+#### ::zip()
 
 #### ::zipWith()
 
