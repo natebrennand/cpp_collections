@@ -309,7 +309,7 @@ std::cout<< collec.size() << std::endl;
 void print();
 ```
 
-This method is also a terminal operator but does not return anything, but instead prints the Collection to the <section>std::cout</section>.
+This method is also a terminal operator but does not return anything, but instead prints the Collection to the `std::cout`.
 
 *Example*:
 ```cpp
