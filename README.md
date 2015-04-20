@@ -363,7 +363,9 @@ std::cout<< col.last(); << "\n";
 ```
 
 
-## Support
+## Streams
+
+The second object in the C++ Collections library that we would like to expand on is the Stream object. Streams are developed by having a head of anytype, a tail which is initially set to a nullptr and a generator function. The initial stream allows users to run `take()`, `head()`, `tail()`, `filter()`, and `map()` on it. Yet Streams also allow the development of infinite lists using the `from()` as well. As the Stream object is developed, the documentation will be updated correspondingly. 
 
 ## Development Suport
 
