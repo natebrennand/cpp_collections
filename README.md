@@ -27,11 +27,11 @@ This is the principle of linguistic relativity also known as the [Sapir-Whorf hy
 
 One of the key components to developing C++ is learnability or more importantly, how easy is it for users to accomplish basic tasks. 
 
-C++ Collections is a C++ 11 library that provides lazy evaluation and functional transformations of the data to lighten the burden of using functional operations such as map, range, and filter for the user. To use C++ Streams, download them from Github and simply <section>#include collections.h</section> in the header of your file after dragging it in.
+C++ Collections is a C++ 11 library that provides lazy evaluation and functional transformations of the data to lighten the burden of using functional operations such as map, range, and filter for the user. To use C++ Streams, download them from Github and simply *#include collections.h* in the header of your file after dragging it in.
 
 ----
 ## What is C++ Collections?
-C++ Collections provides abstractions on a set of ordered data. All examples below assume that we are <section>using namespace cpp_collections</section>.
+C++ Collections provides abstractions on a set of ordered data. All examples below assume that we are *using namespace cpp_collections*.
 The Class collections is used to support functional style transformations as demonstrated above. Assume you would like to create a list of numbers from 1 to 100, sum them, and then store the value in an int. Functional operators allow these operations to happen in nearly one line of code.
 
 ```cpp
@@ -61,6 +61,13 @@ The main abstraction introduced by this library is Collection. The capitalizatio
 
 [mf]:http://martinfowler.com/bliki/FluentInterface.html
 
+## Design
+
+The C++ Collection class uses *std::vector<T>* to store data internally. This allows a number of different constructors to transfer information to the vector to control pointer management and data organization. Additionally, this allows lists, arrays, and C-styled arrays to be stored and mapped to the C++ Collection. 
+
+Within the Collection, there are three main types of operations which are elaborated below: source operators, intermediate operators, and terminal operators. Source operators allow the creation of Collections. Intermediate operators work off Collections and return Collections. Finally, Terminal operators return a non-Collection object or no object in return. 
+
+
 ### Collection operations and pipelines
 Collections themselves have three types of operations:
 - Source operators: Methods which instantiate or create Collections therefore are considered sources of Collections. They can be evaluated immediately.
@@ -71,43 +78,16 @@ Collections themselves have three types of operations:
 
 All Collection pipelines are formed by a combination of a source operator, an either singular or multiple intermediate operators, and concluded with a terminal operator. These three operators work together to form a pipeline. Unlike pipelines in Java 8, our pipelines are executed after each individual function, and therefore we do not need to read the terminal operation before our pipeline is executed. 
 
-Additionally, unlike Java 8, despite syntax similarities, we do not use consumabale Collections. The data of a Collection is statefully stored inside a vector in the Collection called <section>std::vector<T> Data</section>. A Collection is an abstraction on an <section>std::vector<T> Data</section>, so many lazily evaluated function require the use of memoization by increasing memory costs to decrease speed.
+Additionally, unlike Java 8, despite syntax similarities, we do not use consumabale Collections. The data of a Collection is statefully stored inside a vector in the Collection called *std::vector<T> Data*. A Collection is an abstraction on an *std::vector<T> Data*, so many lazily evaluated function require the use of memoization by increasing memory costs to decrease speed.
 
 As mentioned above, the example where one would slice the first five consecutive integers from a list of 1000 numbers involves a new vector being instaniated internally to transfer the first five data elements of the Collection to a newly created list which gets converted into a Collection. The theory behinnd many of the functions utilized for the Collections library will be expanded upon in the documentation below.
 
 
-
----
-## API Reference - Methods
+Below we will tour through the design, the style, and way different methods function and operate.
 
 ### Generators
 
-#### Collection<T>(std::vector<T> d);
-Construct a standard Collection using a vector of any type.
-
-#### Collection<T>(std::array<T, SIZE> d);
-Construct a standard Collection using an array of any type.
-
-#### Collection<T>(std::list<T> d);
-Constructs a collection with a list as any type.
-
-#### Collection<T>(T d[], int len); 
-C-style array constructor. It requires length to use as well to create a collection using an array of any type.
-
-#### Collection<T>(int size);
-Construct an empty collection of size 'size'. This Colleciton will return nothing but can be used with <section>Collection<T>.size()</section> to return a size.
-
-*Example*:
-```cpp
-std::cout<< Collection<int>(5).size() << std::endl; 
-```
-
-*Output*:
-```
-5
-```
-
-#### Collection<T>();
+#### Collection<T>()
 Construct an empty collection. This Colleciton will return nothing but can be used with <section>Collection<T>.size()</section> to return a size of 0.
 
 *Example*:
@@ -120,9 +100,74 @@ std::cout<< Collection<int>().size() << std::endl;
 0
 ```
 
+#### Collection<T>()
+
+**Method**:
+```cpp
+auto emptyCollection = Collection<T>();
+```
+
+Construct an empty collection of size 'size'. This Colleciton will return nothing but can be used with *Collection<T>.size()* to return a size.
+
+**Method**:
+```cpp
+auto vectorCollection = Collection<T>(std::vector<T> d);
+```
+
+Construct a standard Collection using a vector of any type.
+
+**Method**:
+```cpp
+auto arrayCollection = Collection<T>(std::array<T, SIZE> d);
+```
+
+Construct a standard Collection using an array of any type.
+
+**Method**:
+```cpp
+auto listCollection = Collection<T>(std::list<T> d);
+```
+
+Constructs a collection with a list as any type.
+
+
+```cpp
+auto cListCollection = Collection<T>(T d[], int len);
+```
+
+C-style array constructor. It requires length to use as well to create a collection using an array of any type.
+
+#### Collection<T>(int size)
+
+**Method**:
+```cpp
+auto presizedCollection = Collection<T>(5);
+```
+
+*Example*:
+```cpp
+std::cout<< Collection<int>(5).size() << std::endl; 
+```
+
+*Output*:
+```
+5
+```
+
+#### ::concat
+
+
+#### ::range()
+
+
+#### ::zip
+
+#### ::zipWith()
+
+
 ### Intermediate operators
 
-#### ::init();
+#### ::init()
 
 **Method**:
 ```cpp
@@ -142,7 +187,7 @@ std::cout<< col.init(); << "\n";
 [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99]
 ```
 
-#### ::tail();
+#### ::tail()
 
 **Method**:
 ```cpp
@@ -162,7 +207,7 @@ std::cout<< col.tail(); << "\n";
 [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100]
 ```
 
-#### ::pop_head
+#### ::pop_head()
 
 **Method**:
 ```cpp
@@ -183,9 +228,31 @@ col.print();
 [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100]
 ```
 
+#### ::each()
+
+#### ::filter()
+
+#### ::slice()
+
+#### ::map()
+
+#### ::tmap()
+
+#### ::reduceLeft()
+
+#### ::reduceRight()
+
+#### ::treduce()
+
+#### ::foldLeft()
+
+#### ::scanLeft()
+
+#### ::scanRight
+
 ### Terminal operators
 
-#### ::vector();
+#### ::vector()
 
 **Method**:
 ```cpp
@@ -199,7 +266,7 @@ Returns the Collection as a vector object. Since Collections are stored as vecto
 std::vector<int> v = Collection<int>(5).vector(); //returns a vector of 5 zeros
 ```
 
-#### ::list();
+#### ::list()
 
 **Method**:
 ```cpp
@@ -213,7 +280,7 @@ Returns the Collection as a list object. Since Collections are stored as vectors
 std::list<int> l = Collection<int>(5).list(); //returns a list of 5 zeros
 ```
 
-#### ::size();
+#### ::size()
 
 **Method**:
 ```cpp
@@ -228,7 +295,7 @@ auto col = Collection<int>(5);
 std::cout<< collec.size() << std::endl;
 ```
 
-#### ::print();
+#### ::print()
 
 **Method**:
 ```cpp
@@ -248,7 +315,7 @@ col.print();
 [0,0,0,0,0]
 ```
 
-#### ::head();
+#### ::head()
 
 **Method**:
 ```cpp
@@ -268,7 +335,7 @@ std::cout<< col.head(); << "\n";
 1
 ```
 
-#### ::last();
+#### ::last()
 
 **Method**:
 ```cpp
