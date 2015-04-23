@@ -14,7 +14,6 @@
 #include <type_traits>
 #include <vector>
 
-
 int detectedThreads = (std::thread::hardware_concurrency() == 0) ? \
     std::thread::hardware_concurrency() : 4;
 
