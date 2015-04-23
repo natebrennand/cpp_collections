@@ -14,8 +14,6 @@
 #include <type_traits>
 #include <vector>
 
-#include "streams.h"
-
 namespace cpp_collections {
 
     template<typename T>
