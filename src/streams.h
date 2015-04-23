@@ -82,6 +82,19 @@ namespace cpp_collections {
         return temp.filter(func);
     }
 
+    template<typename Function, typename ...U>
+    Stream<typename std::result_of<Function(U...)>::type>
+    zipWith(Function func, Stream<U>... other_stream) {
+        using return_type = typename std::result_of<Function(U...)>::type;
+
+        std::allocator<return_type> alloc;
+        return_type *tmp = alloc.allocate(1);
+        alloc.construct(tmp, func(other_stream.head()...));
+        return Stream<return_type>(*tmp, [=]() -> Stream<return_type> {
+            return zipWith(func, other_stream.tail()...);                
+        });
+    }
+
     template<typename T>
     template<typename Function>
     Stream<typename std::result_of<Function(T)>::type>
@@ -122,7 +135,7 @@ namespace cpp_collections {
         }
         return Collection<T>(list);
     }
-        
+
 }
 
 #endif

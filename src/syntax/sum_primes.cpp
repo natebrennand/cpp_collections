@@ -9,6 +9,16 @@ using namespace cpp_collections;
 
 int main() {
 
+    // standard syntax
+    std::vector<int> primes(10000);
+    int i = 2;
+    while (true) {
+        if (
+      
+    
+    }
+
+
     // Collection syntax
     auto isPrime = [](int x) { 
         return x >= 2 && range(2, ((int) sqrt(x)) + 1)
