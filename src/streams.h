@@ -26,15 +26,12 @@ namespace cpp_collections {
         std::function<Stream<T>()> Gen;
     public:
 
+        // default Stream constructor
         Stream<T>(T head, std::function<Stream<T>()> gen) {
             Head = head;
             Tail = nullptr;
             Gen  = gen;
         }
-
-        // Return a collection with n elements taken from the Stream
-        Collection<T>
-        take(int n);
 
         // Return the first element of the Stream
         T
@@ -44,22 +41,31 @@ namespace cpp_collections {
         Stream<T>
         tail() const;
 
+        // Return a Collection with n elements taken from the Stream
+        Collection<T>
+        take(int n);
+
         // Return a substream of elements of the Stream that match the
         // predicate function
         Stream<T>
         filter(std::function<bool(T)> func) const;
 
+        // Return the Stream that results from the transformation of each
+        // element in the original Stream
         template<typename Function>
         Stream<typename std::result_of<Function(T)>::type>
         map(Function func) const;
+
     };
 
+    // Return the first element of the Stream
     template<typename T>
     T
     Stream<T>::head() {
         return Head;
     }
 
+    // Create the tail Stream by removing the head
     template<typename T>
     Stream<T>
     Stream<T>::tail() const {
@@ -68,6 +74,21 @@ namespace cpp_collections {
         return Gen();
     }
 
+    // Return a Collection with n elements taken from the Stream
+    template<typename T>
+    Collection<T>
+    Stream<T>::take(int n) {
+        std::vector<T> list(n);
+        Stream<T> temp = *this;
+        for (int i = 0; i < n; i++) { 
+            list[i] = temp.head();
+            temp = temp.tail();
+        }
+        return Collection<T>(list);
+    }
+
+    // Return a substream of elements of the Stream that match the
+    // predicate function
     template<typename T>
     Stream<T>
     Stream<T>::filter(std::function<bool(T)> func) const {
@@ -82,6 +103,8 @@ namespace cpp_collections {
         return temp.filter(func);
     }
 
+    // Return the Stream that results from the transformation of each
+    // element in the original Stream
     template<typename T>
     template<typename Function>
     Stream<typename std::result_of<Function(T)>::type>
@@ -95,6 +118,7 @@ namespace cpp_collections {
         });
     }
     
+    // Construct a Stream, starting at n, incrementing by step
     template<typename T>
     Stream<T>
     from(T n, T step) {
@@ -103,6 +127,7 @@ namespace cpp_collections {
         });
     }
 
+    // Construct a Stream, starting at n, incrementing by 1
     template<typename T>
     Stream<T>
     from(T n) {
@@ -111,18 +136,8 @@ namespace cpp_collections {
         });
     }
 
-    template<typename T>
-    Collection<T>
-    Stream<T>::take(int n) {
-        std::vector<T> list(n);
-        Stream<T> temp = *this;
-        for (int i = 0; i < n; i++) { 
-            list[i] = temp.head();
-            temp = temp.tail();
-        }
-        return Collection<T>(list);
-    }
-
+    // Return a Stream of tuples, where each tuple contains the elements of 
+    // the zipped Streams that occur at the same position
     template<typename ...U>
     Stream<std::tuple<U...>>
     zip(Stream<U>... other_stream) {
@@ -136,6 +151,8 @@ namespace cpp_collections {
         });
     }
 
+    // Generalizes zip by zipping with the function given as the first argument
+    // instead of a tupling function
     template<typename Function, typename ...U>
     Stream<typename std::result_of<Function(U...)>::type>
     zipWith(Function func, Stream<U>... other_stream) {

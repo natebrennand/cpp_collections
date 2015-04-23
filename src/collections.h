@@ -14,6 +14,8 @@
 #include <type_traits>
 #include <vector>
 
+#include "streams.h"
+
 namespace cpp_collections {
 
     template<typename T>
@@ -564,8 +566,7 @@ namespace cpp_collections {
         }
         return Collection<return_type>(list);
     }
-    
-    
+
     // Generalizes zip by zipping with the function given as the first argument
     // instead of a tupling function
     template<typename Function, typename ...U>
