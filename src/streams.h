@@ -92,14 +92,13 @@ namespace cpp_collections {
     template<typename T>
     Stream<T>
     Stream<T>::filter(std::function<bool(T)> func) const {
-
         Stream<T> temp = tail();
     
-        if (func(Head))
+        if (func(Head)) {
             return Stream<T>(Head, [temp, func]() -> Stream<T> {
                 return temp.filter(func);
             });
-
+        }
         return temp.filter(func);
     }
 
@@ -112,7 +111,6 @@ namespace cpp_collections {
         using return_type = typename std::result_of<Function(T)>::type;
 
         Stream<T> temp = tail();
-
         return Stream<return_type>(func(Head), [temp, func]() -> Stream<return_type> {
             return temp.map(func);
         });
