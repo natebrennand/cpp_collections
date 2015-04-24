@@ -80,7 +80,7 @@ namespace cpp_collections {
     Stream<T>::take(int n) {
         std::vector<T> list(n);
         Stream<T> temp = *this;
-        for (int i = 0; i < n; i++) { 
+        for (int i = 0; i < n; i++) {
             list[i] = temp.head();
             temp = temp.tail();
         }
@@ -93,7 +93,7 @@ namespace cpp_collections {
     Stream<T>
     Stream<T>::filter(std::function<bool(T)> func) const {
         Stream<T> temp = tail();
-    
+
         if (func(Head)) {
             return Stream<T>(Head, [temp, func]() -> Stream<T> {
                 return temp.filter(func);
@@ -115,22 +115,13 @@ namespace cpp_collections {
             return temp.map(func);
         });
     }
-    
+
     // Construct a Stream, starting at n, incrementing by step
     template<typename T>
     Stream<T>
-    from(T n, T step) {
+    from(T n, T step=1) {
         return Stream<T>(n, [=]() -> Stream<T> {
-            return from(n + step, step);
-        });
-    }
-
-    // Construct a Stream, starting at n, incrementing by 1
-    template<typename T>
-    Stream<T>
-    from(T n) {
-        return Stream<T>(n, [=]() -> Stream<T> {
-            return from(n + T(1), T(1));
+            return from(n + T(step), T(step));
         });
     }
 
@@ -140,12 +131,12 @@ namespace cpp_collections {
     Stream<std::tuple<U...>>
     zip(Stream<U>... other_stream) {
         using return_type = std::tuple<U...>;
-  
+
         std::allocator<return_type> alloc;
         return_type *tmp = alloc.allocate(1);
         alloc.construct(tmp, std::move(other_stream.head())...);
         return Stream<return_type>(*tmp, [=]() -> Stream<return_type> {
-            return zip(other_stream.tail()...); 
+            return zip(other_stream.tail()...);
         });
     }
 
@@ -160,7 +151,7 @@ namespace cpp_collections {
         return_type *tmp = alloc.allocate(1);
         alloc.construct(tmp, func(other_stream.head()...));
         return Stream<return_type>(*tmp, [=]() -> Stream<return_type> {
-            return zipWith(func, other_stream.tail()...);                
+            return zipWith(func, (other_stream.tail())...);
         });
     }
 
