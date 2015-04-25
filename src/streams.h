@@ -16,6 +16,9 @@
 
 #include "collections.h"
 
+// Macro to ease the syntax of defining a generator
+#define def_generator(name, return_type, arg_types...) std::function<Stream<return_type>(arg_types)> name = [&](arg_types) -> Stream<return_type>
+
 namespace cpp_collections {
 
     template<typename T>
@@ -119,9 +122,9 @@ namespace cpp_collections {
     // Construct a Stream, starting at n, incrementing by step
     template<typename T>
     Stream<T>
-    from(T n, T step) {
+    from(T n, T step = 1) {
         return Stream<T>(n, [=]() -> Stream<T> {
-            return from(n + step, step);
+            return from(n + T(step), T(step));
         });
     }
 

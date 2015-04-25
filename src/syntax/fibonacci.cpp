@@ -2,8 +2,7 @@
 #include <ostream>
 #include <vector>
 
-#include "../collections.h"
-#include "../streams.h"
+#include "../cpp_collections.h"
 
 using namespace cpp_collections;
 
@@ -11,7 +10,7 @@ int main() {
 
     // Collection syntax
 
-    std::function<Stream<int>(int, int)> fib = [&](int prev, int cur) -> Stream<int> {
+    def_generator(fib, int, int prev, int cur) {
         return Stream<int>(prev + cur, [=]() -> Stream<int> {
             return fib(cur, prev + cur);
         });
