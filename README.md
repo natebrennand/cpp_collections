@@ -9,19 +9,20 @@ Download
 ----
 ## Introduction
 
-Collections are fundamental to most programming tasks. More importantly, they let you group and process large sets of data. Whether you  want to create a collection of a financial transactions you want to operate on, or you want to calculate something as summing a list of squares between 0 and 10.
+Collections are fundamental to most programming tasks because they allow the user to group and process large sets of data. However, when it comes to writing moderately complex collection manipulations, C++ is markedly behind some of its more modern counterparts with respect to code clarity and efficiency of space. This is the problem we set out to solve.
 
 ![Image of Kesiev](http://i.imgur.com/GnCHqIm.png?1) 
 
-Currently, processing collections in C++ is not only far from perfect, but is syntax-wise far behind many current functional programming paradigms.
+Languages are used as tools to communicate, and consequently, the structure and limitations of the languages we use determine the way we think. This idea, known in the field of linguistic relativity as the [Sapir-Whorf hypothesis][2], has critical implications when applied to programming languages, namely that the ability of a programmer to reason about a problem is limited by the languages he or she has learned. 
 
-Languages are used as tools to communicate, and incidentally, the structure and limitations of a C++ determine the way we think. Learning how to think and within the context of a language provides one the ability to be a proper user, well at the same time 
+One of the clearest examples of 
+
+Learning how to think within the context of a new language can provide the user with a completely new point of view on solving a problem he or she might have solved dozens of times before.
 
 > In 24 hours you might be able to learn some of the syntax of C++ (if you already know another language), but you couldn't learn much about how to use the language. In short, if you were, say, a Basic programmer, you could learn to write programs in the style of Basic using C++ syntax, but you couldn't learn what C++ is actually good (and bad) for. So what's the point? Alan Perlis once said: "A language that doesn't affect the way you think about programming, is not worth knowing" -- [Peter Norvig][1]
 
 [1]:http://www.norvig.com/21-days.html
 
-This is the principle of linguistic relativity also known as the [Sapir-Whorf hypothesis][2] shows that the constraints of a language are what most often limit our thought processing. This idea, when applied to programming languages shows how Lisp programmers use macros for everything, Python programmers even in Ruby have code that looks like python.  
 
 [2]:http://en.wikipedia.org/wiki/Linguistic_relativity
 
@@ -369,10 +370,7 @@ The second object in the C++ Collections library that we would like to expand on
 
 ## Development Suport
 
-If you are interested in contributing, 
-```
-g++ -std=c++11 -Wall tests/<FILE>.cpp
-```
+If you are interested in contributing, please fork our repository and submit a pull request. 
 
 ## Tests
 
@@ -391,7 +389,6 @@ Executable with `make`:
 ```
 make test
 ```
-
 
 ### Subsets
 
