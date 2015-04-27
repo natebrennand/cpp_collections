@@ -20,6 +20,7 @@
 #define def_generator(name, return_type, arg_types...) \
     std::function<Stream<return_type>(arg_types)> name = [&](arg_types) -> Stream<return_type>
 
+
 namespace cpp_collections {
 
     template<typename T>
@@ -30,11 +31,18 @@ namespace cpp_collections {
         std::function<Stream<T>()> Gen;
     public:
 
-        // default Stream constructor
+        // Default Stream constructor
         Stream<T>(T head, std::function<Stream<T>()> gen) {
             Head = head;
             Tail = nullptr;
             Gen  = gen;
+        }
+
+        // Tail-only Stream constructor
+        Stream<T>(T head, Stream<T> tail) {
+            Head = head;
+            Tail = std::make_shared<Stream<T>>(tail);
+            Gen  = nullptr;
         }
 
         // Return the first element of the Stream
@@ -89,6 +97,22 @@ namespace cpp_collections {
             temp = temp.tail();
         }
         return Collection<T>(list);
+    }
+
+    //
+    // Non-member Functions
+    //
+
+    template<typename T>
+    Stream<T>
+    cons(T value, Stream<T> other) {
+        return Stream<T>(value, other);
+    }
+
+    template<typename T>
+    Stream<T>
+    operator&(T value, Stream<T> other) {
+        return cons(value, other);
     }
 
     // Return a substream of elements of the Stream that match the
