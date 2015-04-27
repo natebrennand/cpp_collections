@@ -229,7 +229,7 @@ Returns the Collection as a `std::list`.
 
 #### Collection\<T\>::size()
 
-Returns an `int` with the current size of the collection. 
+Returns an `int` with the current size of the Collection. 
 
 #### Collection\<T\>::head()
 
@@ -325,10 +325,10 @@ Return the elements whose indices are within the range `[low, high)`.
 
 *Example:*
 ```cpp
-auto a = range(1,11);
-std::cout << a.slice(2,6) << std::endl;
+auto a = range(10, 20);
+std::cout << a.slice(1,4) << std::endl;
 
->>> [2,3,4,5]
+>>> [11,12,13]
 ```
 
 #### Collection\<T\>::map(Function func)
@@ -343,7 +343,7 @@ std::cout << a.map([](int x) { return x+1; }) << std::endl;
 >>> [1,2,3]
 ```
 
-#### ::tmap(Function func, int threads)
+#### Collection\<T\>::tmap(Function func, int threads)
 
 An alternative implementation of map that uses multiple concurrent
 std::threads to speed up processing.
@@ -351,7 +351,7 @@ std::threads to speed up processing.
 *Example:*
 ```cpp
 auto a = range(3);
-std::cout << a.tmap([](int x) { return x+1; }) << std::endl;
+std::cout << a.tmap([](int x) { return x+1; }, 3) << std::endl;
 
 >>> [1,2,3]
 ```
@@ -372,9 +372,18 @@ std::cout << sum << std::endl;
 
 Return the result of the application of the same binary operator on adjacent pairs of elements in the Collection, starting from the right.
 
+
 #### Collection\<T\>::treduce(std::function\<T(T, T)\> func, int threads)
 
 An alternative implementation of reduce that uses multiple concurrent threads to speed up processing (note that the function passed to treduce must be commutative to achieve accurate result)
+
+*Example:*
+```cpp
+int sum = range(5).treduce([](int x, int y) { return x+y; }, 3);
+std::cout << sum << std::endl;
+
+>>> 10
+```
 
 #### Collection\<T\>::foldLeft(Function func, U init)
 
