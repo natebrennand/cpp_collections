@@ -9,14 +9,22 @@ Download
 ----
 ## Introduction
 
-Collections are fundamental to most programming tasks because they allow the user to group and process large sets of data. However, when it comes to writing moderately complex collection manipulations, C++ is markedly behind some of its more modern counterparts with respect to code clarity and efficiency of space. 
+Collections are fundamental to most programming tasks because they allow the user to group and process large sets of data. 
+However, when it comes to writing moderately complex collection manipulations, C++ is markedly behind some of its more modern counterparts with respect to code clarity and efficiency of space. 
 This is the problem we set out to solve.
 
 ![Image of Kesiev](http://i.imgur.com/GnCHqIm.png?1) 
 
 Languages are used as tools to communicate, and consequently, the structure and limitations of the languages we use determine the way we think. 
-This idea, known in the field of linguistic relativity as the [Sapir-Whorf hypothesis][2], has critical implications when applied to programming languages, namely that the ability of a programmer to reason about a problem is limited by the languages he or she has learned. 
-One of the clearest examples of learning how to think within the context of a new language can provide the user with a completely new point of view on solving a problem he or she might have solved dozens of times before.
+This idea, known in the field of linguistic relativity as the [Sapir-Whorf hypothesis][2], has critical implications when applied to programming languages, namely that the ability of a programmer to reason about a problem can be limited by the languages he or she has learned (or has yet to learn).
+Furthermore, if we hold this hypothesis to be true, we can reasonably conclude that learning how to write code in a new language can provide a programmer with a totally new way of thinking about solving a problem that he or she may have already solved a dozen times before.
+
+C++ is an interesting language in this respect because in recent years it has begun to introduce new language constructs that help it blur the lines between programming paradigms along which programming languages are usually divided. 
+Perhaps most notably, C++11 introduced a set of features that allows for functional programming in the language.
+It is as if the English language introduced a new group of words, whose meanings were all missing from the original dictionary.
+The conclusion we are tempted to draw from this addition is that C++ is a great language to learn, because its new functional vocabulary will allow the programmer who learns it to think about problems both from a traditional C++ perspective, and now also from a functional perspective.
+
+Unfortunately, the ease of use of many of C++'s functional features pales in comparison to that of other functional languages, making it daunting for beginners in functional programming to use the features correctly, if at all.
 
 > In 24 hours you might be able to learn some of the syntax of C++ (if you already know another language), but you couldn't learn much about how to use the language. In short, if you were, say, a Basic programmer, you could learn to write programs in the style of Basic using C++ syntax, but you couldn't learn what C++ is actually good (and bad) for. So what's the point? Alan Perlis once said: "A language that doesn't affect the way you think about programming, is not worth knowing" -- [Peter Norvig][1]
 
@@ -24,25 +32,30 @@ One of the clearest examples of learning how to think within the context of a ne
 
 [2]:http://en.wikipedia.org/wiki/Linguistic_relativity
 
-One of the key components to developing C++ is learnability or more importantly, how easy is it for users to accomplish basic tasks. 
+C++ Collections is a third party library built on top of C++11 that provides both finite and infinite collections data structures, built from the ground up with syntax in mind. 
 
-C++ Collections is a C++ 11 library that provides lazy evaluation and functional transformations of the data to lighten the burden of using functional operations such as map, range, and filter for the user. 
-To use C++ Streams, download them from Github and simply *#include collections.h* in the header of your file after dragging it in.
+To use the C++ Collections library, download it from Github and simply *#include cpp_collections.h* in the header of your source file.
 
 ----
-## What is C++ Collections?
-C++ Collections provides abstractions on a set of ordered data. 
-All examples below assume that we are `using namespace cpp_collections`.
-The Class collections is used to support functional style transformations as demonstrated above. 
-Assume you would like to create a list of numbers from 1 to 100, sum them, and then store the value in an int.
-Functional operators allow these operations to happen in nearly one line of code.
+## What are C++ Collections?
+C++ Collections provides traditional, functional abstractions on a set of data.
 
+The Collection class is used to represent any finite set of data.
+
+Assume you would like to create a list of numbers from 1 to 100, sum them, and then store the value in an `int`.
+The Collection class allows you to achieve this in one line of code.
 
 ```cpp
-int sum = range(1,101).reduceLeft([](int x, int y) {return x + y;});
+Collection<int> ints = range(1, 101);
+int sum = ints.reduceLeft([](int x, int y) {return x + y;});
 ```
 
-The syntax you will note is similar to both Haskell and Scala.
+...or...
+```cpp
+int sum = range(1, 101).reduceLeft([](int x, int y) {return x + y;});
+```
+
+Note the similarity to the syntax provided by languages like Haskell and Scala.
 
 ```haskell
 sum = foldl1 (+) [1..100]
@@ -52,25 +65,37 @@ sum = foldl1 (+) [1..100]
 val sum = Range(1, 101).reduce((a,b) => a+b)
 ```
 
-The main abstractions introduced by this library are Collections and Streams.
-The capitalization in the word 'Collection' is important to distinguish it from collection.
-The Collection is different from standard collections in C++ in that:
+The Stream class is used to represent potentially infinite sets of data. This is a fairly common concept in functional programming languages but is relatively rare in C++, a language that highly encourages the elimination of unknowns at run time.
 
-1. It is functional in nature.
-All operations on a Collection produce some form of result by modifying the source in memory. 
-2. It is concise.
-After introducing lambda functions in C++11, and functors long before that, C++ has emerged as a viable language in which to write programs that conform to the functional paradigm.
-There is no template overhead to calling functions.
+Observe the following example, again computing the sum of the numbers 1 to 100.
 
-Streams on the other hand are:
-1. Lazy evaluation.
-We use laziness to optimize many Stream operations. 
-So similar to Haskell's infinite lists, we use a generator within the Stream class to generate future values.
+```cpp
+Stream<int> ints = from(1);
+Collection<int> ints_1_100 = ints.take(100);
+int sum = ints_1_100.reduceLeft([](int x, int y) {return x + y;});
+```
 
-2. Potentially unbounded. While all collections have a finite size, Stream do not. 
-Short circuiting an infinite Stream by calling <section>head</section> on an infinite Stream. 
+...or...
 
-## EXAMPLE HERE ** 
+```cpp
+int sum = from(1).take(100).reduceLeft([](int x, int y) {return x + y;});
+```
+
+Here, we define the infinite Stream with the function call `from()`. We then `take()` 100 elements from this Stream, which returns a Collection of integers 1 through 100. We can then reduce over this Collection with a function by using the the reduceLeft method as in the first example.
+
+Note that Streams can be arbitrarily complex. Below, we define a Stream to generate the Fibonacci sequence with the help of a one of the macros provided by the C++ Collections library.
+
+```cpp
+def_generator(fibs, int, int prev, int curr) {
+    return Stream<int>(curr, [=]() -> Stream<int> {
+        return fibs(curr, prev + curr);
+    });
+};
+
+std::cout << fibs(0, 1).take(10) << std::endl;
+
+>>> [1,1,2,3,5,8,13,21,34,55]
+```
 
 ### Fluent Interfaces
 [Martin Fowler][mf] coined the term **fluent interface** as a semantic facade that allows you to apply multiple properties to an object without having to redefine the object each time.
