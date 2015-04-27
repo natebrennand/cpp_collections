@@ -622,7 +622,7 @@ Generalizes zip by zipping with the function given as the first argument instead
 
 ### Macros
 
-### def\_generator(name, return\_type, arg\_types...)
+#### def\_generator(name, return\_type, arg\_types...)
 
 A macro to ease the syntax of defining an arbitrary Stream generator.
 
