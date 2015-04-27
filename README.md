@@ -62,8 +62,9 @@ val sum = Range(1, 101).reduce((a,b) => a+b)
 ----
 ## Streams
 
-The Stream class is used to represent potentially infinite sets of data. 
+The Stream class is used to represent potentially infinite lists of data. 
 This is a fairly common concept in functional programming languages but is rare in C++. 
+Streams can be converted to finite Collections via the `take()` function.
 
 Observe the following example, again computing the sum of the numbers 1 to 100.
 
@@ -81,10 +82,10 @@ int sum = from(1).take(100).reduceLeft([](int x, int y) {return x + y;});
 
 Here, we define the infinite Stream with the `from()` function, which by default returns a Stream of elements of its argument's type where each element is incremented by 1. 
 We then use the `take()` function to convert our Stream into a finite Collection.
-We can then reduce over this Collection with a function.
+We then reduce over this Collection with a function.
 
 Note that Streams can be arbitrarily complex.
-Below, we define a Stream to generate the Fibonacci sequence with the help of a one of the macros provided by the C++ Collections library.
+Below, we define a Stream to generate the Fibonacci sequence with the help of one of the macros provided by the C++ Collections library.
 
 ```cpp
 def_generator(fibs, int, int prev, int curr) {
@@ -98,53 +99,61 @@ std::cout << fibs(0, 1).take(10) << std::endl;
 >>> [1,1,2,3,5,8,13,21,34,55]
 ```
 
-### Fluent Interfaces
-[Martin Fowler][mf] coined the term **fluent interface** as a semantic facade that allows you to apply multiple properties to an object without having to redefine the object each time.
-Typically they are used to build domain specific languages, fluent interfaces provide not only more discoverable and readable code - but an easy structure to use particularly for people who may not be familiar with working with functional ideas in C++.
-Developing C++ Collections will benefit teams that would like to use method chaining as a replacement for typical collection based operations with syntax and code that is easier to parse and uses method chaining to communicate the actions taking place sequentially - similar to a UNIX pipe.
+## Implementation Details
 
-[mf]:http://martinfowler.com/bliki/FluentInterface.html
+The Collection class uses a `std::vector` to store data internally.
+Consequently, Collections are very fast and reliable.
+They are also fully type-generic and can be efficiently constructed from a variety of existing STL data structures, including vectors, lists, arrays, and C-style arrays.
+What differentiates the Collection from the `std::vector` is mainly the functions defined on top of it, such as `map`, `zip`, `reduce`, and `fold`.
+Despite the movement of modern C++ toward functional programming, these traditional functional methods are generally absent from the language.
+If they are present, they exist as generalized STL functions, not member functions of existing data structures (see `std::accumulate`).
 
-This form of method cascading which originated in [Smalltalk][sm] allows a layer of syntactic sugar to be added to an otherwise repetitive piece of code.
-Cascading prevents the need to list the object repeatedly as you can have numerous methods communicating exactly what they want to convey all acting on a single object by returning and propagating `this`.
-[sm]: http://en.wikipedia.org/wiki/Smalltalk
+The Stream class is a self-referential data structure, meaning that in addition to the head, or the first value in the list, the class stores a pointer to a function that returns another Stream at all times.
+Recall the definition of the Fibonacci Stream generator from above.
+Written without the macro, the definition is as follows:
 
+```cpp
+std::function<Stream<int>(int, int)> fibs = [&](int prev, int curr) -> Stream<int> {
+    return Stream<int>(curr, [=]() -> Stream<int> {
+        return fibs(curr, prev + curr);
+    });
+};
 
-## Implementation Detail
+Stream<int> tenfibs = fibs(0, 1).take(3); 
+```
 
-The C++ Collection class uses `std::vector<T>` to store data internally.
-This allows a number of different constructors to transfer information to the vector to control pointer management and data organization.
-Additionally, this allows lists, arrays, and C-styled arrays to be stored and mapped to the C++ Collection. 
+The Stream generator `fibs`, when called with arguments `0` and `1`, creates a new Stream that has a head value of 1 and an internal pointer to the function `fibs(1, 1)`.
+Then, when we ask to `take(3)` elements from the Stream, the structure returns its head, and then lazily computes the remainder of the elements it needs to satisfy our request.
+It does this by returning the result of its stored function pointer.
+In this case, `tenfibs` would first return 1 becuase that is its head.
+It would then return the head of the Stream that results from the evaluation of the function it stores a pointer to, namely `fibs(1, 1)`, which is 1.
+The result of `fibs(1, 1)` also stores a pointer to another function, `fibs(1, 2)`. 
+To find the third and final value, the Stream will evaluate this function and return the resulting Stream's head, which is 2.
+For a step-by-step visual depiction of the underlying state of our Stream during the `take(3)` function call, see the graphic below:
 
-Within the Collection, there are three main types of operations which are elaborated below: source operators, intermediate operators, and terminal operators.
-Source operators allow the creation of Collections.
-Intermediate operators work off Collections and return Collections.
-Finally, Terminal operators return a non-Collection object or no object in return. 
-
-
-### Collection operations and pipelines
-Collections themselves have three types of operations:
-- Source operators: Methods which instantiate or create Collections therefore are considered sources of Collections.
-They can be evaluated immediately.
-
-- Intermediate operators: These are Collections that both input and output streams. 
-Intermediate operators range between O(1) and O(n) depending on whether they are stateless or not.
-
-- Terminal operators: These are operators that close a Collection and finally cause all of the operations in the pipeline to evaluate and return a non-Collection value. 
-
-All Collection pipelines are formed by a combination of a source operator, an either singular or multiple intermediate operators, and concluded with a terminal operator.
-These three operators work together to form a pipeline.
-Unlike pipelines in Java 8, our pipelines are executed after each individual function, and therefore we do not need to read the terminal operation before our pipeline is executed. 
-
-Additionally, unlike Java 8, despite syntax similarities, we do not use consumable Collections.
-The data of a Collection is statefully stored inside a vector in the Collection called `std::vector<T> Data`. 
-A Collection is an abstraction on an `std::vector<T> Data`, so many lazily evaluated function require the use of memoization by increasing memory costs to decrease speed.
-
-As mentioned above, the example where one would slice the first five consecutive integers from a list of 1000 numbers involves a new vector being instantiated internally to transfer the first five data elements of the Collection to a newly created list which gets converted into a Collection.
-The theory behind many of the functions utilized for the Collections library will be expanded upon in the documentation below.
+```
+tenfibs.head      tenfibs.gen
+     1             fibs(0,1)
+     1             fibs(1,1)
+     2             fibs(1,2)
+```
 
 
-Below we will tour through the design, the style, and way different methods function and operate.
+### Pipelines
+The Collection and Stream classes are exciting because they allow C++ developers to construct complex pipelines of functions.
+These functions consist of of three main types:
+  1. Source operators: Methods that instantiate or create a Collection. 
+  2. Intermediate operators: Methods that take a Collection or Collections as input and output a new Collection.
+  3. Terminal operators: Methods that take a Collection or Collections as input and output something that is not another Collection.
+
+Collections pipelines can be formed by combining a source operator, one or more intermediate operators, and a terminal operator.
+For example, summing the squares from 1 to 100 can be easily represented by the following pipeline:
+
+```cpp
+int sum = range(1, 101).map([](int x) { return x*x; }).reduceLeft([](int x, int y) { return x+y; });
+```
+
+Here, `range` is the source operator, `map` is an intermediate operator, and `reduceLeft` is a terminal operator.
 
 ### Source operators
 
