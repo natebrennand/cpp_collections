@@ -161,9 +161,10 @@ Here, `range` is the source operator, `map` is an intermediate operator, and `re
 Note how these pipelines can become arbitrarily complex by adding more intermediate operators.
 
 ----
-### Collections Methods
+## Collections Methods
+### Member functions
 
-#### Collection<T>()
+#### Collection\<T\>()
 
 Construct an empty Collection. 
 
@@ -172,7 +173,7 @@ Construct an empty Collection.
 auto empty_collection = Collection<int>();
 ```
 
-#### Collection<T>(int size)
+#### Collection\<T\>(int size)
 
 Construct a presized Collection.
 
@@ -181,7 +182,7 @@ Construct a presized Collection.
 auto presized_collection = Collection<int>(5);
 ```
 
-#### Collection<T>(std::vector<T> list)
+#### Collection\<T\>(std::vector\<T\> list)
 
 Construct a Collection from a `std::vector`.
 
@@ -190,7 +191,7 @@ Construct a Collection from a `std::vector`.
 auto vector_collection = Collection<int>(std::vector<int> {1, 2, 3});
 ```
 
-#### Collection<T>(std::list<T> list)
+#### Collection\<T\>(std::list\<T\> list)
 
 Construct a Collection from a `std::list`.
 
@@ -199,7 +200,7 @@ Construct a Collection from a `std::list`.
 auto list_collection = Collection<int>(std::list<int> {1, 2, 3});
 ```
 
-#### Collection<T>(std::array<T, size> list)
+#### Collection\<T\>(std::array\<T, size\> list)
 
 Construct a Collection from a `std::array`.
 
@@ -208,7 +209,7 @@ Construct a Collection from a `std::array`.
 auto array_collection = Collection<int>(std::array<int,3> {1, 2, 3});
 ```
 
-#### Collection<T>(T d[], int len)
+#### Collection\<T\>(T d[], int len)
 
 Construct a Collection from a C-style array (requires length).
 
@@ -217,6 +218,207 @@ Construct a Collection from a C-style array (requires length).
 int int_c_array[] {1, 2, 3};
 auto c_array_collection = Collection<int>(int_c_array, 3);
 ```
+
+#### Collection\<T\>::vector()
+
+Returns the Collection as a `std::vector`.
+
+#### Collection\<T\>::list()
+
+Returns the Collection as a `std::list`.
+
+#### Collection\<T\>::size()
+
+Returns an `int` with the current size of the collection. 
+
+#### Collection\<T\>::head()
+
+Returns the first element in the Collection.
+
+*Example*:
+```cpp
+auto a = range(1, 10);
+std::cout << a.head(); << std::endl;
+
+>>> 1
+```
+
+#### Collection\<T\>::last()
+
+Returns the last element in the Collection.
+
+*Example*:
+```cpp
+auto a = range(1, 10);
+std::cout << a.last(); << std::endl;
+
+>>> 9
+```
+#### Collection\<T\>::init()
+
+Return all elements except the last.
+
+*Example:*
+```cpp
+auto a = range(5);
+std::cout << a.init() << std::endl;
+
+>>> [0,1,2,3]
+```
+
+#### Collection\<T\>::tail()
+
+Return all elements except the head.
+
+*Example:*
+```cpp
+auto a = range(5);
+std::cout << a.tail() << std::endl;
+
+>>> [1,2,3,4]
+```
+
+#### Collection\<T\>::pop_head()
+
+Remove the head of the collection.
+
+*Example:*
+```cpp
+auto a = range(5);
+a.pop_head();
+std::cout << a << std::endl;
+
+>>> [1,2,3,4]
+```
+
+#### Collection\<T\>::each(std::function\<void(T)\> func)
+
+Apply a function to all the elements in the Collection
+
+*Example:*
+```cpp
+int sum = 0;
+auto a = range(5);
+a.each([&](int x) { 
+    sum += x;
+});
+std::cout << sum << std::endl;
+
+>>> 10
+```
+
+#### Collection\<T\>::filter(std::function\<bool(T)\> func)
+
+Return a sub-Collection containing the elements of the original Collection that pass a predicate function.
+
+*Example:*
+```cpp
+auto a = range(1,11);
+std::cout << a.filter([](int x) { return x % 2 == 0; }) << std::endl;
+
+>>> [2,4,6,8,10]
+```
+
+#### Collection\<T\>::slice(int low, int high)
+
+Return the elements whose indices are within the range `[low, high)`.
+
+*Example:*
+```cpp
+auto a = range(1,11);
+std::cout << a.slice(2,6) << std::endl;
+
+>>> [2,3,4,5]
+```
+
+#### Collection\<T\>::map(Function func)
+
+Return the Collection that results from the transformation of each element in the original Collection.
+
+*Example:*
+```cpp
+auto a = range(3);
+std::cout << a.map([](int x) { return x+1; }) << std::endl;
+
+>>> [1,2,3]
+```
+
+#### ::tmap(Function func, int threads)
+
+An alternative implementation of map that uses multiple concurrent
+std::threads to speed up processing.
+
+*Example:*
+```cpp
+auto a = range(3);
+std::cout << a.tmap([](int x) { return x+1; }) << std::endl;
+
+>>> [1,2,3]
+```
+
+#### Collection\<T\>::reduceLeft(std::function\<T(T, T)\> func)
+
+Return the result of the application of the same binary operator on adjacent pairs of elements in the Collection, starting from the left.
+
+*Example:*
+```cpp
+int sum = range(5).reduceLeft([](int x, int y) { return x+y; });
+std::cout << sum << std::endl;
+
+>>> 10
+```
+
+#### Collection\<T\>::reduceRight(std::function\<T(T, T)\> func)
+
+Return the result of the application of the same binary operator on adjacent pairs of elements in the Collection, starting from the right.
+
+#### Collection\<T\>::treduce(std::function\<T(T, T)\> func, int threads)
+
+An alternative implementation of reduce that uses multiple concurrent threads to speed up processing (note that the function passed to treduce must be commutative to achieve accurate result)
+
+#### Collection\<T\>::foldLeft(Function func, U init)
+
+Return the result of the application of the same binary operator on all elements in the Collection as well as an initial value, starting from the left.
+
+*Example:*
+```cpp
+int sum = range(5).foldLeft([](int x, int y) { return x+y; }, 0);
+std::cout << sum << std::endl;
+
+>>> 10
+```
+
+#### Collection\<T\>::foldRight(Function func, U init)
+
+Return the result of the application of the same binary operator on all elements in the Collection as well as an initial value, starting from the right.
+
+#### Collection\<T\>::scanLeft(Function func, U init)
+
+Returns the intermediate results of the binary accumulation of the elements in a Collection as well as an initial value, starting from the left.
+
+*Example:*
+```cpp
+auto ints = range(1,5);
+auto ints2 = ints.scanLeft([](int x, int y) { return x+y; }, 1);
+std::cout << ints2 << std::endl;
+
+>>> [1,2,4,7,11]
+```
+
+#### Collection\<T\>::scanRight(Function func, U init)
+
+Returns the intermediate results of the binary accumulation of the elements in a Collection as well as an initial value, starting from the left.
+
+*Example:*
+```cpp
+auto ints = range(1,5);
+auto ints2 = ints.scanRight([](int x, int y) { return x+y; }, 1);
+std::cout << ints2 << std::endl;
+
+>>> [11,10,8,5,1]
+```
+
+### Non-member Functions
 
 #### concat()
 
@@ -256,7 +458,7 @@ std::cout << a << std::endl;
 >>> [5,6,7,8,9]
 ```
 
-#### zip(Collection<U>...)
+#### zip(Collection\<U\>... other)
 
 Return a Collection of tuples, where each tuple contains the elements of the zipped Collections that occur at the same position.
 
@@ -271,188 +473,17 @@ auto d = zip(a, b, c);
 assert(d[0] == std::make_tuple(0, 0.0, 'a'));
 ```
 
-#### zipWith(Function func, Collection<U>...)
+#### zipWith(Function func, Collection\<U\>... other)
 Generalizes `zip` by zipping with the function given as the first argument instead of a tupling function.
 
 *Example:*
 ```cpp
 auto a = range(3);
 auto b = range(3);
-
 std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
 
 >>> [0,2,4]
 ```
-
-#### Collection\<T\>::init()
-
-Return all elements except the last.
-
-*Example:*
-```cpp
-auto a = range(5);
-std::cout << a.init() << std::endl;
-
->>> [0,1,2,3]
-```
-
-#### Collection\<T\>::tail()
-
-Return all elements except the head.
-
-*Example:*
-```cpp
-auto a = range(5);
-std::cout << a.tail() << std::endl;
-
->>> [1,2,3,4]
-```
-
-#### Collection\<T\>::pop_head()
-
-Remove the head of the collection.
-
-*Example:*
-```cpp
-auto a = range(5);
-a.pop_head();
-std::cout << a << std::endl;
-
->>> [1,2,3,4]
-```
-
-#### ::each()
-
-#### ::filter()
-
-#### ::slice()
-
-#### ::map()
-
-#### ::tmap()
-
-#### ::reduceLeft()
-
-#### ::reduceRight()
-
-#### ::treduce()
-
-#### ::foldLeft()
-
-#### ::scanLeft()
-
-#### ::scanRight
-
-### Terminal operators
-
-#### ::vector()
-
-**Method**:
-```cpp
-std::vector<T> vector();
-```
-
-Returns the Collection as a vector object.
-Since Collections are stored as vectors, this method simply returns the internal data object.
-
-*Example*:
-```cpp
-std::vector<int> v = Collection<int>(5).vector(); //returns a vector of 5 zeros
-```
-
-#### ::list()
-
-**Method**:
-```cpp
-std::list<T> list();
-```
-
-Returns the Collection as a list object.
-Since Collections are stored as vectors, this method simply returns the internal data object which is then converted to a list by using <section>std::begin(Data)</section> and <section>std::end(Data)</section> to a <section>std::list</section>.
-
-*Example*:
-```cpp
-std::list<int> l = Collection<int>(5).list(); //returns a list of 5 zeros
-```
-
-#### ::size()
-
-**Method**:
-```cpp
-int size();
-```
-
-Returns an `int` with the current size of the collection. 
-This is executed by running the <section>size()</section> method on the internal vector which holds the internal data.
-
-*Example*:
-```cpp
-auto col = Collection<int>(5);
-std::cout<< collec.size() << std::endl;
-```
-
-#### ::print()
-
-**Method**:
-```cpp
-void print();
-```
-
-This method is also a terminal operator but does not return anything, but instead prints the Collection to the `std::cout`.
-
-*Example*:
-```cpp
-auto col = Collection<int>(5);
-col.print();
-```
-
-*Output*:
-```
-[0,0,0,0,0]
-```
-
-#### ::head()
-
-**Method**:
-```cpp
-T head();
-```
-
-This method is a terminal operator which returns the first value of the Collection.
-It returns based on the type of the values stored on the Collection.
-
-*Example*:
-```cpp
-auto col = range(1,101);
-std::cout<< col.head(); << "\n";
-```
-
-*Output*:
-```
-1
-```
-
-#### ::last()
-
-**Method**:
-```cpp
-T last();
-```
-
-This method is a terminal operator which returns the last value of the Collection.
-It returns based on the type of the values stored on the Collection.
-
-*Example*:
-```cpp
-auto col = range(1,101);
-std::cout<< col.last(); << "\n";
-```
-
-*Output*:
-```
-100
-```
-
 
 ----
 ## Development Support
