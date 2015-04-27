@@ -10,7 +10,7 @@ Download
 ## Introduction
 
 Collections are fundamental to most programming tasks because they allow the user to group and process large sets of data. 
-However, when it comes to writing moderately complex collection manipulations, C++ is markedly behind some of its more modern counterparts with respect to code clarity and efficiency of space. 
+However, when it comes to expressing moderately complex collection manipulations, C++ is markedly behind some of its more modern counterparts with respect to code clarity and efficiency of space. 
 This is the problem we set out to solve.
 
 ![Image of Kesiev](http://i.imgur.com/GnCHqIm.png?1) 
@@ -59,6 +59,15 @@ sum = foldl1 (+) [1..100]
 val sum = Range(1, 101).reduce((a,b) => a+b)
 ```
 
+### Implementation Details: Collections
+
+The Collection class uses a `std::vector` to store data internally.
+Consequently, Collections are very fast and reliable.
+They are also fully type-generic and can be efficiently constructed from a variety of existing STL data structures, including vectors, lists, arrays, and C-style arrays.
+What differentiates the Collection from the `std::vector` is mainly the functions defined on top of it, such as `map`, `zip`, `reduce`, and `fold`.
+Despite the movement of modern C++ toward functional programming, these traditional functional methods are generally absent from the language.
+If they are present, they exist as generalized STL functions, not member functions of existing data structures (see `std::accumulate`).
+
 ----
 ## Streams
 
@@ -99,14 +108,7 @@ std::cout << fibs(0, 1).take(10) << std::endl;
 >>> [1,1,2,3,5,8,13,21,34,55]
 ```
 
-## Implementation Details
-
-The Collection class uses a `std::vector` to store data internally.
-Consequently, Collections are very fast and reliable.
-They are also fully type-generic and can be efficiently constructed from a variety of existing STL data structures, including vectors, lists, arrays, and C-style arrays.
-What differentiates the Collection from the `std::vector` is mainly the functions defined on top of it, such as `map`, `zip`, `reduce`, and `fold`.
-Despite the movement of modern C++ toward functional programming, these traditional functional methods are generally absent from the language.
-If they are present, they exist as generalized STL functions, not member functions of existing data structures (see `std::accumulate`).
+### Implementation Details: Streams
 
 The Stream class is a self-referential data structure, meaning that in addition to the head, or the first value in the list, the class stores a pointer to a function that returns another Stream at all times.
 Recall the definition of the Fibonacci Stream generator from above.
@@ -136,17 +138,17 @@ tenfibs.head      tenfibs.gen
      1             fibs(0,1)
      1             fibs(1,1)
      2             fibs(1,2)
+     3             fibs(2,3)
 ```
 
-
-### Pipelines
+## Pipelines
 The Collection and Stream classes are exciting because they allow C++ developers to construct complex pipelines of functions.
 These functions consist of of three main types:
-  1. Source operators: Methods that instantiate or create a Collection. 
-  2. Intermediate operators: Methods that take a Collection or Collections as input and output a new Collection.
-  3. Terminal operators: Methods that take a Collection or Collections as input and output something that is not another Collection.
+  1. Source operators: Methods that instantiate or create a Collection or Stream. 
+  2. Intermediate operators: Methods that take a Collection or Stream as input and output a new Collection or Stream.
+  3. Terminal operators: Methods that take a Collection or Stream as input and output something that is not another Collection or Stream.
 
-Collections pipelines can be formed by combining a source operator, one or more intermediate operators, and a terminal operator.
+Pipelines can be formed by combining a source operator, one or more intermediate operators, and a terminal operator.
 For example, summing the squares from 1 to 100 can be easily represented by the following pipeline:
 
 ```cpp
@@ -154,8 +156,9 @@ int sum = range(1, 101).map([](int x) { return x*x; }).reduceLeft([](int x, int 
 ```
 
 Here, `range` is the source operator, `map` is an intermediate operator, and `reduceLeft` is a terminal operator.
+Note how these pipelines can become arbitrarily complex by adding more intermediate operators.
 
-### Source operators
+### Collection
 
 **EXAMPLE HERE**
 #### Collection<T>()
