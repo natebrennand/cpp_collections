@@ -141,6 +141,7 @@ tenfibs.head      tenfibs.gen
      3             fibs(2,3)
 ```
 
+----
 ## Pipelines
 The Collection and Stream classes are exciting because they allow C++ developers to construct complex pipelines of functions.
 These functions consist of of three main types:
@@ -158,88 +159,83 @@ int sum = range(1, 101).map([](int x) { return x*x; }).reduceLeft([](int x, int 
 Here, `range` is the source operator, `map` is an intermediate operator, and `reduceLeft` is a terminal operator.
 Note how these pipelines can become arbitrarily complex by adding more intermediate operators.
 
-### Collection
-
-**EXAMPLE HERE**
-#### Collection<T>()
-Construct an empty collection.
-This Collection will return nothing but can be used with <section>Collection<T>.size()</section> to return a size of 0.
-
-*Example*:
-```cpp
-std::cout<< Collection<int>().size() << std::endl;
-```
-
-*Output*:
-```
-0
-```
+----
+### Collections Methods
 
 #### Collection<T>()
 
-**Method**:
+Construct an empty Collection. 
+
+*Example:*
 ```cpp
-auto emptyCollection = Collection<T>();
+Collection<int> = Collection<int>();
 ```
-
-Construct an empty collection of size 'size'. 
-This Collection will return nothing but can be used with *Collection<T>.size()* to return a size.
-
-**Method**:
-```cpp
-auto vectorCollection = Collection<T>(std::vector<T> d);
-```
-
-Construct a standard Collection using a vector of any type.
-
-**Method**:
-```cpp
-auto arrayCollection = Collection<T>(std::array<T, SIZE> d);
-```
-
-Construct a standard Collection using an array of any type.
-
-**Method**:
-```cpp
-auto listCollection = Collection<T>(std::list<T> d);
-```
-
-Constructs a collection with a list as any type.
-
-
-```cpp
-auto cListCollection = Collection<T>(T d[], int len);
-```
-
-C-style array constructor.
-It requires length to use as well to create a collection using an array of any type.
 
 #### Collection<T>(int size)
 
-**Method**:
+Construct a presized Collection.
+
+*Example:*
 ```cpp
-auto presizedCollection = Collection<T>(5);
+auto presizedCollection = Collection<int>(5);
 ```
 
-*Example*:
+#### Collection<T>(std::vector<T> list)
+
+Construct a Collection from a `std::vector`.
+
+*Example:*
 ```cpp
-std::cout<< Collection<int>(5).size() << std::endl; 
+auto vector_collection = Collection<int>(std::vector<int> {1, 2, 3});
 ```
 
-*Output*:
+#### Collection<T>(std::list<T> list)
+
+Construct a Collection from a `std::list`.
+
+*Example:*
+```cpp
+auto list_collection = Collection<int>(std::list<int> {1, 2, 3});
 ```
-5
+
+#### Collection<T>(std::array<T, size> list)
+
+Construct a Collection from a `std::array`.
+
+*Example:*
+```cpp
+auto array_collection = Collection<int>(std::array<int,3> {1, 2, 3});
 ```
 
-#### ::concat()
+#### Collection<T>(T d[], int len)
+
+Construct a Collection from a C-style array (requires length).
+
+*Example:*
+```cpp
+int int_c_array[] {1, 2, 3};
+auto c_array_collection = Collection<int>(int_c_array, 3);
+```
+
+#### concat()
+
+Return the Collection that results from the concatentation of an arbitrary number of Collections of the same type.
+
+*Example:*
+```cpp
+auto a = range(5);
+auto b = range(5);
+auto c = range(5);
+std::cout << concat(a, b, c) << std::endl;
+
+>>> [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]
+
+#### range()
 
 
-#### ::range()
+#### zip()
 
-
-#### ::zip()
-
-#### ::zipWith()
+#### zipWith()
 
 
 ### Intermediate operators
@@ -438,18 +434,12 @@ std::cout<< col.last(); << "\n";
 ```
 
 
-## Streams
-
-The second object in the C++ Collections library that we would like to expand on is the Stream object.
-Streams are developed by having a head of anytype, a tail which is initially set to a nullptr and a generator function.
-The initial stream allows users to run `take()`, `head()`, `tail()`, `filter()`, and `map()` on it.
-Yet Streams also allow the development of infinite lists using the `from()` as well.
-As the Stream object is developed, the documentation will be updated correspondingly. 
-
+----
 ## Development Support
 
 If you are interested in contributing, please fork our repository and submit a pull request. 
 
+----
 ## Tests
 
 The test suite is composed of tests to check that we stop all errors at the compilation stage, not at runtime.
