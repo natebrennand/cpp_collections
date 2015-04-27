@@ -229,6 +229,7 @@ auto c = range(5);
 std::cout << concat(a, b, c) << std::endl;
 
 >>> [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]
+```
 
 #### range()
 
