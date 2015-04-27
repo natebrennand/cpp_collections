@@ -503,7 +503,7 @@ std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
 Default Stream constructor.
 Takes an initial head value, and a function that returns a Stream.
 The programmer should not have to interact with this method directly.
-Instead, use the `def\_generator` macro to define a Stream generator.
+Instead, use the `def_generator` macro to define a Stream generator.
 
 *Example:*
 ```
