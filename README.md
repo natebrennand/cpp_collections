@@ -32,30 +32,24 @@ Unfortunately, the ease of use of many of C++'s functional features pales in com
 
 [2]:http://en.wikipedia.org/wiki/Linguistic_relativity
 
-C++ Collections is a third party library built on top of C++11 that provides both finite and infinite collections data structures, built from the ground up with syntax in mind. 
+C++ Collections is a library built on top of C++11 that provides both finite and infinite collections data structures, built from the ground up with syntax in mind. 
 
-To use the C++ Collections library, download it from Github and simply *#include cpp_collections.h* in the header of your source file.
+To use the C++ Collections library, download it from Github and simply *#include cpp_collections.h* in your source file.
 
 ----
-## What are C++ Collections?
-C++ Collections provides traditional, functional abstractions on a set of data.
+## Collections
+C++ Collections provides traditional, functional abstractions on lists.
 
-The Collection class is used to represent any finite set of data.
+The Collection class is used to represent any finite list. 
 
 Assume you would like to create a list of numbers from 1 to 100, sum them, and then store the value in an `int`.
 The Collection class allows you to achieve this in one line of code.
 
 ```cpp
-Collection<int> ints = range(1, 101);
-int sum = ints.reduceLeft([](int x, int y) {return x + y;});
-```
-
-...or...
-```cpp
 int sum = range(1, 101).reduceLeft([](int x, int y) {return x + y;});
 ```
 
-Note the similarity to the syntax provided by languages like Haskell and Scala.
+Note the similarity to the syntax provided by functional languages like Haskell and Scala.
 
 ```haskell
 sum = foldl1 (+) [1..100]
@@ -65,7 +59,11 @@ sum = foldl1 (+) [1..100]
 val sum = Range(1, 101).reduce((a,b) => a+b)
 ```
 
-The Stream class is used to represent potentially infinite sets of data. This is a fairly common concept in functional programming languages but is relatively rare in C++, a language that highly encourages the elimination of unknowns at run time.
+----
+## Streams
+
+The Stream class is used to represent potentially infinite sets of data. 
+This is a fairly common concept in functional programming languages but is rare in C++. 
 
 Observe the following example, again computing the sum of the numbers 1 to 100.
 
@@ -81,9 +79,12 @@ int sum = ints_1_100.reduceLeft([](int x, int y) {return x + y;});
 int sum = from(1).take(100).reduceLeft([](int x, int y) {return x + y;});
 ```
 
-Here, we define the infinite Stream with the function call `from()`. We then `take()` 100 elements from this Stream, which returns a Collection of integers 1 through 100. We can then reduce over this Collection with a function by using the the reduceLeft method as in the first example.
+Here, we define the infinite Stream with the `from()` function, which by default returns a Stream of elements of its argument's type where each element is incremented by 1. 
+We then use the `take()` function to convert our Stream into a finite Collection.
+We can then reduce over this Collection with a function.
 
-Note that Streams can be arbitrarily complex. Below, we define a Stream to generate the Fibonacci sequence with the help of a one of the macros provided by the C++ Collections library.
+Note that Streams can be arbitrarily complex.
+Below, we define a Stream to generate the Fibonacci sequence with the help of a one of the macros provided by the C++ Collections library.
 
 ```cpp
 def_generator(fibs, int, int prev, int curr) {
