@@ -162,7 +162,7 @@ Note how these pipelines can become arbitrarily complex by adding more intermedi
 
 ----
 ## Collections Methods
-### Member functions
+### Member Functions
 
 #### Collection\<T\>()
 
@@ -493,6 +493,27 @@ std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
 
 >>> [0,2,4]
 ```
+
+----
+## Streams Methods
+### Member Functions
+
+#### Stream\<T\>(T head, std::function\<T\>()> gen)
+
+Default Stream constructor.
+Takes an initial head value, and a function that returns a Stream.
+The programmer should not have to interact with this method directly.
+
+*Example:*
+```
+std::function<Stream<int>()> ones = []() { return Stream<int>(1, ones) };
+std::cout << ones().take(3) << std::endl;
+
+>>> [1,1,1]
+```
+
+
+### Non-member Functions
 
 ----
 ## Development Support
