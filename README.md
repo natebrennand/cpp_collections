@@ -32,7 +32,8 @@ Unfortunately, the ease of use of many of C++'s functional features pales in com
 
 [2]:http://en.wikipedia.org/wiki/Linguistic_relativity
 
-C++ Collections is a library built on top of C++11 that provides both finite and infinite collections data structures, built from the ground up with syntax in mind. 
+C++ Collections is a library built on top of C++11 that provides both finite and infinite collections data structures, built from the ground up with syntax in mind.
+It strives to make functional programming concepts, specifically to do with lists, more accessible and understandable to C++ programmers.
 
 To use the C++ Collections library, download it from Github and simply *#include cpp_collections.h* in your source file.
 
@@ -168,7 +169,7 @@ Construct an empty Collection.
 
 *Example:*
 ```cpp
-Collection<int> = Collection<int>();
+auto empty_collection = Collection<int>();
 ```
 
 #### Collection<T>(int size)
@@ -177,7 +178,7 @@ Construct a presized Collection.
 
 *Example:*
 ```cpp
-auto presizedCollection = Collection<int>(5);
+auto presized_collection = Collection<int>(5);
 ```
 
 #### Collection<T>(std::vector<T> list)
@@ -223,12 +224,12 @@ Return the Collection that results from the concatentation of an arbitrary numbe
 
 *Example:*
 ```cpp
-auto a = range(5);
-auto b = range(5);
-auto c = range(5);
+auto a = range(3);
+auto b = range(3);
+auto c = range(3);
 std::cout << concat(a, b, c) << std::endl;
 
->>> [0,1,2,3,4,0,1,2,3,4,0,1,2,3,4]
+>>> [0,1,2,0,1,2,0,1,2]
 ```
 
 #### range(T size)
@@ -267,7 +268,7 @@ auto c = Collection(std::vector<char> {'a','b','c'});
 
 auto d = zip(a, b, c);
 
-assert(d[0] == std::make_tuple(a[0], b[0], c[0]));
+assert(d[0] == std::make_tuple(0, 0.0, 'a'));
 ```
 
 #### zipWith(Function func, Collection<U>...)
@@ -283,67 +284,41 @@ std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
 >>> [0,2,4]
 ```
 
-### Intermediate operators
+#### Collection\<T\>::init()
 
-#### ::init()
+Return all elements except the last.
 
-**Method**:
+*Example:*
 ```cpp
-Collection<T> init();
+auto a = range(5);
+std::cout << a.init() << std::endl;
+
+>>> [0,1,2,3]
 ```
 
-This method is an intermediate operator which returns all elements except the last.
+#### Collection\<T\>::tail()
 
-*Example*:
+Return all elements except the head.
+
+*Example:*
 ```cpp
-auto col = range(1,101);
-std::cout<< col.init(); << "\n";
+auto a = range(5);
+std::cout << a.tail() << std::endl;
+
+>>> [1,2,3,4]
 ```
 
-*Output*:
-```
-[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99]
-```
+#### Collection\<T\>::pop_head()
 
-#### ::tail()
+Remove the head of the collection.
 
-**Method**:
+*Example:*
 ```cpp
-Collection<T> tail();
-```
+auto a = range(5);
+a.pop_head();
+std::cout << a << std::endl;
 
-This method is an intermediate operator which returns all elements except the first.
-
-*Example*:
-```cpp
-auto col = range(1,101);
-std::cout<< col.tail(); << "\n";
-```
-
-*Output*:
-```
-[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100]
-```
-
-#### ::pop_head()
-
-**Method**:
-```cpp
-void pop_head();
-```
-
-This method removes the head by erasing the first element of the internal data vector.
-
-*Example*:
-```cpp
-auto col = range(1,101);
-col.pop_head();
-col.print();
-```
-
-*Output*:
-```
-[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100]
+>>> [1,2,3,4]
 ```
 
 #### ::each()
