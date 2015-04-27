@@ -503,17 +503,138 @@ std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
 Default Stream constructor.
 Takes an initial head value, and a function that returns a Stream.
 The programmer should not have to interact with this method directly.
+Instead, use the `def\_generator` macro to define a Stream generator.
 
 *Example:*
 ```
-std::function<Stream<int>()> ones = []() { return Stream<int>(1, ones) };
+std::function<Stream<int>()> ones = [&]() { return Stream<int>(1, ones) };
 std::cout << ones().take(3) << std::endl;
 
 >>> [1,1,1]
 ```
 
+#### Stream\<T\>(T head, Stream\<T\> tail)
+
+Tail-only Stream constructor.
+The programmer should not have to interact with this method directly.
+
+#### Stream\<T\>::head()
+
+Return the first element of the Stream.
+
+*Example:*
+```
+std::cout << from(1).head() << std::endl;
+
+>>> 1
+```
+
+#### Stream\<T\>::tail()
+
+Return the Stream minus the current head.
+
+*Example:*
+```
+std::cout << from(1).tail().head() << std::endl;
+
+>>> 2
+```
+
+#### Stream\<T\>::take(int n)
+
+Return `n` elements taken from the Stream as a Collection.
+
+*Example:*
+```
+std::cout << from(1).take(5) << std::endl;
+
+>>> [1,2,3,4,5]
+```
+
+#### Stream\<T\>::filter(std::function\<bool(T)\> func)
+
+Return a sub-Stream of elements of the Stream that match the predicate function.
+
+*Example:*
+```
+auto evens = from(1).filter([](int x) { return x % 2 == 0; });
+std::cout << evens.take(5) << std::endl;
+
+>>> [2,4,6,8,10]
+```
+
+#### Stream\<T\>::map(Function func)
+
+Return the Stream that results from the transformation of each element in the original Stream.
+
+*Example:*
+```
+auto squares = from(1).map([](int x) { return x * x; });
+std::cout << squares.take(5) << std::endl;
+
+>>> [1,4,9,16,25]
+```
 
 ### Non-member Functions
+
+#### cons(T value, Stream\<T\> other)
+
+Prepends a value to a Stream.
+
+*Example:*
+```
+auto ints = from(1);
+std:cout << cons(10, ints).take(5) << std::endl;
+
+>>> [10,1,2,3,4]
+```
+
+#### operator&(T value, Stream\<T\> other)
+
+Prepends a value to a Stream.
+
+*Example:*
+```
+auto ints = from(1);
+std:cout << (10 & (20 & ints)).take(5) << std::endl;
+
+>>> [10,20,1,2,3]
+```
+
+#### from(T n, T step=1)
+
+Construct a Stream, starting at n, incrementing by step (defaults to 1).
+
+*Example:*
+```
+std:cout << from(1).take(5) << std::endl;
+
+>>> [1,2,3,4,5]
+```
+
+#### zip(Stream\<U\>... other)
+
+Return a Stream of tuples, where each tuple contains the elements of the zipped Streams that occur at the same position
+
+#### zipWith(Function func, Stream\<U\>... other)
+
+Generalizes zip by zipping with the function given as the first argument instead of a tupling function.
+
+### Macros
+
+### def\_generator(name, return\_type, arg\_types...)
+
+A macro to ease the syntax of defining an arbitrary Stream generator.
+
+*Example:*
+```
+def_generator(ones, int) {
+    return Stream<int>(1, ones)
+};
+std::cout << ones().take(5) << std::endl;
+
+>>> [1,1,1,1,1]
+```
 
 ----
 ## Development Support
@@ -526,7 +647,7 @@ If you are interested in contributing, please fork our repository and submit a p
 The test suite is composed of tests to check that we stop all errors at the compilation stage, not at runtime.
 Files placed in the `tests/` directory will be compiled against `collections.h`.
 
-Files with `fail_` at the start of the filename will be expected to fail.
+Files with `fail\_` at the start of the filename will be expected to fail.
 
 Those without will be expected to build.
 Buildable files will also be executed.
