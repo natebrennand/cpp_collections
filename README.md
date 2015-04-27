@@ -624,7 +624,7 @@ Generalizes zip by zipping with the function given as the first argument instead
 
 #### def\_generator(name, return\_type, arg\_types...)
 
-A macro to ease the syntax of defining an arbitrary Stream generator.
+A macro to ease the syntax of defining any arbitrary recursive Stream generator.
 
 *Example:*
 ```
@@ -639,10 +639,12 @@ std::cout << ones().take(5) << std::endl;
 *Example:*
 ```
 def_generator(fibs, int, int prev, int curr) {
-    return Stream<int>(curr, fibs(curr, prev+curr));
+    return Stream<int>(curr, [=]() { return fibs(curr, prev+curr); });
 };
+std::cout << fibs(0, 1).take(10) << std::endl;
 
-fibs(0, 1).take(10).print();
+>>> [1,1,2,3,5,8,13,21,34,55]
+```
 
 ----
 ## Development Support
