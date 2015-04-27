@@ -231,13 +231,57 @@ std::cout << concat(a, b, c) << std::endl;
 >>> [0,1,2,3,4,0,1,2,3,4,0,1,2,3,4]
 ```
 
-#### range()
+#### range(T size)
 
+Return Collection of numeric types over the range `[0, size)`.
 
-#### zip()
+*Example:*
+```cpp
+auto a = range(5);
+std::cout << a << std::endl;
 
-#### zipWith()
+>>> [0,1,2,3,4]
+```
 
+#### range(T low, T high)
+
+Return Collection of numeric types over the range `[low, high)`.
+
+*Example:*
+```cpp
+auto a = range(5, 10);
+std::cout << a << std::endl;
+
+>>> [5,6,7,8,9]
+```
+
+#### zip(Collection<U>...)
+
+Return a Collection of tuples, where each tuple contains the elements of the zipped Collections that occur at the same position.
+
+*Example:*
+```cpp
+auto a = range(3);
+auto b = range(3.0);
+auto c = Collection(std::vector<char> {'a','b','c'});
+
+auto d = zip(a, b, c);
+
+assert(d[0] == std::make_tuple(a[0], b[0], c[0]));
+```
+
+#### zipWith(Function func, Collection<U>...)
+Generalizes `zip` by zipping with the function given as the first argument instead of a tupling function.
+
+*Example:*
+```cpp
+auto a = range(3);
+auto b = range(3);
+
+std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
+
+>>> [0,2,4]
+```
 
 ### Intermediate operators
 
