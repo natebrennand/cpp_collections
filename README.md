@@ -636,6 +636,14 @@ std::cout << ones().take(5) << std::endl;
 >>> [1,1,1,1,1]
 ```
 
+*Example:*
+```
+def_generator(fibs, int, int prev, int curr) {
+    return Stream<int>(curr, fibs(curr, prev+curr));
+};
+
+fibs(0, 1).take(10).print();
+
 ----
 ## Development Support
 
