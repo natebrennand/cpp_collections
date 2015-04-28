@@ -147,18 +147,9 @@ namespace cpp_collections {
     // Construct a Stream, starting at n, incrementing by step
     template<typename T>
     Stream<T>
-    from(T n, T step = 1) {
+    from(T n, T step=1) {
         return Stream<T>(n, [=]() -> Stream<T> {
             return from(n + T(step), T(step));
-        });
-    }
-
-    // Construct a Stream, starting at n, incrementing by 1
-    template<typename T>
-    Stream<T>
-    from(T n) {
-        return Stream<T>(n, [=]() -> Stream<T> {
-            return from(n + T(1), T(1));
         });
     }
 
