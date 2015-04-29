@@ -38,7 +38,7 @@ C++ Collections is a library built on top of C++11 that provides both finite and
 It strives to make functional programming concepts, specifically to do with lists, more accessible and understandable to C++ programmers.
 
 An additional perk of functional languages is the terseness associated with them.
-Software bugs per line of code have been found to be constant across different languages [TODO: cite Code Complete] which indicates that more succint operatoins on lists are more likely to operate as intended.
+Software bugs per line of code have been found to be constant across different languages [TODO: cite Code Complete] which indicates that more succint operations on lists are more likely to operate as intended.
 
 To use the C++ Collections library, download it from Github and simply `#include cpp_collections.h` in your source file.
 
