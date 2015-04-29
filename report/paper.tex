@@ -1,0 +1,54 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{alltt,epsfig,amsmath,amssymb}
+\usepackage{fullpage} % one inch margins
+
+\usepackage{listings}
+\lstset{
+  breaklines=true,
+  keepspaces=true,
+  numbers=left
+}
+
+\usepackage{fancyhdr}
+\fancypagestyle{plain}{
+  \fancyhf{}% Clear header/footer
+  \fancyhead[L]{Ian Zapolsky, Nate Brennand and Uday Singh}
+  \fancyfoot[C]{\thepage}
+  \fancyhead[R]{Library Design in C++}
+}
+
+\pagestyle{plain}   % Set page style to plain.
+
+\author{Ian Zapolsky, Nate Brennand and Uday Singh}
+\title{Functional Collections in C++}
+
+
+\begin{document}
+\setlength{\parskip}{.1 in}
+
+\maketitle
+\newpage
+
+\subsection*{Introduction}
+
+%
+% Intro tex
+%
+
+% each section is configured in a separate file
+\section*{Cloud}
+% \input{cloud/main} \newpage
+
+\section*{Column-Stores}
+% \input{column_store/main} \newpage
+
+\section*{OLTP}
+% \input{oltp/main} \newpage
+
+% citations
+\include{bib}
+
+\end{document}
+

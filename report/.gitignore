@@ -1,0 +1,11 @@
+
+# binaries
+paper.pdf
+
+# latex junk
+*.log
+*.aux
+*.fdb_latexmk
+*.fls
+*.d
+
