@@ -1,47 +1,52 @@
 Download
 --------
 
-[C++ Collections][dl] (18 KB) -- 10 April 2015
+[C++ Collections][zip_download] (18 KB) -- 10 April 2015
 
-[dl]: https://github.com/natebrennand/cpp_collections/archive/master.zip
+[norvig]:http://www.norvig.com/21-days.html
+[zip_download]:https://github.com/natebrennand/cpp_collections/archive/master.zip
+[intro_comic]:http://i.imgur.com/GnCHqIm.png?1
+[linguistic_relativity]:http://en.wikipedia.org/wiki/Linguistic_relativity
+[tfmenu]:/graphics/markdown/mt_textformat_menu.png
+[repo]:https://github.com/natebrennand/cpp_collections/
 
 
 ----
 ## Introduction
 
-Collections are fundamental to most programming tasks because they allow the user to group and process large sets of data. 
-However, when it comes to expressing moderately complex collection manipulations, C++ is markedly behind some of its more modern counterparts with respect to code clarity and efficiency of space. 
+Collections are fundamental to most programming tasks because they allow the user to group and process large sets of data.
+However, when it comes to expressing moderately complex collection manipulations, C++ is markedly behind some of its more modern counterparts with respect to code clarity and efficiency of space.
 This is the problem we set out to solve.
 
-![Image of Kesiev](http://i.imgur.com/GnCHqIm.png?1) 
+![Image of Kesiev](intro_comic)
 
-Languages are used as tools to communicate, and consequently, the structure and limitations of the languages we use determine the way we think. 
-This idea, known in the field of linguistic relativity as the [Sapir-Whorf hypothesis][2], has critical implications when applied to programming languages, namely that the ability of a programmer to reason about a problem can be limited by the languages he or she has learned (or has yet to learn).
+Languages are used as tools to communicate, and consequently, the structure and limitations of the languages we use determine the way we think.
+This idea, known in the field of linguistic relativity as the [Sapir-Whorf hypothesis][linguistic_relativity], has critical implications when applied to programming languages, namely that the ability of a programmer to reason about a problem can be limited by the languages he or she has learned (or has yet to learn).
 Furthermore, if we hold this hypothesis to be true, we can reasonably conclude that learning how to write code in a new language can provide a programmer with a totally new way of thinking about solving a problem that he or she may have already solved a dozen times before.
 
-C++ is an interesting language in this respect because in recent years it has begun to introduce new language constructs that help it blur the lines between programming paradigms along which programming languages are usually divided. 
+C++ is an interesting language in this respect because in recent years it has begun to introduce new language constructs that help it blur the lines between programming paradigms along which programming languages are usually divided.
 Perhaps most notably, C++11 introduced a set of features that allows for functional programming in the language.
+Functional programming is a programming paradigm that avoids state and favors immutable variables.
 It is as if the English language introduced a new group of words, whose meanings were all missing from the original dictionary.
 The conclusion we are tempted to draw from this addition is that C++ is a great language to learn, because its new functional vocabulary will allow the programmer who learns it to think about problems both from a traditional C++ perspective, and now also from a functional perspective.
 
 Unfortunately, the ease of use of many of C++'s functional features pales in comparison to that of other functional languages, making it daunting for beginners in functional programming to use the features correctly, if at all.
 
-> In 24 hours you might be able to learn some of the syntax of C++ (if you already know another language), but you couldn't learn much about how to use the language. In short, if you were, say, a Basic programmer, you could learn to write programs in the style of Basic using C++ syntax, but you couldn't learn what C++ is actually good (and bad) for. So what's the point? Alan Perlis once said: "A language that doesn't affect the way you think about programming, is not worth knowing" -- [Peter Norvig][1]
-
-[1]:http://www.norvig.com/21-days.html
-
-[2]:http://en.wikipedia.org/wiki/Linguistic_relativity
+> In 24 hours you might be able to learn some of the syntax of C++ (if you already know another language), but you couldn't learn much about how to use the language. In short, if you were, say, a Basic programmer, you could learn to write programs in the style of Basic using C++ syntax, but you couldn't learn what C++ is actually good (and bad) for. So what's the point? Alan Perlis once said: "A language that doesn't affect the way you think about programming, is not worth knowing" -- [Peter Norvig][norvig]
 
 C++ Collections is a library built on top of C++11 that provides both finite and infinite collections data structures, built from the ground up with syntax in mind.
 It strives to make functional programming concepts, specifically to do with lists, more accessible and understandable to C++ programmers.
 
-To use the C++ Collections library, download it from Github and simply *#include cpp_collections.h* in your source file.
+An additional perk of functional languages is the terseness associated with them.
+Software bugs per line of code have been found to be constant across different languages [TODO: cite Code Complete] which indicates that more succint operations on lists are more likely to operate as intended.
+
+To use the C++ Collections library, download it from Github and simply `#include cpp_collections.h` in your source file.
 
 ----
 ## Collections
 C++ Collections provides traditional, functional abstractions on lists.
 
-The Collection class is used to represent any finite list. 
+The Collection class is used to represent any finite list.
 
 Assume you would like to create a list of numbers from 1 to 100, sum them, and then store the value in an `int`.
 The Collection class allows you to achieve this in one line of code.
@@ -62,7 +67,7 @@ val sum = Range(1, 101).reduce((a,b) => a+b)
 
 ### Implementation Details: Collections
 
-The Collection class uses a `std::vector` to store data internally.
+The Collection class uses the heavily optimized `std::vector` to store data internally.
 Consequently, Collections are very fast and reliable.
 They are also fully type-generic and can be efficiently constructed from a variety of existing STL data structures, including vectors, lists, arrays, and C-style arrays.
 What differentiates the Collection from the `std::vector` is mainly the functions defined on top of it, such as `map`, `zip`, `reduce`, and `fold`.
@@ -72,8 +77,8 @@ If they are present, they exist as generalized STL functions, not member functio
 ----
 ## Streams
 
-The Stream class is used to represent potentially infinite lists of data. 
-This is a fairly common concept in functional programming languages but is rare in C++. 
+The Stream class is used to represent potentially infinite lists of data.
+This is a fairly common concept in functional programming languages but is rare in C++.
 Streams can be converted to finite Collections via the `take()` function.
 
 Observe the following example, again computing the sum of the numbers 1 to 100.
@@ -90,9 +95,9 @@ int sum = ints_1_100.reduceLeft([](int x, int y) {return x + y;});
 int sum = from(1).take(100).reduceLeft([](int x, int y) {return x + y;});
 ```
 
-Here, we define the infinite Stream with the `from()` function, which by default returns a Stream of elements of its argument's type where each element is incremented by 1. 
+Here, we define the infinite Stream with the `from()` function, which by default returns a Stream of elements of its argument's type where each element is incremented by 1.
 We then use the `take()` function to convert our Stream into a finite Collection.
-We then reduce over this Collection with a function.
+We then reduce this Collection with an addition function.
 
 Note that Streams can be arbitrarily complex.
 Below, we define a Stream to generate the Fibonacci sequence with the help of one of the macros provided by the C++ Collections library.
@@ -122,7 +127,7 @@ std::function<Stream<int>(int, int)> fibs = [&](int prev, int curr) -> Stream<in
     });
 };
 
-Stream<int> tenfibs = fibs(0, 1).take(3); 
+Stream<int> tenfibs = fibs(0, 1).take(3);
 ```
 
 The Stream generator `fibs`, when called with arguments `0` and `1`, creates a new Stream that has a head value of 1 and an internal pointer to the function `fibs(1, 1)`.
@@ -130,7 +135,7 @@ Then, when we ask to `take(3)` elements from the Stream, the structure returns i
 It does this by returning the result of its stored function pointer.
 In this case, `tenfibs` would first return 1 becuase that is its head.
 It would then return the head of the Stream that results from the evaluation of the function it stores a pointer to, namely `fibs(1, 1)`, which is 1.
-The result of `fibs(1, 1)` also stores a pointer to another function, `fibs(1, 2)`. 
+The result of `fibs(1, 1)` also stores a pointer to another function, `fibs(1, 2)`.
 To find the third and final value, the Stream will evaluate this function and return the resulting Stream's head, which is 2.
 For a step-by-step visual depiction of the underlying state of our Stream during the `take(3)` function call, see the graphic below:
 
@@ -146,27 +151,29 @@ tenfibs.head      tenfibs.gen
 ## Pipelines
 The Collection and Stream classes are exciting because they allow C++ developers to construct complex pipelines of functions.
 These functions consist of of three main types:
-  1. Source operators: Methods that instantiate or create a Collection or Stream. 
-  2. Intermediate operators: Methods that take a Collection or Stream as input and output a new Collection or Stream.
-  3. Terminal operators: Methods that take a Collection or Stream as input and output something that is not another Collection or Stream.
+
+1. Source operators: methods that instantiate or create a Collection or Stream.
+2. Intermediate operators: methods that take a Collection or Stream as input and output a new Collection or Stream.
+3. Terminal operators: methods that take a Collection or Stream as input and output something that is not another Collection or Stream.
 
 Pipelines can be formed by combining a source operator, one or more intermediate operators, and a terminal operator.
 For example, summing the squares from 1 to 100 can be easily represented by the following pipeline:
 
 ```cpp
-int sum = range(1, 101).map([](int x) { return x*x; }).reduceLeft([](int x, int y) { return x+y; });
+int sum = range(1, 101).map([](int x) { return x * x; }).reduceLeft([](int x, int y) { return x+y; });
 ```
 
 Here, `range` is the source operator, `map` is an intermediate operator, and `reduceLeft` is a terminal operator.
 Note how these pipelines can become arbitrarily complex by adding more intermediate operators.
 
 ----
+
 ## Collections Methods
 ### Member Functions
 
 #### Collection\<T\>()
 
-Construct an empty Collection. 
+Construct an empty Collection.
 
 *Example:*
 ```cpp
@@ -175,7 +182,7 @@ auto empty_collection = Collection<int>();
 
 #### Collection\<T\>(int size)
 
-Construct a presized Collection.
+Construct a pre-sized Collection.
 
 *Example:*
 ```cpp
@@ -229,7 +236,7 @@ Returns the Collection as a `std::list`.
 
 #### Collection\<T\>::size()
 
-Returns an `int` with the current size of the Collection. 
+Returns an `int` with the current size of the Collection.
 
 #### Collection\<T\>::head()
 
@@ -299,7 +306,7 @@ Apply a function to all the elements in the Collection
 ```cpp
 int sum = 0;
 auto a = range(5);
-a.each([&](int x) { 
+a.each([&](int x) {
     sum += x;
 });
 std::cout << sum << std::endl;
@@ -309,7 +316,7 @@ std::cout << sum << std::endl;
 
 #### Collection\<T\>::filter(std::function\<bool(T)\> func)
 
-Return a sub-Collection containing the elements of the original Collection that pass a predicate function.
+Return a subset of the Collection containing the elements of the original Collection that pass a predicate function.
 
 *Example:*
 ```cpp
@@ -375,7 +382,8 @@ Return the result of the application of the same binary operator on adjacent pai
 
 #### Collection\<T\>::treduce(std::function\<T(T, T)\> func, int threads)
 
-An alternative implementation of reduce that uses multiple concurrent threads to speed up processing (note that the function passed to treduce must be commutative to achieve accurate result)
+An alternative implementation of reduce that uses multiple concurrent threads to speed up processing
+(note that the function passed to treduce must be commutative to achieve accurate result).
 
 *Example:*
 ```cpp
@@ -553,7 +561,7 @@ std::cout << from(1).take(5) << std::endl;
 
 #### Stream\<T\>::filter(std::function\<bool(T)\> func)
 
-Return a sub-Stream of elements of the Stream that match the predicate function.
+Return a Stream that contains the elements of the initial Stream that match the predicate function.
 
 *Example:*
 ```
@@ -649,7 +657,7 @@ std::cout << fibs(0, 1).take(10) << std::endl;
 ----
 ## Development Support
 
-If you are interested in contributing, please fork our repository and submit a pull request. 
+If you are interested in contributing, please fork our repository and submit a pull request on [github](repo).
 
 ----
 ## Tests
@@ -682,4 +690,13 @@ Ex. Run all tests matching reduce:
 ./run_tests.sh reduce
 ```
 
-  [tfmenu]: /graphics/markdown/mt_textformat_menu.png
+
+
+
+
+## Bibliography
+
+Title Code Complete, Second Edition
+Publisher Microsoft Press Redmond, WA, USA ©2004
+ISBN  0735619670 9780735619678
+
