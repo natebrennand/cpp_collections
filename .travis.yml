@@ -1,7 +1,13 @@
 language: cpp
 
-gcc: 4.8
-
+before_install:
+  - sudo apt-get install valgrind python-yaml libyaml-dev build-essential libssh2-1-dev libarchive-dev clang
+  - sudo apt-get install gcc-4.9 g++-4.9
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9
+  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.9
+  - sudo update-alternatives --config gcc
+  - sudo update-alternatives --config g++
 
 
 # Change this to your needs
