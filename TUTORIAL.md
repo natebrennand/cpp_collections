@@ -9,9 +9,9 @@ This is completely intentional, but due to documentation provided, more experien
 
 ## 1. Getting Started
 
-In order to run C++ Collections, [download][1] and `#include collections.`* for the Collection class (hereforth referred to as Collection with a capital 'C') or `#include streams.h` for the Stream class (hereforth referred to as Stream with a capital 'S').
+In order to run C++ Collections, [download][1] and `#include collections.` for the Collection class (here forth referred to as Collection with a capital 'C') or `#include streams.h` for the Stream class (here forth referred to as Stream with a capital 'S').
 
-Once you've installed and added the appropraite libraries, you can then start by creating an either Collection or Stream object.
+Once you've installed and added the appropriate libraries, you can then start by creating an either Collection or Stream object.
 The difference between a Collection and a Stream object is:
 
 - Collections are traditional functional abstractions on lists are used to define finite lists.
@@ -28,7 +28,7 @@ To create a Collection, use the *auto* keyword and create an empty collection.
 auto empty_collection = Collection<int>();
 ```
 
-With this emply collection we have a number of member functions. 
+With this empty collection we have a number of member functions. 
 Let's call the `size()` method. 
 
 ```cpp
@@ -84,7 +84,7 @@ Now we will explore some other ways to create, manipulate, and use Collections.
 
 ## 3. Non-Member Functions for Collections
 
-Although the Collection constructor provides a simple way to instiate a Collection.
+Although the Collection constructor provides a simple way to instantiate a Collection.
 Often times, it can be easier to use non-member functions to return collections.
 This can be another method of creating collections - particularly with certain constraints.
 
@@ -99,7 +99,7 @@ a.print();
 ```
 
 This uses both the `print()` method and the `range(T size)` to return a Collection from zero to four.
-Another way you can utilize `range()` is to use the other set of paramters where you return a collection over the range `[low, high)`.
+Another way you can utilize `range()` is to use the other set of parameters where you return a collection over the range `[low, high)`.
 
 ```cpp
 auto b = range(5, 10);
@@ -174,17 +174,17 @@ For list processing, C++ Collections tends to use Haskell method names for retur
 
 ```cpp
 auto col = range(1,101);
-std::cout<< col.head(); << "\n";
+std::cout<< col.head(); << std::endl;
 
 >>> 1
 ```
 
-The `head()` function will return an element of type `<T>` depending on whatever type the Collection orginially was. 
+The `head()` function will return an element of type `<T>` depending on whatever type the Collection originally was. 
 This function, however, is not a pipeline operator and instead is a terminal operator as you cannot use dot-syntax to keep adding to it.
 
 ```cpp
 auto col = range(1,101);
-std::cout<< col.last(); << "\n";
+std::cout<< col.last(); << std::endl;
 
 >>> 100
 ```
@@ -204,7 +204,7 @@ col.init().print();
 >>> [0,1,2,3,4,5,6,7,8]
 ```
 
-Now what would happen if we split the two methods `init()` and `print()` into into two seperate pieces?
+Now what would happen if we split the two methods `init()` and `print()` into into two separate pieces?
 
 ```cpp
 auto col = range(10);
@@ -404,7 +404,7 @@ Stream<int> tenfibs = fibs(0, 1).take(3);
 
 This example is directly from the design document regarding implementation.
 To quote the document:
-> The Stream generator fibs, when called with arguments 0 and 1, creates a new Stream that has a head value of 1 and an internal pointer to the function fibs(1, 1). Then, when we ask to take(3) elements from the Stream, the structure returns its head, and then lazily computes the remainder of the elements it needs to satisfy our request. It does this by returning the result of its stored function pointer. In this case, tenfibs would first return 1 becuase that is its head. It would then return the head of the Stream that results from the evaluation of the function it stores a pointer to, namely fibs(1, 1), which is 1. The result of fibs(1, 1) also stores a pointer to another function, fibs(1, 2). To find the third and final value, the Stream will evaluate this function and return the resulting Stream's head, which is 2. - Implementation Details: Streams
+> The Stream generator fibs, when called with arguments 0 and 1, creates a new Stream that has a head value of 1 and an internal pointer to the function fibs(1, 1). Then, when we ask to take(3) elements from the Stream, the structure returns its head, and then lazily computes the remainder of the elements it needs to satisfy our request. It does this by returning the result of its stored function pointer. In this case, tenfibs would first return 1 because that is its head. It would then return the head of the Stream that results from the evaluation of the function it stores a pointer to, namely fibs(1, 1), which is 1. The result of fibs(1, 1) also stores a pointer to another function, fibs(1, 2). To find the third and final value, the Stream will evaluate this function and return the resulting Stream's head, which is 2. - Implementation Details: Streams
 
 We can simply this by using macros to generate Streams rather than depending on `Stream<T>(T head, std::function<T>()> gen)`.
 
