@@ -1,0 +1,33 @@
+
+C++ Collections provides traditional, functional abstractions on lists.
+
+The Collection class is used to represent any finite list.
+
+Assume you would like to create a list of numbers from 1 to 100, sum them, and then store the value in an \code{int}.
+The Collection class allows you to achieve this in one line of code.
+
+\begin{lstlisting}
+int sum = range(1, 101).reduceLeft([](int x, int y) {
+    return x + y;});
+\end{lstlisting}
+
+Note the similarity to the syntax provided by functional languages like Haskell and Scala.
+
+\begin{lstlisting}[language=haskell]
+sum = foldl1 (+) [1..100]
+\end{lstlisting}
+
+\begin{lstlisting}
+val sum = Range(1, 101).reduce((a,b) => a+b)
+\end{lstlisting}
+
+\subsection{Implementation Details}
+
+The Collection class uses the heavily optimized \code{std::vector} to store data internally.
+Consequently, Collections are very fast and reliable.
+They are also fully type-generic and can be efficiently constructed from a variety of existing STL data structures, including vectors, lists, arrays, and C-style arrays.
+What differentiates the Collection from the \code{std::vector} is mainly the functions defined on top of it, such as \code{map}, \code{zip}, \code{reduce}, and \code{fold}.
+Despite the movement of modern C++ toward functional programming, these traditional functional methods are generally absent from the language.
+If they are present, they exist as generalized STL functions, not member functions of existing data structures (see \code{std::accumulate}).
+
+

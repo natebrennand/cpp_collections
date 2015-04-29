@@ -1,0 +1,32 @@
+
+
+The test suite is composed of tests to check that we stop all errors at the compilation stage, not at runtime.
+Files placed in the \code{tests/} directory will be compiled against \code{collections.h}.
+
+Files with \code{fail\_} at the start of the filename will be expected to fail.
+
+Those without will be expected to build.
+Buildable files will also be executed.
+They should include assertions to insure the library is executing as desired.
+Passing tests should not include any output to stdout/stderr.
+
+
+Executable with \code{make}:
+
+\begin{lstlisting}
+make test
+\end{lstlisting}
+
+
+
+
+\subsection{Subsets}
+
+A subset of the tests can be run by utilizing the \code{run\_tests.sh} script directly.
+If an argument is provided, only the tests matching it will be run.
+
+\begin{lstlisting}[title=Ex. Run all tests matching reduce]
+./run_tests.sh reduce
+\end{lstlisting}
+
+

@@ -4,19 +4,33 @@
 \usepackage{alltt,epsfig,amsmath,amssymb}
 \usepackage{fullpage} % one inch margins
 
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+% inline code
+\def\code#1{\texttt{#1}}
+% block code
 \usepackage{listings}
 \lstset{
+  numbers=none,
+  showstringspaces=false,
+  frame=L,
+  language=c++,
+  xleftmargin=\parindent,
   breaklines=true,
-  keepspaces=true,
-  numbers=left
+  keepspaces=true
+  basicstyle=\ttfamily,
 }
+
+% block quotes
+\usepackage{csquotes}
 
 \usepackage{fancyhdr}
 \fancypagestyle{plain}{
   \fancyhf{}% Clear header/footer
-  \fancyhead[L]{Ian Zapolsky, Nate Brennand and Uday Singh}
+  \fancyhead[L]{}
   \fancyfoot[C]{\thepage}
-  \fancyhead[R]{Library Design in C++}
+  \fancyhead[R]{C++ Functional Collections}
 }
 
 \pagestyle{plain}   % Set page style to plain.
@@ -31,24 +45,35 @@
 \maketitle
 \newpage
 
-\subsection*{Introduction}
+\section{Introduction}
+\input{intro}
 
-%
-% Intro tex
-%
+\section{Collections}
+\input{collections}
 
-% each section is configured in a separate file
-\section*{Cloud}
-% \input{cloud/main} \newpage
+\section{Streams}
+\input{streams}
 
-\section*{Column-Stores}
-% \input{column_store/main} \newpage
+\section{Pipelines}
+\input{pipelines}
 
-\section*{OLTP}
-% \input{oltp/main} \newpage
+\section{Collections Methods}
+\input{collections_methods}
+
+\section{Stream Methods}
+\input{stream_methods}
+
+\section{Development Support}
+If you are interested in contributing, please fork our repository and submit a pull request on Github \cite{github}.
+
+\section{Testing}
+\input{testing}
+
+
 
 % citations
-\include{bib}
+\bibliographystyle{abbrv}
+\bibliography{bibliography}
 
 \end{document}
 
