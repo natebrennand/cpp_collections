@@ -1,4 +1,7 @@
+
 # Tutorial
+
+- [Getting Started](#getting-started)
 
 We will begin with a swift introduction to C++ Collections.
 Our goal is to show the main elements of this library as quickly as possible.
@@ -7,19 +10,22 @@ Rather than getting caught up in details, rules, exceptions - we want to allow u
 Unlike the standard design documentation which provides a list of all methods available and their uses, we may prefer brevity over depth.
 This is completely intentional, but due to documentation provided, more experienced programmers can use our design document to cement their understanding of C++ Collections.
 
-## 1. Getting Started
 
-In order to run C++ Collections, [download][1] and `#include collections.` for the Collection class (here forth referred to as Collection with a capital 'C') or `#include streams.h` for the Stream class (here forth referred to as Stream with a capital 'S').
+
+## Getting Started
+
+In order to run C++ Collections, [download][repo_download] and `#include collections.` for the Collection class (here forth referred to as Collection with a capital 'C') or `#include streams.h` for the Stream class (here forth referred to as Stream with a capital 'S').
 
 Once you've installed and added the appropriate libraries, you can then start by creating an either Collection or Stream object.
 The difference between a Collection and a Stream object is:
 
 - Collections are traditional functional abstractions on lists are used to define finite lists.
-- Streams are self-referential lazy-seeking data structures which allow the storage of the head and a pointer to a function which returns another stream.
+- Streams are self-referential lazily-evaluated data structures which allow the storage of the head and a pointer to a function which returns another stream.
 
 
 
-## 2. Creating Collections
+## Creating Collections
+
 The Collection is used to represent a finite list which allows a number of functions outside of STL to be called on it.
 
 To create a Collection, use the *auto* keyword and create an empty collection.
@@ -28,8 +34,8 @@ To create a Collection, use the *auto* keyword and create an empty collection.
 auto empty_collection = Collection<int>();
 ```
 
-With this empty collection we have a number of member functions. 
-Let's call the `size()` method. 
+With this empty collection we have a number of member functions.
+Let's call the `size()` method.
 
 ```cpp
 int x = empty_collection.size();
@@ -38,7 +44,8 @@ std::cout << x << std::endl
 
 >>> 0
 ```
-We can assume that we are `using namespace std` for all examples. 
+
+We can assume that we are `using namespace std` for all examples.
 Now, rather than instantiating an empty list, we can instantiate a list with a predetermined size.
 
 ```cpp
@@ -48,7 +55,7 @@ auto presizedCollection = Collection<T>(5);
 This can be validated immediately by running the following:
 
 ```cpp
-std::cout<< presizedCollection.size() << std::endl; 
+std::cout<< presizedCollection.size() << std::endl;
 
 >>> 5
 ```
@@ -540,5 +547,6 @@ If you would like to contribute to the project it can be found [here][2]. Thanks
 
 
 <!-- Sources -->
-[1]: https://github.com/natebrennand/cpp_collections/archive/master.zip
+[repo_download]: https://github.com/natebrennand/cpp_collections/archive/master.zip
 [2]: https://github.com/natebrennand/cpp_collections/
+
