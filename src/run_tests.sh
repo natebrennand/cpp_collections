@@ -20,7 +20,7 @@ run_test() {
     local should_fail=$1
 
     # stdout of parser
-    $($CXX -std=c++0x -pthread $file &> $tmp_file)
+    $($CXX -std=c++11 -pthread $file &> $tmp_file)
     outcome=`cat $tmp_file`
     # empty if compiled, errors otherwise
 
