@@ -8,7 +8,7 @@ Index:
 - [Non-Member Functions for Collections](#non-member-functions-for-collections)
 - [Simple Member Functions for Collections](#simple-member-functions-for-collections)
   - [Returning Collections](#returning-collections)
-  - [list Processing](#list-processing)
+  - [List Processing](#list-processing)
 - [Advanced Member Functions for Collections](#advanced-member-functions-for-collections)
   - [Mapping functions](#mapping-functions)
   - [Reduction functions](#reduction-functions)
@@ -391,30 +391,35 @@ std::cout << ints2 << std::endl;
 
 ## Creating Streams
 
-Creating Streams is a little different.
-One of the key differentiating factors between Streams and Collections is that Streams can be used to represent potentially infinite lists of data. 
-Streams, instead can be converted to Collections (our finite data structure) using the `take()` function. 
-First, let's create a Stream.
+Creating Streams is a different from creating Collections.
+The key differentiating factor between Streams and Collections is that Streams can be used to represent potentially infinite lists of data.
+These infinite Streams can then be converted to finite Collections using the `take()` function. 
+
+First, let's create an infinite Stream of 1s.
 
 ```cpp
-std::function<Stream<int>()> ones = [&]() { return Stream<int>(1, ones) };
+std::function<Stream<int>()> ones_gen = [&]() { return Stream<int>(1, ones_gen) };
+Stream<int> ones = Stream<int>(1, ones_gen);
 ```
 
-Here we have an infinite list starting at 1. 
-It is important that we short-circuit this Stream in order for it to produce some sort of result.
-Now if we want to pull out the first three results we can do the following:
+Let's break down what is happening here. 
+Streams are self-referential data structures, meaning that in addition to the head, or the first value in the list, the class stores a pointer to a function that returns another Stream.
+Here, we define a function `ones_gen()` that return a new Stream with a head of 1 and a generator function `ones_gen()`.
+We then construct the new Stream `ones` with the default Stream constructor, passing the initial head value of 1, and the generator function `ones_gen()`.
+
+Now, we can take an arbitrary number of elements out of this Stream with the `take()` function.
 
 ```cpp
-std::cout << ones().take(3) << std::endl;
+std::cout << ones.take(3) << std::endl;
 
 >>> [1,1,1]
 ```
 
-The `take()` method converts the Stream into a Collection for printing.
-Prior, however, we use the default Stream constructor.
+Note that `take()` returns a Collection, so we could also use any of the Collection manipulation methods on the result.
+The `take()` method converts the Stream into a Collection by repeatedly requesting the head of the Stream, and if it doesn't exist, returning the head of the Stream constructed by the generator function.
 
-
-Let's try and generate the Fibonacci sequence using the standard Stream generator.
+Let's try a more complex example.
+Here we generate the Fibonacci sequence.
 
 ```cpp
 std::function<Stream<int>(int, int)> fibs = [&](int prev, int curr) -> Stream<int> {
@@ -423,145 +428,159 @@ std::function<Stream<int>(int, int)> fibs = [&](int prev, int curr) -> Stream<in
     });
 };
 
-Stream<int> tenfibs = fibs(0, 1).take(3);
+Collection<int> tenfibs = fibs(0, 1).take(3);
 ```
 
-This example is directly from the design document regarding implementation.
-To quote the document:
-> The Stream generator fibs, when called with arguments 0 and 1, creates a new Stream that has a head value of 1 and an internal pointer to the function fibs(1, 1). Then, when we ask to take(3) elements from the Stream, the structure returns its head, and then lazily computes the remainder of the elements it needs to satisfy our request. It does this by returning the result of its stored function pointer. In this case, tenfibs would first return 1 because that is its head. It would then return the head of the Stream that results from the evaluation of the function it stores a pointer to, namely fibs(1, 1), which is 1. The result of fibs(1, 1) also stores a pointer to another function, fibs(1, 2). To find the third and final value, the Stream will evaluate this function and return the resulting Stream's head, which is 2. - Implementation Details: Streams
+The Stream generator `fibs`, when called with arguments `0` and `1`, creates a new Stream that has a head value of 1 and an internal pointer to the function `fibs(1, 1)`.
+Then, when we ask to `take(3)` elements from the Stream, the structure returns its head, and then lazily computes the remainder of the elements it needs to satisfy our request.
+It does this by returning the result of its stored function pointer.
+In this case, `tenfibs` would first return 1 becuase that is its head.
+It would then return the head of the Stream that results from the evaluation of the function it stores a pointer to, namely `fibs(1, 1)`, which is 1.
+The result of `fibs(1, 1)` also stores a pointer to another function, `fibs(1, 2)`.
+To find the third and final value, the Stream will evaluate this function and return the resulting Stream's head, which is 2.
+For a step-by-step visual depiction of the underlying state of our Stream during the `take(3)` function call, see the graphic below:
 
-We can simply this by using macros to generate Streams rather than depending on `Stream<T>(T head, std::function<T>()> gen)`.
+```
+tenfibs.head      tenfibs.gen
+     1             fibs(0,1)
+     1             fibs(1,1)
+     2             fibs(1,2)
+     3             fibs(2,3)
+```
 
 ## Macros
 
-A macro is used to ease the syntax of defining any arbitrary recursive Stream generator.
-`def_generator()` takes the first parameter providing a name, the second parameter providing a return type, and the rest of the parameters providing arguments for the named function.
+Unfortunately, both examples above are rather verbose. 
+C++11 does not allow the definition of recursive lambdas, so we have to define our Stream generators as `std::function`s instead.
+This creates a lot of syntax overhead to the definition of arbitrary Stream generator functions.
+In order to ease the syntactic pain of this process, we implemented a macro that helps our programmers define Stream generators in a more concise manner.
+
+`def_generator()` takes two or more parameters, where the first parameter is the name of the generator, the second parameter is the return type (or type of Stream), and the rest of the parameters are arguments for the generator function.
+
 ```cpp
 def_generator(ones, int) {
     return Stream<int>(1, ones)
 };
 std::cout << ones().take(5) << std::endl;
 
->>> [1,1,1,1,1]
+// [1,1,1,1,1]
 ```
-Since streams are recursively defined, this macro syntax provides a clean definition to showing how the `ones()` stream works.
-This is more apparent when defining and printing the Fibonacci sequence.
+
+This macro provides a cleaner way of defining recursive Stream generators.
+The syntax gains are more apparent when we re-define the Fibonacci Stream.
+
 ```cpp
 def_generator(fibs, int, int prev, int curr) {
     return Stream<int>(curr, [=]() { return fibs(curr, prev+curr); });
 };
 std::cout << fibs(0, 1).take(10) << std::endl;
 
->>> [1,1,2,3,5,8,13,21,34,55]
+// [1,1,2,3,5,8,13,21,34,55]
 ```
+
 ## Non-Member Functions for Streams
 
-Non-member functions don't need to act on a Stream to run.
-
 ### Alternative Generating Tactics
-Now rather than using `def_generator` there is an easier way to generate a Stream using a non-member function called `from()`.
+
+Rather than using `def_generator`, there is an easier way to generate a basic Stream using the non-member function `from()`.
+`from()` constructs a Stream starting with the first parameter and incrementing by a step, which defaults to 1.
+
 ```cpp
 from(1).take(5).print();
 
->>> [1,2,3,4,5]
+// [1,2,3,4,5]
 ```
-`from()` constructs a Stream starting with the first parameter and incrementing by a step.
+
+```cpp
+from(1,2).take(5).print();
+
+// [1,3,5,7,9]
+```
 
 ### Prepend Values
-Now assume you want to add values to a Stream. 
-`cons(T value, Stream<T> other)` can allow a user to prepend a value to a Stream.
+
+Assume you want to add values to a Stream. 
+`cons(T value, Stream<T> other)` prepends a value to a Stream.
+
 ```cpp
 auto ints = from(1);
 std:cout << cons(10, ints).take(5) << std::endl;
 
->>> [10,1,2,3,4]
+// [10,1,2,3,4]
 ```
-This can even be done with the `&` operator.
+
+This can also be done with the `&` operator.
+However, note that parentheses must be used appropriately because the operator is not defined as a member operator.
+
 ```cpp
 auto ints = from(1);
 std:cout << (10 & (20 & ints)).take(5) << std::endl;
 
->>> [10,20,1,2,3]
+// [10,20,1,2,3]
 ```
 
 
 ### Zipping Streams
-Similar to `range()` for Collections, it is easy to use `zip()` and `zipWith()` in the identical manner to the Collections above.
+
 `zip()` returns a Stream of tuples, where each tuple contains the elements of the zipped Streams that occur at the same position.
 `zipWith()` generalizes `zip()` by taking the function for zipping as the first argument instead of a tupling function.
 
+These methods work in the exact same way as their Collection counterparts, except that they operatee on Streams instead.
 
 ## Member Functions for Streams
 
 ### List Processing Functions
 
-Now as we showed above with `take()`, there are a couple more key member functions for Streams.
 Similar to Collections, we can call `head()` to return the first element of the Stream.
 
 ```cpp
 std::cout << from(1).head() << std::endl;
 
->>> 1
+// 1
 ```
 
-Similar to Collections, we can do a similar thing by calling `tail()` which will return the Stream without the current head.
-Since a Stream is built using it's head, and a pointer to a function generating a value ahead - calling tail() on a Stream like below will produce the following result:
+`tail()` returns the Stream without the current head.
 
 ```cpp
 std::cout << from(1).tail().head() << std::endl;
 
->>> 2
+// 2
 ```
 
 ### Filtering Function
 
-Just like Collections, we can also call a `filter()` function and then convert it to a Collection to print it using `take()`.
-
-`filter()` in this case return a sub-Stream of elements of the Stream that match the predicate function provided.
+Just like Collections, we can also `filter()` Streams.
+`filter()` simply returns a sub-Stream of elements of the Stream that match the predicate function provided.
 
 ```cpp
 auto odds = from(1).filter([](int x) { return x % 2 != 0; }).take(5);
-odds.print();
+std::cout << odds << std::endl;
 
->>> [1,3,5,7,9]
+// [1,3,5,7,9]
 ```
 
 ### Mapping function
 
-Similar to Collections as well, `map()` allows us to return a Stream that is given due to the transformation of each element from the original Stream given as input.
+Again, like Collections, `map()` allows us to return a Stream transformed according to the function we pass it.
 
 Let's create a list of the first five squares.
-```cpp
-auto squares = from(1);
-```
-Now we will apply `map()`.
+
 ```cpp
 auto squares = from(1).map([](int x) { return x * x; });
-```
-Next, to convert to a Collection we can run:
-```cpp
-auto squares = from(1).map([](int x) { return x * x; }).take(5);
-```
-Finally, we can `print()` the five items we need.
-```cpp
-auto squares = from(1).map([](int x) { return x * x; }).take(5);
-squares.print();
+std::cout << squares.take(5) << std::endl;
 
->>> [1,4,9,16,25]
+// [1,4,9,16,25]
 ```
-
 
 ## You're Done!
 You've made it!
-Thank you so much for following along our entire guide highlighting all the features, syntax-styling, and code that drives our library.
-Now using source operators, intermediate operators, and terminal operators - you can build full pipelines in C++ which provides the readability of a language like Scala.
-For example, summing the squares from 0 to 100 is simply:
-```cpp
-int sum = range(1, 101).map([](int x) { return x*x; }).reduceLeft([](int x, int y) { return x+y; });
-```
-We hope that C++ Collections will make functional programming concepts with both finite and infinite data structures accessible and understandable to C++ programmers.
-If you would like to contribute to the project it can be found [here][2]. Thanks and stay posted for updates.
+Thank you so much for reading through our tutorial highlighting the features, syntax, and code that drives our library.
+By piping together the Collection and Stream methods you find here, you will be able to easily write complex, functional list operations in C++ with readability of a language like Scala.
 
+We hope that C++ Collections will make functional programming concepts with both finite and infinite data structures more accessible and understandable to C++ programmers.
+If you would like to contribute to the project it can be found [here][2]. 
+
+Thank you and stay posted for updates.
 
 <!-- Sources -->
 [repo_download]: https://github.com/natebrennand/cpp_collections/archive/master.zip
