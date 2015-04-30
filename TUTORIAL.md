@@ -112,7 +112,7 @@ This allows Collections to not only remain fast, but reliable.
 Although we are using integers for most of our examples here, the Collection can handle any type due to the type agnosticism of vectors.
 Now we will explore some other ways to create, manipulate, and use Collections.
 
-## 3. Non-Member Functions for Collections
+## Non-Member Functions for Collections
 
 Although the Collection constructor provides a simple way to instantiate a Collection.
 Often times, it can be easier to use non-member functions to return collections.
@@ -181,9 +181,9 @@ std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
 >>> [0,2,4]
 ```
 
-## 4. Simple Member Functions for Collections
+## Simple Member Functions for Collections
 
-### 4.1 Returning Collections
+### Returning Collections
 
 Now that we understand the different ways we can create a Collection, how can we return a Collection?
 Since Collections are stored as vectors, this method simply returns the internal data object.
@@ -198,7 +198,7 @@ Since Collections are stored as vectors, this method simply returns the internal
 std::list<int> l = Collection<int>(5).list(); //returns a list of 5 zeros
 ```
 
-### 4.2 List Processing 
+### List Processing
 
 For list processing, C++ Collections tends to use Haskell method names for returning particular elements on a list.
 
@@ -276,7 +276,7 @@ s.print();
 ```
 
 
-## 5. Advanced Member Functions for Collections
+## Advanced Member Functions for Collections
 
 Now that we have covered standard member functions, we can move to more advanced member functions. 
 Lambdas allow us to apply functions as parameters giving us interesting options for member functions.
@@ -313,7 +313,7 @@ s.filter([](int x) { return x % 2 != 0; }).slice(1,3).print();
 ```
 This method allows the user to return a subset of the original collection based on provided indicides.
 
-### 5.1 Mapping functions
+### Mapping functions
 One of the key components to functional programming, particularly coming from a language like Ruby or Scala is the map function.
 C++11's lambdas become useful in implementing `map()`.
 ```cpp
@@ -337,7 +337,7 @@ std::cout << a.tmap([](int x) { return x+1; }, 3) << std::endl;
 All functions that have a prefix with the character 't' are multithreaded and have the second parameter holding the number of necessary threads.
 Also, std::cout can be used to print output similar to `print()`.
 
-### 5.2 Reduction functions
+### Reduction functions
 
 Return the final value of the application of the same binary operator on adjacent pairs of elements in the Collection, starting from the left.
 The use of reduceLeft can allow binary operators to apply to large lists with a small synatx foot-print.
@@ -369,7 +369,7 @@ std::cout << sum << std::endl;
 >>> 10
 ```
 
-### 5.3 Fold/Scan Functions
+### Fold/Scan Functions
 
 We have two fold functions: `foldLeft()` and `foldRight()`.
 
@@ -393,13 +393,13 @@ std::cout << ints2 << std::endl;
 >>> [1,2,4,7,11]
 ```
 
-### 5.4 Extra
+### Extra
 
 All in all, the Collection object provides a very clean abstraction over the standard `list` or `vector` object.
 The development of many of these functions highlighted above allows tasks like applying binary operations to sets of numbers to be easy.
 The multithreading in methods provided also provides a performance boost and is recommended when implementing and using a Collection.
 
-## 6. Creating Streams
+## Creating Streams
 
 Creating Streams is a little different.
 One of the key differentiating factors between Streams and Collections is that Streams can be used to represent potentially infinite lists of data. 
@@ -438,7 +438,7 @@ To quote the document:
 
 We can simply this by using macros to generate Streams rather than depending on `Stream<T>(T head, std::function<T>()> gen)`.
 
-## 7. Macros
+## Macros
 
 A macro is used to ease the syntax of defining any arbitrary recursive Stream generator.
 `def_generator()` takes the first parameter providing a name, the second parameter providing a return type, and the rest of the parameters providing arguments for the named function.
@@ -460,11 +460,11 @@ std::cout << fibs(0, 1).take(10) << std::endl;
 
 >>> [1,1,2,3,5,8,13,21,34,55]
 ```
-## 8. Non-Member Functions for Streams
+## Non-Member Functions for Streams
 
 Non-member functions don't need to act on a Stream to run.
 
-### 8.1 Alternative Generating Tactics
+### Alternative Generating Tactics
 Now rather than using `def_generator` there is an easier way to generate a Stream using a non-member function called `from()`.
 ```cpp
 from(1).take(5).print();
@@ -473,7 +473,7 @@ from(1).take(5).print();
 ```
 `from()` constructs a Stream starting with the first parameter and incrementing by a step.
 
-### 8.2 Prepend Values
+### Prepend Values
 Now assume you want to add values to a Stream. 
 `cons(T value, Stream<T> other)` can allow a user to prepend a value to a Stream.
 ```cpp
@@ -491,15 +491,15 @@ std:cout << (10 & (20 & ints)).take(5) << std::endl;
 ```
 
 
-### 8.3 Zipping Streams
+### Zipping Streams
 Similar to `range()` for Collections, it is easy to use `zip()` and `zipWith()` in the identical manner to the Collections above.
 `zip()` returns a Stream of tuples, where each tuple contains the elements of the zipped Streams that occur at the same position.
 `zipWith()` generalizes `zip()` by taking the function for zipping as the first argument instead of a tupling function.
 
 
-## 9. Member Functions for Streams
+## Member Functions for Streams
 
-### 9.1 List Processing Functions
+### List Processing Functions
 
 Now as we showed above with `take()`, there are a couple more key member functions for Streams.
 Similar to Collections, we can call `head()` to return the first element of the Stream.
@@ -519,7 +519,7 @@ std::cout << from(1).tail().head() << std::endl;
 >>> 2
 ```
 
-### 9.2 Filtering Function
+### Filtering Function
 
 Just like Collections, we can also call a `filter()` function and then convert it to a Collection to print it using `take()`.
 
@@ -532,7 +532,7 @@ odds.print();
 >>> [1,3,5,7,9]
 ```
 
-### 9.3 Mapping function
+### Mapping function
 
 Similar to Collections as well, `map()` allows us to return a Stream that is given due to the transformation of each element from the original Stream given as input.
 
@@ -557,7 +557,7 @@ squares.print();
 ```
 
 
-## 10. You're Done!
+## You're Done!
 You've made it!
 Thank you so much for following along our entire guide highlighting all the features, syntax-styling, and code that drives our library.
 Now using source operators, intermediate operators, and terminal operators - you can build full pipelines in C++ which provides the readability of a language like Scala.
