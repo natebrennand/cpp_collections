@@ -14,12 +14,12 @@
 #include <type_traits>
 #include <vector>
 
+#include "utility.h"
 #include "collections.h"
 
 // Macro to ease the syntax of defining a generator
 #define def_generator(name, return_type, arg_types...) \
     std::function<Stream<return_type>(arg_types)> name = [&](arg_types) -> Stream<return_type>
-
 
 namespace cpp_collections {
 
@@ -150,6 +150,52 @@ namespace cpp_collections {
     from(T n, T step=1) {
         return Stream<T>(n, [=]() -> Stream<T> {
             return from(n + T(step), T(step));
+        });
+    }
+
+    // Construct a Stream whose values are the return values from repeated
+    // calls the generation function which takes no arguments.
+    template<typename Function>
+    Stream<typename std::result_of<Function()>::type>
+    generate(Function func) {
+        using return_type = typename std::result_of<Function()>::type;
+        return Stream<return_type>(func(), [=]() -> Stream<return_type> {
+            return generate(func);
+        });
+    }
+
+    // Construct a Stream that consists of a repeated value.
+    template<typename T>
+    Stream<T>
+    repeat(T value) {
+        return Stream<T>(value, [=]() -> Stream<T> {
+            return repeat(value);
+        });
+    }
+
+    // Given an initial value x and function f, return the Stream produced by
+    // x, f(x), f(f(x)), and so on.
+    template<typename T, typename Function>
+    Stream<T>
+    iterate(T value, Function func) {
+        return Stream<T>(value, [=]() -> Stream<T> {
+            return iterate(func(value), func);
+        });
+    }
+
+    // Return the Stream that is the recurrence relation starting with an
+    // intial set of values. For example, if we have two initial values a1 and
+    // a2, the output of the stream would be: a1, a2, a3=f(a1,a2), a4=f(a2,a3),
+    // and so on.
+    template<typename Tuple, typename Function>
+    Stream<typename std::result_of<Function(Tuple)>::type>
+    recurrence(Function func, Tuple t) {
+        using return_type = typename std::result_of<Function(Tuple)>::type;
+
+        auto sub_tuple = get_part<1, std::tuple_size<Tuple>::value>(t);
+        auto new_tuple = std::tuple_cat(sub_tuple, std::make_tuple(func(t)));
+        return Stream<return_type>(std::get<0>(t), [=]() -> Stream<return_type> {
+            return recurrence(func, new_tuple);
         });
     }
 
