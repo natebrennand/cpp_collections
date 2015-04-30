@@ -13,7 +13,6 @@ Index:
   - [Mapping functions](#mapping-functions)
   - [Reduction functions](#reduction-functions)
   - [Fold and scan Functions](#fold-and-scan-functions)
-  - [Extra](#extra)
 - [Creating Streams](#creating-streams)
 - [Macros](#macros)
 - [Non-Member Functions for Streams](#non-member-functions-for-streams)
@@ -160,10 +159,11 @@ auto b = range(5,10);
 auto ab = zip(a, b);
 
 cout << ab << endl;
-// [(0,5), (1,6), (2,7), (3,8), 4,9)]
+// [(0,5), (1,6), (2,7), (3,8), (4,9)]
 ```
 
-In the following example we see that `zip()` returns a new Collection of tuples that include an integer, float and character.
+Tuples can also hold elements with different types, meaning that `zip()` can be called on Collections of different types as well.
+In the following example we see that `zip()` returns a new Collection of tuples that include an `int`, `float`, and `char`.
 
 ```cpp
 auto e = range(3);
@@ -175,8 +175,8 @@ cout << efg << endl;
 // [(0,0.0,'e'), (1,1.0,'f'), (2,2.0,'g')]
 ```
 
-`zipWith()` generalizes the functionality provided by `zip()` by allowing us to pass any function to be applied to members of the zipped lists.
-Here we zip two Collections together, *with* a lambda that adds the members of the Collections.
+`zipWith()` generalizes the functionality provided by `zip()` by allowing us to pass any function to be applied to the members of the zipped lists.
+Here we zip two Collections together, *with* a lambda function that adds the members of the Collections together.
 
 ```cpp
 auto a = range(3);
@@ -192,130 +192,85 @@ std::cout << sums << std::endl;
 ### Returning Collections
 
 Now that we understand the different ways we can create a Collection, how can we return the data from a Collection?
-Since Collections are stored as vectors, this method simply returns the internal data object.
+Since Collections are stored as vectors, the `vector()` method simply returns the internal data object.
 
 ```cpp
-//returns a vector of 5 zeros
+// returns a std::vector of size 5 with elements 0,1,2,3,4 
 auto c = range(5);
 std::vector<int> v = c.vector();
 ```
 
-
-
 What happens if we want to return a list?
-Since Collections are stored as vectors, this method simply returns the internal data object which is then converted to a list by using `std::begin(Data)` and `std::end(Data)` to a `std::list`.
 
 ```cpp
-//returns a list of 5 zeros
+// returns a std::list of size 5 with elements 0,1,2,3,4 
 std::list<int> l = Collection<int>(5).list();
 ```
 
-
-
-
-
 ### List Processing
 
-For processing Collections, C++ Collections use a common set of operations that are common in functional langauges.
+For processing Collections, the C++ Collections library exposes a set of operations that are common in functional langauges.
+Firstly, in order to maintain consistency with the list data structures of Haskell and Scala, we implement the `head()`, `last()`, `init()`, and `tail()` functions.
 
-
-
-
-The `head()` function will return an element of type `<T>` depending on whatever type the Collection originally was.
-This function, however, is not a pipeline operator and instead is a terminal operator as you cannot use dot-syntax to keep adding to it.
+The `head()` function returns the first element in the Collection.
+The `last()` function returns the last element in the Collection
 
 ```cpp
-auto col = range(1,101);
+auto col = range(1,11);
 
 cout << col.head(); << endl;
 // 1
 
 cout << col.last(); << endl;
-// 100
+// 10
 ```
 
-
-Above we have `last()` which similar to `head()`, returns the final element.
-
-
-
-
-The more interesting of the list processing functions are both `init()` and `tail()`.
-Both of these also return Collections and can be used on top of each other to produce different mutations of the original Collection.
-The two functions are similar with slight differences - `init()` returns a Collection with all elements except the last.
+The `init()` function returns a new Collection with all elements except the last.
+The `tail()` function returns a new Collection with all elements except the head.
 
 ```cpp
-auto col = range(10);
+auto col = range(1,11);
 cout << col.init() << endl;
-
-// [0,1,2,3,4,5,6,7,8]
-```
-
-
-
-Now what would happen if we split the two methods `init()` in a different expression from where we print the Collection?
-
-```cpp
-auto col = range(10);
-
-col.init()
-cout << col << endl;
-// [0,1,2,3,4,5,6,7,8,9]
-
-auto i = col.init()
-cout << i << endl;
-// [0,1,2,3,4,5,6,7,8]
-```
-
-
-
-This may be confusing initially - but `init()` does not mutate the internal vector but returns a new Collection with a new vector inside.
-In fact both `init()` and `tail()` return modified copies of the Collection object.
-Now, if we call `tail()` which returns all the elements except the head in a Collection on `col.init()` what will the result be?
-
-```cpp
-cout << col.init().tail() << endl;
-// [1,2,3,4,5,6,7,8]
-```
-
-
-
-
-Although `tail()` returns a copy without the head of a Collection.
-You can also remove the head of a collection itself by mutating it with `pop_head()`.
-
-```cpp
-auto col = range(10);
-col.pop_head();
-col.print();
 
 // [1,2,3,4,5,6,7,8,9]
 ```
 
+What would happen if we called `init()` on our Collection *before* printing it?
 
+```cpp
+auto col = range(1,11);
 
+col.init()
+cout << col << endl;
+// [1,2,3,4,5,6,7,8,9,10]
 
-All these functions can be used together to do things like creating a list of ten odd numbers by doing something like this:
+auto new_col = col.init()
+cout << new_col << endl;
+// [1,2,3,4,5,6,7,8,9]
+```
+
+This example might be confusing initially, but the concept it illustrates is central to functional programming. 
+`init()` does not mutate the internal `std::vector` of the Collection is is called on but instead returns a new Collection with a new `std::vector` inside.
+In fact, both `init()` and `tail()` return modified *copies* of the original Collection object, as do `zip()`, `zipWith()`, and other, more advanced functions we will see a little later.
+
+This means that we can use all these functions together to do create arbitrarily complex Collections.
+Here, we create a list of ten odd numbers.
 
 ```cpp
 auto s = range(11);
 s = zipWith([](int x, int y) {return x+y;}, s, s.tail());
-s.print();
+std::cout << s << std::endl;
 
-// [1,3,5,7,9,11,13,15,17, 19]
+// [1,3,5,7,9,11,13,15,17,19]
 ```
-
-
-
-
 
 ## Advanced Member Functions for Collections
 
-Now that we have covered standard member functions, we can move to more advanced member functions.
-Lambdas allow us to apply functions as parameters giving us interesting options for member functions.
+Now that we have covered basic member functions of Collections we can move on to more advanced member functions.
 
-One of the first things we can do similar to `zipWith()` is to try out the `each()` function.
-This function allows you to call a given block once for each element in the Collection that it is being applied to passing that element as a parameter.
+C++11 lambdas allow us to pass functions as parameters, giving us lots of interesting functionality for advanced member functions.
+One of the most basic examples of this is the `each()` function, which allows us to pass a function to be executed once for every element in the Collection.
+
 ```cpp
 int sum = 0;
 auto a = range(5);
@@ -324,82 +279,90 @@ a.each([&](int x) {
 });
 std::cout << sum << std::endl;
 
->>> 10
+// 10
 ```
-The `filter()` function is similar to the `each()` function, but instead of returning a terminal value, returns a subset of the original Collection that has passed through a predicate function.
-Similar to **4.2** let's attempt to print a list of even numbers with a filter.
-Since we are using `filter()` for a smaller ranger it is understandable that we will have less odd numbers since we are not generating odd numbers, but removing even numbers.
+
+The `filter()` function is similar to the `each()` function, except that the function passed to it must return a boolean value.
+`filter()` will test each element with this predicate function and return a subset of the original Collection with the elements that pass the predicate.
+Similar to the example above, let's attempt to print a list of odd numbers with `filter()`.
 
 ```cpp
-auto s = range(11);
+auto s = range(20);
 s.filter([](int x) { return x % 2 != 0; }).print();
 
->>> [1,3,5,7,9]
+// [1,3,5,7,9,11,13,15,17,19]
 ```
-Now assuming we would want to filter this Collection more - let's say we try to get the indicies within the range `[1, 3)`.
-This is where the `slice()` comes in.
-```cpp
-auto s = range(11);
-s.filter([](int x) { return x % 2 != 0; }).slice(1,3).print();
 
->>> [3,5]
+Let's assume we only want the fourth and fifth odd numbers in our Collection.
+The `slice()` method returns a new Collection with the elements whose indices are within the range `[low, high)`.
+
+```cpp
+auto s = range(20);
+std::cout << s.filter([](int x) { return x % 2 != 0; }).slice(3,5).print();
+
+// [7,9]
 ```
-This method allows the user to return a subset of the original collection based on provided indicides.
 
 ### Mapping functions
-One of the key components to functional programming, particularly coming from a language like Ruby or Scala is the map function.
-C++11's lambdas become useful in implementing `map()`.
+
+One of the key concepts in functional programming is the `map()` function.
+`map()` allows us to apply an arbitrary transformation (passed as a C++11 lambda) to all the elements of the Collection.
+
 ```cpp
 auto a = range(3);
 a.map([](int x) { return x+1; }).print();
 
->>> [1,2,3]
+// [1,2,3]
 ```
 
-This function above allows us to apply a transformation to the Collection generated in using `range(3)`.
-Although it may be syntactically similar, `tmap()` allows the user to call the map function using multi-threading.
-The use of multiple concurrent `std::threads` speeds up processing.
+The `tmap()` function achieves the same effect as `map()`, but uses multiple concurrent `std::threads` to speed up processing.
+You can pass the number of threads you would like to execute your transformation with as the second argument to `tmap()` (default is set to `std::thread::hardware_concurrency()`, or, if that returns 0, 4).
 
 ```cpp
 auto a = range(3);
 std::cout << a.tmap([](int x) { return x+1; }, 3) << std::endl;
 
->>> [1,2,3]
+// [1,2,3]
 ```
 
-All functions that have a prefix with the character 't' are multithreaded and have the second parameter holding the number of necessary threads.
-Also, std::cout can be used to print output similar to `print()`.
+All functions that are prefixed with the character 't' are multithreaded and can be passed the number of threads to execute with as their final parameter.
 
 ### Reduction functions
 
-Return the final value of the application of the same binary operator on adjacent pairs of elements in the Collection, starting from the left.
-The use of reduceLeft can allow binary operators to apply to large lists with a small synatx foot-print.
-Assume you want to sum the first five digits from zero to four inclusively:
+In an example above, we used the `each()` function with an external variable to sum the values in a Collection.
+This was not the traditionally functional way of achieving this.
+Reduction functions return a single value which is the result of the application of the same binary operator on adjacent pairs of elements in the Collection.
+`reduceLeft()` applies the binary operator starting from the left, and `reduceRight()` applies the binary operator starting from the right (or last element).
+
+Here we use `reduceLeft()` to find the sum of the integers 0 - 4. 
 
 ```cpp
 int sum = range(5).reduceLeft([](int x, int y) { return x+y; });
 std::cout << sum << std::endl;
 
->>> 10
+// 10
 ```
-We can do the same thing reducing right.
-This is the same function just operating from the right first:
+
+It is worth diving into this a little bit more, and inspecting the state of the Collection at each step of the reduction.
 
 ```cpp
-int sum = range(5).reduceRight([](int x, int y) { return x+y; });
-std::cout << sum << std::endl;
-
->>> 10
+begin : 0,1,2,3,4
+step 1:   1,2,3,4
+step 2:     3,3,4
+step 3:       6,4
+step 4:        10
 ```
 
-Similar to `tmap()`, we also have `treduce()`: an alternative implementation of reduce that uses multiple concurrent threads to speed up processing.
-The function passed to treduce must be commutative to achieve accurate results.
+Reduction functions move pairwise across the Collection, applying the same binary operator on each pair that it finds. 
+
+Similar to `tmap()`, we also have `treduce()`, an alternative implementation of reduce that uses multiple concurrent threads to speed up processing.
+Note that the function passed to `treduce()` must be commutative to achieve accurate results, becuase we cannot guarantee that all binary reductions will occurr in the expected order when working with multiple threads.
 
 ```cpp
 int sum = range(5).treduce([](int x, int y) { return x+y; }, 3);
 std::cout << sum << std::endl;
 
->>> 10
+// 10
 ```
 
 ### Fold/Scan Functions
@@ -407,30 +370,24 @@ std::cout << sum << std::endl;
 We have two fold functions: `foldLeft()` and `foldRight()`.
 
 This returns the result of the application of the same binary operator on all elements in the Collection as well as an initial value, starting from the left.
+Folds are just the same as reductions, except that they start with an initial value, meaning that a fold can return a type different from that stored in the original Collection, while a reduction cannot.
 
 ```cpp
 int sum = range(5).foldLeft([](int x, int y) { return x+y; }, 0);
 std::cout << sum << std::endl;
 
->>> 10
+// 10
 ```
 
-`foldRight()` is similar in terms of function. 
-In addition to all these fold functions, we can also return the intermediate results of the binary accumulation of elements in a Collection object starting from the left with `scanLeft()` and then with the right with `scanRight()`.
+In addition to the fold functions, we can also return the intermediate results of the binary accumulation of elements in a Collection with `scanLeft()` and `scanRight()`.
 
 ```cpp
 auto ints = range(1,5);
 auto ints2 = ints.scanLeft([](int x, int y) { return x+y; }, 1);
 std::cout << ints2 << std::endl;
 
->>> [1,2,4,7,11]
+// [1,2,4,7,11]
 ```
-
-### Extra
-
-All in all, the Collection object provides a very clean abstraction over the standard `list` or `vector` object.
-The development of many of these functions highlighted above allows tasks like applying binary operations to sets of numbers to be easy.
-The multithreading in methods provided also provides a performance boost and is recommended when implementing and using a Collection.
 
 ## Creating Streams
 
@@ -438,17 +395,21 @@ Creating Streams is a little different.
 One of the key differentiating factors between Streams and Collections is that Streams can be used to represent potentially infinite lists of data. 
 Streams, instead can be converted to Collections (our finite data structure) using the `take()` function. 
 First, let's create a Stream.
+
 ```cpp
 std::function<Stream<int>()> ones = [&]() { return Stream<int>(1, ones) };
 ```
+
 Here we have an infinite list starting at 1. 
 It is important that we short-circuit this Stream in order for it to produce some sort of result.
 Now if we want to pull out the first three results we can do the following:
+
 ```cpp
 std::cout << ones().take(3) << std::endl;
 
 >>> [1,1,1]
 ```
+
 The `take()` method converts the Stream into a Collection for printing.
 Prior, however, we use the default Stream constructor.
 
