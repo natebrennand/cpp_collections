@@ -1,7 +1,30 @@
 
 # Tutorial
 
+Index:
+
 - [Getting Started](#getting-started)
+- [Creating Collections](#creating-collections)
+- [Non-Member Functions for Collections](non-member-functions-for-collections)
+- [Simple Member Functions for Collections](simple-member-functions-for-collections)
+  - [Returning Collections](returning-collections)
+  - [list Processing](list-processing)
+- [Advanced Member Functions for Collections](advanced-member-functions-for-collections)
+  - [Mapping functions](mapping-functions)
+  - [Reduction functions](reduction-functions)
+  - [Fold and scan Functions](fold-and-scan-functions)
+  - [Extra](extra)
+- [Creating Streams](creating-streams)
+- [Macros](macros)
+- [Non-Member Functions for Streams](non-member-functions-for-streams)
+  - [Alternative Generating Tactics](alternative-generating-tactics)
+  - [Prepend Values](prepend-values)
+  - [Zipping Streams](zipping-streams)
+- [Member Functions for Streams](member-functions-for-streams)
+  - [List Processing Functions](list-processing-functions)
+  - [Filtering Function](filtering-function)
+  - [Mapping function](mapping-function)
+- [Conclusion](Youre-Done)
 
 We will begin with a swift introduction to C++ Collections.
 Our goal is to show the main elements of this library as quickly as possible.
