@@ -25,4 +25,10 @@ int main() {
     ints = Collection<int>(int_c_array, 4);
     assert(ints[3] == 5);
 
+    auto a = Collection<int>();
+    assert(a.size() == 0);
+    auto b = Collection<int>(5);
+    assert(b.size() == 5);
+    assert(b[1] == 0);
+
 }

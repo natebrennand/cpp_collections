@@ -23,7 +23,7 @@ int main() {
         return data;
     };
 
-    std::cout << "Comparing reduceLeft & preduce" << std::endl;
+    std::cout << "Comparing reduceLeft & treduce" << std::endl;
 
 
     bench(input, [&](Collection<int> i){
@@ -31,14 +31,14 @@ int main() {
     }, trials, "reduceLeft: linear reduceLeft");
 
     bench(input, [&](Collection<int> i){
-        return i.preduce(add, 4);
-    }, trials, "preduce: parallel reduce");
+        return i.treduce(add, 4);
+    }, trials, "treduce: parallel reduce");
 
     bench(rand_input, [&](Collection<int> i){
         return i.reduceLeft(add);
     }, trials, "reduceLeft: linear reduceLeft w/ random data");
 
     bench(rand_input, [&](Collection<int> i){
-        return i.preduce(add, 4);
-    }, trials, "preduce: parallel reduce w/ random data");
+        return i.treduce(add, 4);
+    }, trials, "treduce: parallel reduce w/ random data");
 }

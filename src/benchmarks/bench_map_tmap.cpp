@@ -22,7 +22,7 @@ int main() {
         return data;
     };
 
-    std::cout << "Comparing map & pmap" << std::endl;
+    std::cout << "Comparing map & tmap" << std::endl;
 
 
     bench(input, [&](Collection<int> i){
@@ -30,14 +30,14 @@ int main() {
     }, trials, "map: linear map");
 
     bench(input, [&](Collection<int> i){
-        return i.pmap(inc, 4);
-    }, trials, "pmap: parallel map");
+        return i.tmap(inc, 4);
+    }, trials, "tmap: parallel map");
 
     bench(rand_input, [&](Collection<int> i){
         return i.map(inc);
     }, trials, "map: linear map w/ random data");
 
     bench(rand_input, [&](Collection<int> i){
-        return i.pmap(inc, 4);
-    }, trials, "pmap: parallel map w/ random data");
+        return i.tmap(inc, 4);
+    }, trials, "tmap: parallel map w/ random data");
 }
