@@ -49,13 +49,15 @@ The difference between a Collection and a Stream object is:
 
 ## Creating Collections
 
-The Collection is used to represent a finite list which allows a number of functions outside of STL to be called on it.
+(We can assume that we are using namespace `std` for all examples.)
 
-To create a Collection, use the *auto* keyword and create an empty collection.
+The Collection is used to represent a finite list which allows a number of functions outside of STL to be called on it.
+To create a Collection, use the *auto* keyword for the type and create an empty collection.
 
 ```cpp
 auto empty_collection = Collection<int>();
 ```
+
 
 With this empty collection we have a number of member functions.
 Let's call the `size()` method.
@@ -64,53 +66,70 @@ Let's call the `size()` method.
 int x = empty_collection.size();
 
 std::cout << x << std::endl
-
->>> 0
+// 0
 ```
 
-We can assume that we are `using namespace std` for all examples.
+
 Now, rather than instantiating an empty list, we can instantiate a list with a predetermined size.
 
 ```cpp
-auto presizedCollection = Collection<T>(5);
+auto presizedCollection = Collection<int>(5);
+
+std::cout << presizedCollection << std::endl;
+// [0,0,0,0,0]
 ```
+
 
 This can be validated immediately by running the following:
 
 ```cpp
-std::cout<< presizedCollection.size() << std::endl;
-
->>> 5
+std::cout << presizedCollection.size() << std::endl;
+// 5
 ```
+
+
 The `size()` method works because since the internal data object of a Collection is a vector, this simply calls `size()` from `std::vector<T>` on the internal data object.
 Now, since the Collection constructor is implemented by abstracting a private `vector`, you can create a Collection using a vector as well.
 
 ```cpp
-auto vectorCollection = Collection<T>(std::vector<T> d);
+vector<int> v {1,2,3,5,7};
+auto vectorCollection = Collection<int>(v);
 ```
+
 
 Rather than just vectors, you can also create a Collection with an array:
 
 ```cpp
-auto arrayCollection = Collection<T>(std::array<T, SIZE> d); // created with an array
+array<int, 6> foo  = {1, 1, 2, 3, 5, 8};
+auto arrayCollection = Collection<int>(foo); // created with an array
 ```
+
 
 You can also use a c-style array:
 
 ```cpp
-auto cListCollection = Collection<T>(T d[], int len); // C-style array
+int foo [5] = { 16, 2, 77, 40, 12071 };
+auto cListCollection = Collection<int>(foo, 5); // C-style array
+
 ```
+
 
 You can even use a list:
+
 ```cpp
-auto listCollection = Collection<T>(std::list<T> d); // created with a list
+list<int> l = {1,2,3,4};
+auto listCollection = Collection<int>(l); // created with a list
 ```
 
-
-As mentioned above, the Collection class uses a `std::vector` to store data internally. 
-This allows Collections to not only remain fast, but reliable. 
+As mentioned above, the Collection class uses a `std::vector` to store data internally.
+This allows Collections to not only remain fast, but reliable.
 Although we are using integers for most of our examples here, the Collection can handle any type due to the type agnosticism of vectors.
 Now we will explore some other ways to create, manipulate, and use Collections.
+
+
+
+
+
 
 ## Non-Member Functions for Collections
 
@@ -121,106 +140,143 @@ This can be another method of creating collections - particularly with certain c
 
 If you want to return a Collection of numeric types over the range `[0, size)` use the `range()` function.
 
+This uses the `range(T size)` to return a Collection from zero to four.
+The numeric type used to tell range how the domain dictates what type the values are.
+
 ```cpp
 auto a = range(5);
-a.print();
+cout << a << endl;
 
->>> [0,1,2,3,4]
+// [0,1,2,3,4]
+
+
+auto f = range(float(5));
+cout << f << endl;
+
+// [0.0,1.0,2.0,3.0,4.0]
 ```
 
-This uses both the `print()` method and the `range(T size)` to return a Collection from zero to four.
+
+
 Another way you can utilize `range()` is to use the other set of parameters where you return a collection over the range `[low, high)`.
 
 ```cpp
 auto b = range(5, 10);
-b.print(); //std::cout << arr << std::endl;
+cout << b << endl;
 
->>> [5,6,7,8,9]
+// [5,6,7,8,9]
 ```
 
-Again we utilized the `print()` method which allows you to output the contents of a Collection to the `std::out`.
+
+
 Now assuming you would like to return a Collection that can concatenate with another Collection we can do that the following way.
 
 ```cpp
 auto a = range(5);
 auto b = range(5,10);
 auto c = range(5);
-concat(a, b, c).print();
+cout << concat(a, b, c) << endl;
 
->>> [0,1,2,3,4,5,6,7,8,9,0,1,2,3,4]
+// [0,1,2,3,4,5,6,7,8,9,0,1,2,3,4]
 ```
 
-So what if the user wants to return a tuple where each tuple contains the elements of the zipped Collections that occur at the same position?
+
+
+Do you need to use multiple Collections together for an operation?
+The `zip` function combines multiple Collections into a single Collection of tuples.
+A [tuple](http://www.cplusplus.com/reference/tuple/) is a dynamically created object that can hold multiple different types.
 
 ```cpp
-auto d = zip(a, b, c); //using
-assert(d[0] == std::make_tuple(0, 5, 0));
+auto a = range(5);
+auto b = range(5,10);
+auto ab = zip(a, b);
+
+cout << ab << endl;
+// [(0,5), (1,6), (2,7), (3,8), 4,9)]
 ```
 
-The assert here will pass because of how zip works. 
-Now what if we use three different types?
+
+
+Here we see `zip` create a new Collection of tuples that include an integer, float and character.
 
 ```cpp
 auto e = range(3);
-auto f = range(3.0);
+auto f = range(float(3.0));
 auto g = Collection(std::vector<char> {'e','f','g'});
 
-auto h = zip(e, f, g);
-
-assert(h[0] == std::make_tuple(0, 0.0, 'e'));
+auto efg = zip(e, f, g);
+cout << efg << endl;
+// [(0,0.0,'e'), (1,1.0,'f'), (2,2.0,'g')]
 ```
 
-Again, this will work because of how tuples don't need to all have the same type to work properly.
+
+
 Now if you put a function into the generalize `zip` function instead called `zipWith()` you can return a collection rather than a tupling function.
 
 ```cpp
 auto a = range(3);
 auto b = range(3);
-std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
+auto sums = zipWith([](int x, int y) { return x+y; }, a, b)
 
->>> [0,2,4]
+std::cout << sums << std::endl;
+// [0,2,4]
 ```
+
+
+
+
 
 ## Simple Member Functions for Collections
 
 ### Returning Collections
 
-Now that we understand the different ways we can create a Collection, how can we return a Collection?
+Now that we understand the different ways we can create a Collection, how can we return the data from a Collection?
 Since Collections are stored as vectors, this method simply returns the internal data object.
 
 ```cpp
-std::vector<int> v = Collection<int>(5).vector(); //returns a vector of 5 zeros
+//returns a vector of 5 zeros
+auto c = range(5);
+std::vector<int> v = c.vector();
 ```
+
+
+
 What happens if we want to return a list?
 Since Collections are stored as vectors, this method simply returns the internal data object which is then converted to a list by using `std::begin(Data)` and `std::end(Data)` to a `std::list`.
 
 ```cpp
-std::list<int> l = Collection<int>(5).list(); //returns a list of 5 zeros
+//returns a list of 5 zeros
+std::list<int> l = Collection<int>(5).list();
 ```
+
+
+
+
 
 ### List Processing
 
-For list processing, C++ Collections tends to use Haskell method names for returning particular elements on a list.
+For processing Collections, C++ Collections use a common set of operations that are common in functional langauges.
 
-```cpp
-auto col = range(1,101);
-std::cout<< col.head(); << std::endl;
 
->>> 1
-```
 
-The `head()` function will return an element of type `<T>` depending on whatever type the Collection originally was. 
+
+The `head()` function will return an element of type `<T>` depending on whatever type the Collection originally was.
 This function, however, is not a pipeline operator and instead is a terminal operator as you cannot use dot-syntax to keep adding to it.
 
 ```cpp
 auto col = range(1,101);
-std::cout<< col.last(); << std::endl;
 
->>> 100
+cout << col.head(); << endl;
+// 1
+
+cout << col.last(); << endl;
+// 100
 ```
 
+
 Above we have `last()` which similar to `head()`, returns the final element.
-The final element is always the one before the element provided in the second parameter as the range function does not include the last parameter in the returned Collection.
+
+
 
 
 The more interesting of the list processing functions are both `init()` and `tail()`.
@@ -229,32 +285,42 @@ The two functions are similar with slight differences - `init()` returns a Colle
 
 ```cpp
 auto col = range(10);
-col.init().print();
+cout << col.init() << endl;
 
->>> [0,1,2,3,4,5,6,7,8]
+// [0,1,2,3,4,5,6,7,8]
 ```
 
-Now what would happen if we split the two methods `init()` and `print()` into into two separate pieces?
+
+
+Now what would happen if we split the two methods `init()` in a different expression from where we print the Collection?
 
 ```cpp
 auto col = range(10);
-col.init()
-col.print();
 
->>> [0,1,2,3,4,5,6,7,8,9]
+col.init()
+cout << col << endl;
+// [0,1,2,3,4,5,6,7,8,9]
+
+auto i = col.init()
+cout << i << endl;
+// [0,1,2,3,4,5,6,7,8]
 ```
 
-This may be confusing initially - but `init()` does not mutate the internal vector but returns a new Collection with a new vector inside. 
+
+
+This may be confusing initially - but `init()` does not mutate the internal vector but returns a new Collection with a new vector inside.
 In fact both `init()` and `tail()` return modified copies of the Collection object.
 Now, if we call `tail()` which returns all the elements except the head in a Collection on `col.init()` what will the result be?
 
 ```cpp
-col.init().tail().print();
-
->>> [1,2,3,4,5,6,7,8]
+cout << col.init().tail() << endl;
+// [1,2,3,4,5,6,7,8]
 ```
 
-Although `tail()` returns a copy without the head of a Collection. 
+
+
+
+Although `tail()` returns a copy without the head of a Collection.
 You can also remove the head of a collection itself by mutating it with `pop_head()`.
 
 ```cpp
@@ -262,8 +328,11 @@ auto col = range(10);
 col.pop_head();
 col.print();
 
->>> [1,2,3,4,5,6,7,8,9]
+// [1,2,3,4,5,6,7,8,9]
 ```
+
+
+
 
 All these functions can be used together to do things like creating a list of ten odd numbers by doing something like this:
 
@@ -272,13 +341,16 @@ auto s = range(11);
 s = zipWith([](int x, int y) {return x+y;}, s, s.tail());
 s.print();
 
->>> [1,3,5,7,9,11,13,15,17, 19]
+// [1,3,5,7,9,11,13,15,17, 19]
 ```
+
+
+
 
 
 ## Advanced Member Functions for Collections
 
-Now that we have covered standard member functions, we can move to more advanced member functions. 
+Now that we have covered standard member functions, we can move to more advanced member functions.
 Lambdas allow us to apply functions as parameters giving us interesting options for member functions.
 
 One of the first things we can do similar to `zipWith()` is to try out the `each()` function.
@@ -286,7 +358,7 @@ This function allows you to call a given block once for each element in the Coll
 ```cpp
 int sum = 0;
 auto a = range(5);
-a.each([&](int x) { 
+a.each([&](int x) {
     sum += x;
 });
 std::cout << sum << std::endl;
@@ -323,7 +395,7 @@ a.map([](int x) { return x+1; }).print();
 >>> [1,2,3]
 ```
 
-This function above allows us to apply a transformation to the Collection generated in using `range(3)`. 
+This function above allows us to apply a transformation to the Collection generated in using `range(3)`.
 Although it may be syntactically similar, `tmap()` allows the user to call the map function using multi-threading.
 The use of multiple concurrent `std::threads` speeds up processing.
 
