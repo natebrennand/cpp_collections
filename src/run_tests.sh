@@ -7,6 +7,7 @@ if ["$CXX" = ""]
 then
     CXX="g++"
 fi
+echo "CXX = $CXX"
 
 
 reduce_path_to_test_name () {
