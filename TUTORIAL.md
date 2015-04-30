@@ -26,40 +26,35 @@ Index:
   - [Mapping function](#mapping-function)
 - [Conclusion](#youre-done)
 
-We will begin with a swift introduction to C++ Collections.
+We begin with a swift introduction to C++ Collections.
 Our goal is to show the main elements of this library as quickly as possible.
 Rather than getting caught up in details, rules, exceptions - we want to allow users to make useful programs as quickly as possible.
 
-Unlike the standard design documentation which provides a list of all methods available and their uses, we may prefer brevity over depth.
-This is completely intentional, but due to documentation provided, more experienced programmers can use our design document to cement their understanding of C++ Collections.
-
+Unlike the standard design documentation, which provides a list of all methods available and their uses, we prefer brevity over depth here.
+This is completely intentional, and we encourage more experienced programmers to refer to our design document to cement their understanding of C++ Collections.
 
 
 ## Getting Started
 
-In order to run C++ Collections, [download][repo_download] and `#include collections.` for the Collection class (here forth referred to as Collection with a capital 'C') or `#include streams.h` for the Stream class (here forth referred to as Stream with a capital 'S').
+In order to run C++ Collections, [download][repo_download] and `#include cpp_collections.h`.
 
-Once you've installed and added the appropriate libraries, you can then start by creating an either Collection or Stream object.
+You can then start by creating either a Collection or a Stream object.
 The difference between a Collection and a Stream object is:
 
 - Collections are traditional functional abstractions on lists are used to define finite lists.
-- Streams are self-referential lazily-evaluated data structures which allow the storage of the head and a pointer to a function which returns another stream.
-
-
+- Streams are self-referential lazily-evaluated data structures that allow for the definition of infinite lists.
 
 ## Creating Collections
 
-(We can assume that we are using namespace `std` for all examples.)
+(We assume that we are using namespace `std` for all examples.)
 
-The Collection is used to represent a finite list which allows a number of functions outside of STL to be called on it.
-To create a Collection, use the *auto* keyword for the type and create an empty collection.
+The Collection is used to represent a finite list. Let's create an empty one.
 
 ```cpp
 auto empty_collection = Collection<int>();
 ```
 
-
-With this empty collection we have a number of member functions.
+With this empty collection we can demonstrate a number of member functions.
 Let's call the `size()` method.
 
 ```cpp
@@ -69,79 +64,58 @@ std::cout << x << std::endl
 // 0
 ```
 
-
 Now, rather than instantiating an empty list, we can instantiate a list with a predetermined size.
 
 ```cpp
-auto presizedCollection = Collection<int>(5);
+auto presized_collection = Collection<int>(5);
 
-std::cout << presizedCollection << std::endl;
+std::cout << presized_collection << std::endl;
 // [0,0,0,0,0]
 ```
-
 
 This can be validated immediately by running the following:
 
 ```cpp
-std::cout << presizedCollection.size() << std::endl;
+std::cout << presized_collection.size() << std::endl;
 // 5
 ```
 
-
-The `size()` method works because since the internal data object of a Collection is a vector, this simply calls `size()` from `std::vector<T>` on the internal data object.
-Now, since the Collection constructor is implemented by abstracting a private `vector`, you can create a Collection using a vector as well.
+Because Collections use a `std::vector` to store its data internally, the `size()` method of a Collection simply calls `size()` on its internal `std::vector`.
+Moreover, this implementation detail means that we can easily create a Collection from a `std::vector`.
 
 ```cpp
 vector<int> v {1,2,3,5,7};
-auto vectorCollection = Collection<int>(v);
+auto vector_collection = Collection<int>(v);
 ```
 
-
-Rather than just vectors, you can also create a Collection with an array:
-
-```cpp
-array<int, 6> foo  = {1, 1, 2, 3, 5, 8};
-auto arrayCollection = Collection<int>(foo); // created with an array
-```
-
-
-You can also use a c-style array:
-
-```cpp
-int foo [5] = { 16, 2, 77, 40, 12071 };
-auto cListCollection = Collection<int>(foo, 5); // C-style array
-
-```
-
-
-You can even use a list:
+In addition to `std::vector`, we can also create a Collection from a `std::list`.
 
 ```cpp
 list<int> l = {1,2,3,4};
-auto listCollection = Collection<int>(l); // created with a list
+auto list_collection = Collection<int>(l); 
+```
+
+We can also use `std::array` and C-style arrays.
+
+```cpp
+array<int, 6> foo  = {1, 1, 2, 3, 5, 8};
+auto array_collection = Collection<int>(foo);  // std::array
+
+int foo [5] = { 16, 2, 77, 40, 12071 };
+auto c_array_collection = Collection<int>(foo, 5); // C-style array
+
 ```
 
 As mentioned above, the Collection class uses a `std::vector` to store data internally.
 This allows Collections to not only remain fast, but reliable.
-Although we are using integers for most of our examples here, the Collection can handle any type due to the type agnosticism of vectors.
-Now we will explore some other ways to create, manipulate, and use Collections.
-
-
-
-
-
+Although we use integers for most of our examples here, the Collection can handle any type due to the type agnosticism of vectors. 
 
 ## Non-Member Functions for Collections
 
-Although the Collection constructor provides a simple way to instantiate a Collection.
-Often times, it can be easier to use non-member functions to return collections.
-This can be another method of creating collections - particularly with certain constraints.
-
+Although the Collection constructor provides a simple way to instantiate a Collection, the C++ Collections library contains several non-member functions that make this process easier.
 
 If you want to return a Collection of numeric types over the range `[0, size)` use the `range()` function.
-
-This uses the `range(T size)` to return a Collection from zero to four.
-The numeric type used to tell range how the domain dictates what type the values are.
+Note that the Collection returned by `range()` contains whatever type you passed to `range()` initially.
 
 ```cpp
 auto a = range(5);
@@ -156,9 +130,7 @@ cout << f << endl;
 // [0.0,1.0,2.0,3.0,4.0]
 ```
 
-
-
-Another way you can utilize `range()` is to use the other set of parameters where you return a collection over the range `[low, high)`.
+`range()` can also be used with lower and upper bounds, returning a Collection over the range `[low, high)`.
 
 ```cpp
 auto b = range(5, 10);
@@ -167,9 +139,7 @@ cout << b << endl;
 // [5,6,7,8,9]
 ```
 
-
-
-Now assuming you would like to return a Collection that can concatenate with another Collection we can do that the following way.
+We can also concatenate an arbitrary number of Collections together by using the `concat()` function.
 
 ```cpp
 auto a = range(5);
@@ -180,10 +150,8 @@ cout << concat(a, b, c) << endl;
 // [0,1,2,3,4,5,6,7,8,9,0,1,2,3,4]
 ```
 
-
-
-Do you need to use multiple Collections together for an operation?
-The `zip` function combines multiple Collections into a single Collection of tuples.
+Need to use multiple Collections together for an operation?
+The `zip()` function combines multiple Collections into a single Collection of tuples.
 A [tuple](http://www.cplusplus.com/reference/tuple/) is a dynamically created object that can hold multiple different types.
 
 ```cpp
@@ -195,9 +163,7 @@ cout << ab << endl;
 // [(0,5), (1,6), (2,7), (3,8), 4,9)]
 ```
 
-
-
-Here we see `zip` create a new Collection of tuples that include an integer, float and character.
+In the following example we see that `zip()` returns a new Collection of tuples that include an integer, float and character.
 
 ```cpp
 auto e = range(3);
@@ -209,9 +175,8 @@ cout << efg << endl;
 // [(0,0.0,'e'), (1,1.0,'f'), (2,2.0,'g')]
 ```
 
-
-
-Now if you put a function into the generalize `zip` function instead called `zipWith()` you can return a collection rather than a tupling function.
+`zipWith()` generalizes the functionality provided by `zip()` by allowing us to pass any function to be applied to members of the zipped lists.
+Here we zip two Collections together, *with* a lambda that adds the members of the Collections.
 
 ```cpp
 auto a = range(3);
@@ -221,10 +186,6 @@ auto sums = zipWith([](int x, int y) { return x+y; }, a, b)
 std::cout << sums << std::endl;
 // [0,2,4]
 ```
-
-
-
-
 
 ## Simple Member Functions for Collections
 
