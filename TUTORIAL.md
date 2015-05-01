@@ -14,7 +14,6 @@ Index:
   - [Reduction functions](#reduction-functions)
   - [Fold and scan Functions](#fold-and-scan-functions)
 - [Creating Streams](#creating-streams)
-- [Macros](#macros)
 - [Non-Member Functions for Streams](#non-member-functions-for-streams)
   - [Alternative Generating Tactics](#alternative-generating-tactics)
   - [Prepend Values](#prepend-values)
@@ -31,7 +30,6 @@ Rather than getting caught up in details, rules, exceptions - we want to allow u
 
 Unlike the standard design documentation, which provides a list of all methods available and their uses, we prefer brevity over depth here.
 This is completely intentional, and we encourage more experienced programmers to refer to our design document to cement their understanding of C++ Collections.
-
 
 ## Getting Started
 
@@ -412,7 +410,7 @@ Now, we can take an arbitrary number of elements out of this Stream with the `ta
 ```cpp
 std::cout << ones.take(3) << std::endl;
 
->>> [1,1,1]
+// [1,1,1]
 ```
 
 Note that `take()` returns a Collection, so we could also use any of the Collection manipulation methods on the result.
@@ -448,42 +446,26 @@ tenfibs.head      tenfibs.gen
      3             fibs(2,3)
 ```
 
-## Macros
+## Non-Member Functions for Streams
+
+### Alternative Stream Creation Tactics
 
 Unfortunately, both examples above are rather verbose. 
-C++11 does not allow the definition of recursive lambdas, so we have to define our Stream generators as `std::function`s instead.
-This creates a lot of syntax overhead to the definition of arbitrary Stream generator functions.
-In order to ease the syntactic pain of this process, we implemented a macro that helps our programmers define Stream generators in a more concise manner.
+C++11 does not allow the definition of recursive lambdas, so we have to define our Stream generators as `std::function` intead.
+This creates a lot of syntax overhead to the definition of arbtrary Stream generator functions.
+In order to ease the syntactic pain of this process, we implemented a series of helper functions to make this process more straightforward.
 
-`def_generator()` takes two or more parameters, where the first parameter is the name of the generator, the second parameter is the return type (or type of Stream), and the rest of the parameters are arguments for the generator function.
+`repeat()` is the simplest of these functions. It creates an infinite Stream of whatever value it is passed.
 
 ```cpp
-def_generator(ones, int) {
-    return Stream<int>(1, ones)
-};
-std::cout << ones().take(5) << std::endl;
+repeat(1).take(5).print();
 
 // [1,1,1,1,1]
 ```
 
-This macro provides a cleaner way of defining recursive Stream generators.
-The syntax gains are more apparent when we re-define the Fibonacci Stream.
-
-```cpp
-def_generator(fibs, int, int prev, int curr) {
-    return Stream<int>(curr, [=]() { return fibs(curr, prev+curr); });
-};
-std::cout << fibs(0, 1).take(10) << std::endl;
-
-// [1,1,2,3,5,8,13,21,34,55]
-```
-
-## Non-Member Functions for Streams
-
-### Alternative Generating Tactics
-
-Rather than using `def_generator`, there is an easier way to generate a basic Stream using the non-member function `from()`.
-`from()` constructs a Stream starting with the first parameter and incrementing by a step, which defaults to 1.
+The `from()` function takes two parameters, an initial value, and a step. 
+It then constructs a Stream starting at the initial value, incrementing by the step each time.
+If the step is omitted from the function call, it defaults to 1.
 
 ```cpp
 from(1).take(5).print();
@@ -495,6 +477,17 @@ from(1).take(5).print();
 from(1,2).take(5).print();
 
 // [1,3,5,7,9]
+```
+
+`iterate()` allows users to define an infinite Stream in terms of an initial value `x`, and a function `f`.
+The Stream is then constructed as `x, f(x), f(f(x)), f(f(f(x)))...`.
+
+```cpp
+iterate([](int x) { return x*x; }, 2).take(5).print();
+
+//
+
+
 ```
 
 ### Prepend Values
