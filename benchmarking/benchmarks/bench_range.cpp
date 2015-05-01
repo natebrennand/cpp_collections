@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../../src/collections.h"
+#include "collections.h"
 #include "benchmark.h"
 
 
@@ -26,7 +26,6 @@ int main() {
     std::cout << "Comparing range & for loops"
         << "with size: " << size
         << ", and trials: " << trials << std::endl;
-
 
     bench(input, [](int n) {
         std::vector<int> data(n);
