@@ -544,11 +544,12 @@ namespace cpp_collections {
     // the zipped lists that occur at the same position
     template<typename ...U>
     Collection<std::tuple<U...>>
-    zip(Collection<U>... other_list) {
+    zip(Collection<U>&... other_list) {
         // TODO: list size checking
         using return_type = std::tuple<U...>;
 
-        int size = std::min(other_list.size()...);
+        auto size_ilist = {other_list.size()...};
+        int size = std::min(size_ilist);
         std::vector<return_type> list(size);
         std::allocator<return_type> alloc;
         for (int i = 0; i < size; i++) {
@@ -569,7 +570,8 @@ namespace cpp_collections {
         // TODO: check that func takes as many arguments as there are lists
         using return_type = typename std::result_of<Function(U...)>::type;
 
-        int size = std::min(other_list.size()...);
+        auto size_ilist = {other_list.size()...};
+        int size = std::min(size_ilist);
         std::vector<return_type> list(size);
         std::allocator<return_type> alloc;
         for (int i = 0; i < size; i++) {
