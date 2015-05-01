@@ -10,10 +10,10 @@ int main() {
 
     // Collection syntax
 
-    def_generator(fibs, int, int prev, int curr) {
-        return Stream<int>(curr, [=]() { return fibs(curr, prev+curr); });
-    };
+    auto fibs = recurrence([](std::tuple<int,int> t) {
+        return std::get<0>(t) + std::get<1>(t);
+    }, std::make_tuple(0, 1));
 
-    fibs(0, 1).take(10).print();
+    fibs.take(10).print();
 
 }

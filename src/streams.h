@@ -17,10 +17,6 @@
 #include "utility.h"
 #include "collections.h"
 
-// Macro to ease the syntax of defining a generator
-#define def_generator(name, return_type, arg_types...) \
-    std::function<Stream<return_type>(arg_types)> name = [&](arg_types) -> Stream<return_type>
-
 namespace cpp_collections {
 
     template<typename T>
