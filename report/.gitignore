@@ -8,4 +8,5 @@ paper.pdf
 *.fdb_latexmk
 *.fls
 *.d
+*.blg
 
