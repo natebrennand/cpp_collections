@@ -425,8 +425,9 @@ std::function<Stream<int>(int, int)> fibs = [&](int prev, int curr) -> Stream<in
         return fibs(curr, prev + curr);
     });
 };
-
 Collection<int> tenfibs = fibs(0, 1).take(3);
+
+// [1,1,2]
 ```
 
 The Stream generator `fibs`, when called with arguments `0` and `1`, creates a new Stream that has a head value of 1 and an internal pointer to the function `fibs(1, 1)`.
@@ -483,11 +484,21 @@ from(1,2).take(5).print();
 The Stream is then constructed as `x, f(x), f(f(x)), f(f(f(x)))...`.
 
 ```cpp
-iterate([](int x) { return x*x; }, 2).take(5).print();
+iterate(0, [](int x) { return x+1; }).take(5).print();
 
-//
+// [0,1,2,3,4]
+```
 
+Finally, `recurrence()` is a generalized version of `iterate()`, which allows the user to define an infinite Stream in terms of any number of arguments, stored in a tuple, and a function that takes that tuple.
+Here is how we use `recurrence()` to rewrite our verbose definition of the Fibonacci Stream above.
 
+```cpp
+auto fibs = recurrence([](std::tuple<int,int> t) {
+    return std::get<0>(t) + std::get<1>(t);
+}, std::make_tuple(0, 1));
+fibs.take(5).print();
+
+// [0,1,1,2,3]
 ```
 
 ### Prepend Values
