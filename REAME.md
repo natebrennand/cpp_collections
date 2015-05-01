@@ -127,7 +127,7 @@ std::function<Stream<int>(int, int)> fibs = [&](int prev, int curr) -> Stream<in
     });
 };
 
-Stream<int> tenfibs = fibs(0, 1).take(3);
+Collection<int> tenfibs = fibs(0, 1).take(3);
 ```
 
 The Stream generator `fibs`, when called with arguments `0` and `1`, creates a new Stream that has a head value of 1 and an internal pointer to the function `fibs(1, 1)`.
