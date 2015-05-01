@@ -100,18 +100,15 @@ We then use the `take()` function to convert our Stream into a finite Collection
 We then reduce this Collection with an addition function.
 
 Note that Streams can be arbitrarily complex.
-Below, we define a Stream to generate the Fibonacci sequence with the help of one of the macros provided by the C++ Collections library.
+Below, we define a Stream to generate the Fibonacci sequence with the help of one of the Stream creation functions provided by the C++ Collections library.
 
 ```cpp
-def_generator(fibs, int, int prev, int curr) {
-    return Stream<int>(curr, [=]() -> Stream<int> {
-        return fibs(curr, prev + curr);
-    });
-};
+auto fibs = recurrence([](std::tuple<int,int> t) {
+    return std::get<0>(t) + std::get<1>(t);
+}, std::make_tuple(0, 1));
+fibs.take(5).print();
 
-std::cout << fibs(0, 1).take(10) << std::endl;
-
->>> [1,1,2,3,5,8,13,21,34,55]
+>>> [0,1,1,2,3]
 ```
 
 ### Implementation Details: Streams
@@ -511,7 +508,7 @@ std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
 Default Stream constructor.
 Takes an initial head value, and a function that returns a Stream.
 The programmer should not have to interact with this method directly.
-Instead, use the `def_generator` macro to define a Stream generator.
+Instead, use the one of the four Stream creation helper functions, `from()`, `repeat()`, `iterate()`, or `recurrence()`.
 
 *Example:*
 ```
@@ -663,32 +660,6 @@ Return a Stream of tuples, where each tuple contains the elements of the zipped 
 #### zipWith(Function func, Stream\<U\>... other)
 
 Generalizes zip by zipping with the function given as the first argument instead of a tupling function.
-
-### Macros
-
-#### def\_generator(name, return\_type, arg\_types...)
-
-A macro to ease the syntax of defining any arbitrary recursive Stream generator.
-
-*Example:*
-```
-def_generator(ones, int) {
-    return Stream<int>(1, ones)
-};
-std::cout << ones().take(5) << std::endl;
-
->>> [1,1,1,1,1]
-```
-
-*Example:*
-```
-def_generator(fibs, int, int prev, int curr) {
-    return Stream<int>(curr, [=]() { return fibs(curr, prev+curr); });
-};
-std::cout << fibs(0, 1).take(10) << std::endl;
-
->>> [1,1,2,3,5,8,13,21,34,55]
-```
 
 ----
 ## Development Support
