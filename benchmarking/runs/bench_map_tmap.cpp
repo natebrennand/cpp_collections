@@ -1,16 +1,24 @@
 #include <iostream>
 #include <vector>
 
-#include "../collections.h"
+#include "../../src/collections.h"
 #include "benchmark.h"
 
-#define size 1000000
+
+#if defined COLLECTION_SIZE
+#define size COLLECTION_SIZE
+#else
+#define size 100
+#endif
+
 #define trials 50
 
-using namespace cpp_collections;
 
+
+
+
+using namespace cpp_collections;
 int main() {
-    // timing map on a vector of size 100,000
     auto input = [](){ return range(0, size); };
     auto inc = [](int x) {return x+1;};
     random_generator rand_gen;
@@ -22,22 +30,24 @@ int main() {
         return data;
     };
 
-    std::cout << "Comparing map & tmap" << std::endl;
+    std::cout << "Comparing map & tmap "
+        << "with size: " << size
+        << ", and trials: " << trials << std::endl;
 
 
-    bench(input, [&](Collection<int> i){
+    bench(input, [&](Collection<int> i) {
         return i.map(inc);
     }, trials, "map: linear map");
 
-    bench(input, [&](Collection<int> i){
+    bench(input, [&](Collection<int> i) {
         return i.tmap(inc, 4);
     }, trials, "tmap: parallel map");
 
-    bench(rand_input, [&](Collection<int> i){
+    bench(rand_input, [&](Collection<int> i) {
         return i.map(inc);
     }, trials, "map: linear map w/ random data");
 
-    bench(rand_input, [&](Collection<int> i){
+    bench(rand_input, [&](Collection<int> i) {
         return i.tmap(inc, 4);
     }, trials, "tmap: parallel map w/ random data");
 }
