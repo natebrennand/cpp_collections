@@ -609,6 +609,17 @@ std:cout << (10 & (20 & ints)).take(5) << std::endl;
 >>> [10,20,1,2,3]
 ```
 
+#### repeat(T value)
+
+Construct an infinite Stream of the given value.
+
+*Example:*
+```
+std:cout << repeat(1).take(5) << std::endl;
+
+>>> [1,1,1,1,1]
+```
+
 #### from(T n, T step=1)
 
 Construct a Stream, starting at n, incrementing by step (defaults to 1).
@@ -618,6 +629,31 @@ Construct a Stream, starting at n, incrementing by step (defaults to 1).
 std:cout << from(1).take(5) << std::endl;
 
 >>> [1,2,3,4,5]
+```
+
+#### iterate(T value, Function func)
+
+Construct an infinite Stream in terms of an initial value `x`, and a function `f`.
+The Stream is then constructed as `x, f(x), f(f(x)), f(f(f(x)))...`.
+
+*Example:*
+```cpp
+iterate(0, [](int x) { return x+1; }).take(5).print();
+
+>>> [0,1,2,3,4]
+```
+
+#### recurrence(Function func, std::tuple\<U...\> args)
+
+A generalized version of `iterate()`, which allows the user to define an infinite Stream in terms of any number of arguments, stored in a tuple, and a function that takes that tuple.
+
+```cpp
+auto fibs = recurrence([](std::tuple<int,int> t) {
+    return std::get<0>(t) + std::get<1>(t);
+}, std::make_tuple(0, 1));
+fibs.take(5).print();
+
+>>> [0,1,1,2,3]
 ```
 
 #### zip(Stream\<U\>... other)
