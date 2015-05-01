@@ -30,7 +30,7 @@ auto fibs = recurrence([](std::tuple<int,int> t) {
     return std::get<0>(t) + std::get<1>(t);
 }, std::make_tuple(0, 1));
 
-std::cout << fibs.take(5).print() std::endl;
+std::cout << fibs.take(5) << std::endl;
 // [0,1,1,2,3]
 \end{lstlisting}
 
