@@ -100,7 +100,7 @@ Returns the first element in the Collection.
 auto a = range(1, 10);
 std::cout << a.head(); << std::endl;
 
-# 1
+// 1
 \end{lstlisting}
 
 
@@ -114,7 +114,7 @@ Returns the last element in the Collection.
 auto a = range(1, 10);
 std::cout << a.last(); << std::endl;
 
-# 9
+// 9
 \end{lstlisting}
 
 
@@ -128,7 +128,7 @@ Return all elements except the last.
 auto a = range(5);
 std::cout << a.init() << std::endl;
 
-# [0,1,2,3]
+// [0,1,2,3]
 \end{lstlisting}
 
 
@@ -142,7 +142,7 @@ Return all elements except the head.
 auto a = range(5);
 std::cout << a.tail() << std::endl;
 
-# [1,2,3,4]
+// [1,2,3,4]
 \end{lstlisting}
 
 
@@ -157,7 +157,7 @@ auto a = range(5);
 a.pop_head();
 std::cout << a << std::endl;
 
-# [1,2,3,4]
+// [1,2,3,4]
 \end{lstlisting}
 
 
@@ -175,7 +175,7 @@ a.each([&](int x) {
 });
 std::cout << sum << std::endl;
 
-# 10
+// 10
 \end{lstlisting}
 
 
@@ -189,7 +189,7 @@ Return a subset of the Collection containing the elements of the original Collec
 auto a = range(1,11);
 std::cout << a.filter([](int x) { return x % 2 == 0; }) << std::endl;
 
-# [2,4,6,8,10]
+// [2,4,6,8,10]
 \end{lstlisting}
 
 
@@ -203,7 +203,7 @@ Return the elements whose indices are within the range \code{[low, high)}.
 auto a = range(10, 20);
 std::cout << a.slice(1,4) << std::endl;
 
-# [11,12,13]
+// [11,12,13]
 \end{lstlisting}
 
 
@@ -218,7 +218,7 @@ Return the Collection that results from the transformation of each element in th
 auto a = range(3);
 std::cout << a.map([](int x) { return x+1; }) << std::endl;
 
-# [1,2,3]
+// [1,2,3]
 \end{lstlisting}
 
 
@@ -233,7 +233,7 @@ std::threads to speed up processing.
 auto a = range(3);
 std::cout << a.tmap([](int x) { return x+1; }, 3) << std::endl;
 
-# [1,2,3]
+// [1,2,3]
 \end{lstlisting}
 
 
@@ -248,7 +248,7 @@ Return the result of the application of the same binary operator on adjacent pai
 int sum = range(5).reduceLeft([](int x, int y) { return x+y; });
 std::cout << sum << std::endl;
 
-# 10
+// 10
 \end{lstlisting}
 
 
@@ -271,7 +271,7 @@ An alternative implementation of reduce that uses multiple concurrent threads to
 int sum = range(5).treduce([](int x, int y) { return x+y; }, 3);
 std::cout << sum << std::endl;
 
-# 10
+// 10
 \end{lstlisting}
 
 
@@ -285,7 +285,7 @@ Return the result of the application of the same binary operator on all elements
 int sum = range(5).foldLeft([](int x, int y) { return x+y; }, 0);
 std::cout << sum << std::endl;
 
-# 10
+// 10
 \end{lstlisting}
 
 
@@ -307,7 +307,7 @@ auto ints = range(1,5);
 auto ints2 = ints.scanLeft([](int x, int y) { return x+y; }, 1);
 std::cout << ints2 << std::endl;
 
-# [1,2,4,7,11]
+// [1,2,4,7,11]
 \end{lstlisting}
 
 
@@ -322,7 +322,7 @@ auto ints = range(1,5);
 auto ints2 = ints.scanRight([](int x, int y) { return x+y; }, 1);
 std::cout << ints2 << std::endl;
 
-# [11,10,8,5,1]
+// [11,10,8,5,1]
 \end{lstlisting}
 
 
@@ -340,7 +340,7 @@ auto b = range(3);
 auto c = range(3);
 std::cout << concat(a, b, c) << std::endl;
 
-# [0,1,2,0,1,2,0,1,2]
+// [0,1,2,0,1,2,0,1,2]
 \end{lstlisting}
 
 
@@ -355,7 +355,7 @@ Return Collection of numeric types over the range \code{[0, size)}.
 auto a = range(5);
 std::cout << a << std::endl;
 
-# [0,1,2,3,4]
+// [0,1,2,3,4]
 \end{lstlisting}
 
 
@@ -369,7 +369,7 @@ Return Collection of numeric types over the range \code{[low, high)}.
 auto a = range(5, 10);
 std::cout << a << std::endl;
 
-# [5,6,7,8,9]
+// [5,6,7,8,9]
 \end{lstlisting}
 
 
@@ -401,7 +401,7 @@ auto a = range(3);
 auto b = range(3);
 std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
 
-# [0,2,4]
+// [0,2,4]
 \end{lstlisting}
 
 

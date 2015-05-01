@@ -6,14 +6,14 @@
 Default Stream constructor.
 Takes an initial head value, and a function that returns a Stream.
 The programmer should not have to interact with this method directly.
-Instead, use the \code{def\_generator} macro to define a Stream generator.
+Instead, use the one of the four Stream creation helper functions, \code{from()}, \code{repeat()}, \code{iterate()}, or \code{recurrence()}.
 
 
 \begin{lstlisting}[title=example]
 std::function<Stream<int>()> ones = [&]() { return Stream<int>(1, ones) };
 std::cout << ones().take(3) << std::endl;
 
-# [1,1,1]
+// [1,1,1]
 \end{lstlisting}
 
 \subsubsection{\code{Stream<T>(T head, Stream<T> tail)}}
@@ -28,7 +28,7 @@ Return the first element of the Stream.
 \begin{lstlisting}[title=example]
 std::cout << from(1).head() << std::endl;
 
-# 1
+// 1
 \end{lstlisting}
 
 \subsubsection{\code{Stream<T>::tail()}}
@@ -38,7 +38,7 @@ Return the Stream minus the current head.
 \begin{lstlisting}[title=example]
 std::cout << from(1).tail().head() << std::endl;
 
-# 2
+// 2
 \end{lstlisting}
 
 \subsubsection{\code{Stream<T>::take(int n)}}
@@ -48,7 +48,7 @@ Return \code{n} elements taken from the Stream as a Collection.
 \begin{lstlisting}[title=example]
 std::cout << from(1).take(5) << std::endl;
 
-# [1,2,3,4,5]
+// [1,2,3,4,5]
 \end{lstlisting}
 
 \subsubsection{\code{Stream<T>::filter(std::function<bool(T)> func)}}
@@ -59,7 +59,7 @@ Return a Stream that contains the elements of the initial Stream that match the 
 auto evens = from(1).filter([](int x) { return x % 2 == 0; });
 std::cout << evens.take(5) << std::endl;
 
-# [2,4,6,8,10]
+// [2,4,6,8,10]
 \end{lstlisting}
 
 \subsubsection{\code{Stream<T>::map(Function func)}}
@@ -70,7 +70,7 @@ Return the Stream that results from the transformation of each element in the or
 auto squares = from(1).map([](int x) { return x * x; });
 std::cout << squares.take(5) << std::endl;
 
-# [1,4,9,16,25]
+// [1,4,9,16,25]
 \end{lstlisting}
 
 \subsection{Non-member Functions}
@@ -83,7 +83,7 @@ Prepends a value to a Stream.
 auto ints = from(1);
 std:cout << cons(10, ints).take(5) << std::endl;
 
-# [10,1,2,3,4]
+// [10,1,2,3,4]
 \end{lstlisting}
 
 \subsubsection{\code{operator\&(T value, Stream<T> other)}}
@@ -94,8 +94,19 @@ Prepends a value to a Stream.
 auto ints = from(1);
 std:cout << (10 & (20 & ints)).take(5) << std::endl;
 
-# [10,20,1,2,3]
+// [10,20,1,2,3]
 \end{lstlisting}
+
+\subsubsection{\code{repeate(T value)}}
+
+Construct an infinite Stream of the given value.
+
+\begin{lstlisting}[title=example]
+std:cout << repeat(1).take(5) << std::endl;
+
+// [1,1,1,1,1]
+\end{lstlisting}
+
 
 \subsubsection{\code{from(T n, T step=1)}}
 
@@ -104,8 +115,34 @@ Construct a Stream, starting at n, incrementing by step (defaults to 1).
 \begin{lstlisting}[title=example]
 std:cout << from(1).take(5) << std::endl;
 
-# [1,2,3,4,5]
+// [1,2,3,4,5]
 \end{lstlisting}
+
+\subsubsection{\code{iterate(T value, Function func)}}
+
+Construct an infinite Stream in terms of an initial value \code{x}, and a function \code{f}.
+The Stream is then constructed as \code{x, f(x), f(f(x)), f(f(f(x)))...}.
+
+\begin{lstlisting}[title=example]
+std::cout <<  iterate(0, [](int x) { return x+1; }).take(5) << std::endl;
+
+// [0,1,2,3,4]
+\end{lstlisting}
+
+\subsubsection{\code{recurrence(Function func, std::tuple<U...> args)}}
+
+A generalized version of \code{iterate()}, which allows the user to define an infinite Stream in terms of any number of arguments, stored in a tuple, and a function that takes that tuple.
+
+\begin{lstlisting}[title=example]
+auto fibs = recurrence([](std::tuple<int,int> t) {
+    return std::get<0>(t) + std::get<1>(t);
+}, std::make_tuple(0, 1));
+std::cout << fibs.take(5) << std::endl;
+
+// [0,1,1,2,3]
+\end{lstlisting}
+
+
 
 \subsubsection{\code{zip(Stream<U>... other)}}
 
@@ -115,27 +152,5 @@ Return a Stream of tuples, where each tuple contains the elements of the zipped 
 
 Generalizes zip by zipping with the function given as the first argument instead of a tupling function.
 
-\subsection{Macros}
 
-\subsubsection{\code{def\_generator(name, return\_type, arg\_types...)}}
-
-A macro to ease the syntax of defining any arbitrary recursive Stream generator.
-
-\begin{lstlisting}[title=example]
-def_generator(ones, int) {
-    return Stream<int>(1, ones)
-};
-std::cout << ones().take(5) << std::endl;
-
-# [1,1,1,1,1]
-\end{lstlisting}
-
-\begin{lstlisting}[title=example]
-def_generator(fibs, int, int prev, int curr) {
-    return Stream<int>(curr, [=]() { return fibs(curr, prev+curr); });
-};
-std::cout << fibs(0, 1).take(10) << std::endl;
-
-# [1,1,2,3,5,8,13,21,34,55]
-\end{lstlisting}
 

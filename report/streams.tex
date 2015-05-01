@@ -22,17 +22,16 @@ We then use the \code{take()} function to convert our Stream into a finite Colle
 We then reduce this Collection with an addition function.
 
 Note that Streams can be arbitrarily complex.
-Below, we define a Stream to generate the Fibonacci sequence with the help of one of the macros provided by the C++ Collections library.
+Below, we define a Stream to generate the Fibonacci sequence with the help of one of the Stream creation functions provided by the C++ Collections library.
+
 
 \begin{lstlisting}
-def_generator(fibs, int, int prev, int curr) {
-    return Stream<int>(curr, [=]() -> Stream<int> {
-        return fibs(curr, prev + curr);
-    });
-};
+auto fibs = recurrence([](std::tuple<int,int> t) {
+    return std::get<0>(t) + std::get<1>(t);
+}, std::make_tuple(0, 1));
 
-std::cout << fibs(0, 1).take(10) << std::endl;
-# [1,1,2,3,5,8,13,21,34,55]
+std::cout << fibs.take(5).print() std::endl;
+// [0,1,1,2,3]
 \end{lstlisting}
 
 
