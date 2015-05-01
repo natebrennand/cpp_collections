@@ -27,7 +27,7 @@ namespace cpp_collections {
     public:
 
         // std::vector constructor
-        Collection<T>(std::vector<T> d) {
+        Collection<T>(const std::vector<T>& d) {
             Data = d;
         };
 
@@ -508,15 +508,17 @@ namespace cpp_collections {
 
     // Return Collection of numeric types over the range [0, size)
     template<typename T>
-    Collection<T>
+    const Collection<T>&
     range(T size) {
         static_assert(std::is_arithmetic<T>::value,
             "You must pass range arithmetic type parameters");
 
-        std::vector<T> list(size);
+        std::vector<T> v(size);
         for (int i = 0; i < size; i++)
-            list[i] = T(i);
-        return Collection<T>(list);
+            v[i] = T(i);
+
+        static const auto tmp = Collection<T>(v);
+        return tmp;
     }
 
     // Return Collection of numeric types over the range [low, high)

@@ -10,17 +10,8 @@ sizes=(
     10000000
     100000000
 )
-
-
-for s in "${sizes[@]}"
-do
-    echo "$s "
-done
-
-
-
-#!/bin/bash
-tmp_file=".tmp_err_output"  # stderr of parser stored here
+# stderr of parser stored here
+tmp_file=".tmp_err_output"
 
 reduce_path_to_test_name () {
     local fullpath=$1

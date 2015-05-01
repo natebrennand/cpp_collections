@@ -28,15 +28,15 @@ int main() {
         << ", and trials: " << trials << std::endl;
 
 
-    bench(input, [&](int i) {
-        return range(i);
-    }, trials, "range of " + std::to_string(size));
-
-    bench(input, [&](int n) {
+    bench(input, [](int n) {
         std::vector<int> data(n);
         for (int i = 0; i < n; i++)
             data[i] = i;
-        return data;
+        auto c = data;
     }, trials, "for loop range of " + std::to_string(size));
+
+    bench(input, [](int i) {
+        auto c = range(i);
+    }, trials, "range of " + std::to_string(size));
 }
 
