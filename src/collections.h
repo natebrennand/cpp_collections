@@ -565,7 +565,6 @@ namespace cpp_collections {
         return Collection<return_type>(list);
     }
 
-
     // Generalizes zip by zipping with the function given as the first argument
     // instead of a tupling function
     template<typename Function, typename ...U>
@@ -586,7 +585,6 @@ namespace cpp_collections {
         }
         return Collection<return_type>(list);
     }
-
 }
 
 #endif

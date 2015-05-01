@@ -3,6 +3,13 @@ success="TEST_SUCCESS"
 had_failures="0"
 tmp_file=".tmp_err_output"  # stderr of parser stored here
 
+if ["$CXX" = ""]
+then
+    CXX="g++"
+fi
+echo "CXX = $CXX"
+
+
 reduce_path_to_test_name () {
     local fullpath=$1
     local filename="${fullpath##*/}" # strip the preceding path
@@ -13,7 +20,7 @@ run_test() {
     local should_fail=$1
 
     # stdout of parser
-    $(g++ -std=c++0x -pthread $file &> $tmp_file)
+    $($CXX -std=c++11 -pthread $file &> $tmp_file)
     outcome=`cat $tmp_file`
     # empty if compiled, errors otherwise
 
