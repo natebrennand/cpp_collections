@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../../src/collections.h"
+#include "collections.h"
 #include "benchmark.h"
 
 
@@ -43,6 +43,11 @@ int main() {
         return i.tmap(inc, 4);
     }, trials, "tmap: parallel map");
 
+    bench(input, [&](Collection<int> i) {
+        return i.pmap(inc);
+    }, trials, "pmap: linear map");
+
+
     bench(rand_input, [&](Collection<int> i) {
         return i.map(inc);
     }, trials, "map: linear map w/ random data");
@@ -50,4 +55,8 @@ int main() {
     bench(rand_input, [&](Collection<int> i) {
         return i.tmap(inc, 4);
     }, trials, "tmap: parallel map w/ random data");
+
+    bench(rand_input, [&](Collection<int> i) {
+        return i.pmap(inc, 4);
+    }, trials, "pmap: parallel map w/ random data");
 }

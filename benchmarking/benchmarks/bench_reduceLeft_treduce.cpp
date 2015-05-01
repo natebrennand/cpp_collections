@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../../src/collections.h"
+#include "collections.h"
 #include "benchmark.h"
 
 #if defined COLLECTION_SIZE
@@ -41,6 +41,11 @@ int main() {
         return i.treduce(add, 4);
     }, trials, "treduce: parallel reduce");
 
+    bench(input, [&](Collection<int> i){
+        return i.preduce(add, 4);
+    }, trials, "preduce: parallel reduce");
+
+
     bench(rand_input, [&](Collection<int> i){
         return i.reduceLeft(add);
     }, trials, "reduceLeft: linear reduceLeft w/ random data");
@@ -48,4 +53,8 @@ int main() {
     bench(rand_input, [&](Collection<int> i){
         return i.treduce(add, 4);
     }, trials, "treduce: parallel reduce w/ random data");
+
+    bench(rand_input, [&](Collection<int> i){
+        return i.preduce(add, 4);
+    }, trials, "preduce: parallel reduce w/ random data");
 }
