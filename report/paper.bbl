@@ -1,0 +1,22 @@
+\begin{thebibliography}{1}
+
+\bibitem{github}
+Cpp collections git repository.
+\newblock https://github.com/natebrennand/cpp\_collections.
+
+\bibitem{norvig}
+Teach yourself programming in ten years.
+\newblock http://www.norvig.com/21-days.html.
+
+\bibitem{code_complete}
+S.~McConnell.
+\newblock {\em Code Complete, Second Edition}.
+\newblock Microsoft Press, Redmond, WA, USA, 2004.
+
+\bibitem{linguistic_relativity}
+C.~Swoyer, M.~Baghramian, and A.~Carter.
+\newblock Relativism.
+\newblock In E.~N. Zalta, editor, {\em The Stanford Encyclopedia of
+  Philosophy}. Winter 2014 edition, 2014.
+
+\end{thebibliography}

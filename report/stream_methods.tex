@@ -1,0 +1,141 @@
+
+\subsection{Member Functions}
+
+\subsubsection{\code{Stream<T>(T head, std::function<T>()> gen)}}
+
+Default Stream constructor.
+Takes an initial head value, and a function that returns a Stream.
+The programmer should not have to interact with this method directly.
+Instead, use the \code{def\_generator} macro to define a Stream generator.
+
+
+\begin{lstlisting}[title=example]
+std::function<Stream<int>()> ones = [&]() { return Stream<int>(1, ones) };
+std::cout << ones().take(3) << std::endl;
+
+# [1,1,1]
+\end{lstlisting}
+
+\subsubsection{\code{Stream<T>(T head, Stream<T> tail)}}
+
+Tail-only Stream constructor.
+The programmer should not have to interact with this method directly.
+
+\subsubsection{\code{Stream<T>::head()}}
+
+Return the first element of the Stream.
+
+\begin{lstlisting}[title=example]
+std::cout << from(1).head() << std::endl;
+
+# 1
+\end{lstlisting}
+
+\subsubsection{\code{Stream<T>::tail()}}
+
+Return the Stream minus the current head.
+
+\begin{lstlisting}[title=example]
+std::cout << from(1).tail().head() << std::endl;
+
+# 2
+\end{lstlisting}
+
+\subsubsection{\code{Stream<T>::take(int n)}}
+
+Return \code{n} elements taken from the Stream as a Collection.
+
+\begin{lstlisting}[title=example]
+std::cout << from(1).take(5) << std::endl;
+
+# [1,2,3,4,5]
+\end{lstlisting}
+
+\subsubsection{\code{Stream<T>::filter(std::function<bool(T)> func)}}
+
+Return a Stream that contains the elements of the initial Stream that match the predicate function.
+
+\begin{lstlisting}[title=example]
+auto evens = from(1).filter([](int x) { return x % 2 == 0; });
+std::cout << evens.take(5) << std::endl;
+
+# [2,4,6,8,10]
+\end{lstlisting}
+
+\subsubsection{\code{Stream<T>::map(Function func)}}
+
+Return the Stream that results from the transformation of each element in the original Stream.
+
+\begin{lstlisting}[title=example]
+auto squares = from(1).map([](int x) { return x * x; });
+std::cout << squares.take(5) << std::endl;
+
+# [1,4,9,16,25]
+\end{lstlisting}
+
+\subsection{Non-member Functions}
+
+\subsubsection{\code{cons(T value, Stream<T> other)}}
+
+Prepends a value to a Stream.
+
+\begin{lstlisting}[title=example]
+auto ints = from(1);
+std:cout << cons(10, ints).take(5) << std::endl;
+
+# [10,1,2,3,4]
+\end{lstlisting}
+
+\subsubsection{\code{operator\&(T value, Stream<T> other)}}
+
+Prepends a value to a Stream.
+
+\begin{lstlisting}[title=example]
+auto ints = from(1);
+std:cout << (10 & (20 & ints)).take(5) << std::endl;
+
+# [10,20,1,2,3]
+\end{lstlisting}
+
+\subsubsection{\code{from(T n, T step=1)}}
+
+Construct a Stream, starting at n, incrementing by step (defaults to 1).
+
+\begin{lstlisting}[title=example]
+std:cout << from(1).take(5) << std::endl;
+
+# [1,2,3,4,5]
+\end{lstlisting}
+
+\subsubsection{\code{zip(Stream<U>... other)}}
+
+Return a Stream of tuples, where each tuple contains the elements of the zipped Streams that occur at the same position
+
+\subsubsection{\code{zipWith(Function func, Stream<U>... other)}}
+
+Generalizes zip by zipping with the function given as the first argument instead of a tupling function.
+
+\subsection{Macros}
+
+\subsubsection{\code{def\_generator(name, return\_type, arg\_types...)}}
+
+A macro to ease the syntax of defining any arbitrary recursive Stream generator.
+
+\begin{lstlisting}[title=example]
+def_generator(ones, int) {
+    return Stream<int>(1, ones)
+};
+std::cout << ones().take(5) << std::endl;
+
+# [1,1,1,1,1]
+\end{lstlisting}
+
+\begin{lstlisting}[title=example]
+def_generator(fibs, int, int prev, int curr) {
+    return Stream<int>(curr, [=]() { return fibs(curr, prev+curr); });
+};
+std::cout << fibs(0, 1).take(10) << std::endl;
+
+# [1,1,2,3,5,8,13,21,34,55]
+\end{lstlisting}
+

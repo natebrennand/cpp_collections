@@ -1,0 +1,407 @@
+
+
+\subsection{Member Functions}
+
+
+\subsubsection{\code{Collection<T>()}}
+
+Construct an empty Collection.
+
+\begin{lstlisting}[title=example]
+auto empty_collection = Collection<int>();
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>(int size)}}
+
+Construct a pre-sized Collection.
+
+\begin{lstlisting}[title=example]
+auto presized_collection = Collection<int>(5);
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>(std::vector<T> list)}}
+
+Construct a Collection from a \code{std::vector}.
+
+\begin{lstlisting}[title=example]
+auto vector_collection = Collection<int>(std::vector<int> {1, 2, 3});
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>(std::list<T> list)}}
+
+Construct a Collection from a \code{std::list}.
+
+\begin{lstlisting}[title=example]
+auto list_collection = Collection<int>(std::list<int> {1, 2, 3});
+\end{lstlisting}
+
+
+
+
+
+\subsubsection{\code{Collection<T>(std::array<T, size> list)}}
+
+Construct a Collection from a \code{std::array}.
+
+\begin{lstlisting}[title=example]
+auto array_collection = Collection<int>(std::array<int,3> {1, 2, 3});
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>(T d[], int len)}}
+
+Construct a Collection from a C-style array (requires length).
+
+\begin{lstlisting}[title=example]
+int int_c_array[] {1, 2, 3};
+auto c_array_collection = Collection<int>(int_c_array, 3);
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::vector()}}
+
+Returns the Collection as a \code{std::vector}.
+
+
+
+
+\subsubsection{\code{Collection<T>::list()}}
+
+Returns the Collection as a \code{std::list}.
+
+
+
+
+\subsubsection{\code{Collection<T>::size()}}
+
+Returns an \code{int} with the current size of the Collection.
+
+
+
+
+\subsubsection{\code{Collection<T>::head()}}
+
+Returns the first element in the Collection.
+
+\begin{lstlisting}[title=example]
+auto a = range(1, 10);
+std::cout << a.head(); << std::endl;
+
+# 1
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::last()}}
+
+Returns the last element in the Collection.
+
+\begin{lstlisting}[title=example]
+auto a = range(1, 10);
+std::cout << a.last(); << std::endl;
+
+# 9
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::init()}}
+
+Return all elements except the last.
+
+\begin{lstlisting}[title=example]
+auto a = range(5);
+std::cout << a.init() << std::endl;
+
+# [0,1,2,3]
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::tail()}}
+
+Return all elements except the head.
+
+\begin{lstlisting}[title=example]
+auto a = range(5);
+std::cout << a.tail() << std::endl;
+
+# [1,2,3,4]
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::pop\_head()}}
+
+Remove the head of the collection.
+
+\begin{lstlisting}[title=example]
+auto a = range(5);
+a.pop_head();
+std::cout << a << std::endl;
+
+# [1,2,3,4]
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::each(std::function<void(T)> func)}}
+
+Apply a function to all the elements in the Collection
+
+\begin{lstlisting}[title=example]
+int sum = 0;
+auto a = range(5);
+a.each([&](int x) {
+    sum += x;
+});
+std::cout << sum << std::endl;
+
+# 10
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::filter(std::function<bool(T)> func)}}
+
+Return a subset of the Collection containing the elements of the original Collection that pass a predicate function.
+
+\begin{lstlisting}[title=example]
+auto a = range(1,11);
+std::cout << a.filter([](int x) { return x % 2 == 0; }) << std::endl;
+
+# [2,4,6,8,10]
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::slice(int low, int high)}}
+
+Return the elements whose indices are within the range \code{[low, high)}.
+
+\begin{lstlisting}[title=example]
+auto a = range(10, 20);
+std::cout << a.slice(1,4) << std::endl;
+
+# [11,12,13]
+\end{lstlisting}
+
+
+
+
+
+\subsubsection{\code{Collection<T>::map(Function func)}}
+
+Return the Collection that results from the transformation of each element in the original Collection.
+
+\begin{lstlisting}[title=example]
+auto a = range(3);
+std::cout << a.map([](int x) { return x+1; }) << std::endl;
+
+# [1,2,3]
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::tmap(Function func, int threads)}}
+
+An alternative implementation of map that uses multiple concurrent
+std::threads to speed up processing.
+
+\begin{lstlisting}[title=example]
+auto a = range(3);
+std::cout << a.tmap([](int x) { return x+1; }, 3) << std::endl;
+
+# [1,2,3]
+\end{lstlisting}
+
+
+
+
+
+\subsubsection{\code{Collection<T>::reduceLeft(std::function<T(T, T)> func)}}
+
+Return the result of the application of the same binary operator on adjacent pairs of elements in the Collection, starting from the left.
+
+\begin{lstlisting}[title=example]
+int sum = range(5).reduceLeft([](int x, int y) { return x+y; });
+std::cout << sum << std::endl;
+
+# 10
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::reduceRight(std::function<T(T, T)> func)}}
+
+Return the result of the application of the same binary operator on adjacent pairs of elements in the Collection, starting from the right.
+
+
+
+
+
+\subsubsection{\code{Collection<T>::treduce(std::function<T(T, T)> func, int threads)}}
+
+An alternative implementation of reduce that uses multiple concurrent threads to speed up processing
+(note that the function passed to treduce must be commutative to achieve accurate result).
+
+\begin{lstlisting}[title=example]
+int sum = range(5).treduce([](int x, int y) { return x+y; }, 3);
+std::cout << sum << std::endl;
+
+# 10
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::foldLeft(Function func, U init)}}
+
+Return the result of the application of the same binary operator on all elements in the Collection as well as an initial value, starting from the left.
+
+\begin{lstlisting}[title=example]
+int sum = range(5).foldLeft([](int x, int y) { return x+y; }, 0);
+std::cout << sum << std::endl;
+
+# 10
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::foldRight(Function func, U init)}}
+
+Return the result of the application of the same binary operator on all elements in the Collection as well as an initial value, starting from the right.
+
+
+
+
+\subsubsection{\code{Collection<T>::scanLeft(Function func, U init)}}
+
+Returns the intermediate results of the binary accumulation of the elements in a Collection as well as an initial value, starting from the left.
+
+\begin{lstlisting}[title=example]
+auto ints = range(1,5);
+auto ints2 = ints.scanLeft([](int x, int y) { return x+y; }, 1);
+std::cout << ints2 << std::endl;
+
+# [1,2,4,7,11]
+\end{lstlisting}
+
+
+
+
+\subsubsection{\code{Collection<T>::scanRight(Function func, U init)}}
+
+Returns the intermediate results of the binary accumulation of the elements in a Collection as well as an initial value, starting from the left.
+
+\begin{lstlisting}[title=example]
+auto ints = range(1,5);
+auto ints2 = ints.scanRight([](int x, int y) { return x+y; }, 1);
+std::cout << ints2 << std::endl;
+
+# [11,10,8,5,1]
+\end{lstlisting}
+
+
+
+
+\subsection{Non-member Functions}
+
+\subsubsection{\code{concat()}}
+
+Return the Collection that results from the concatentation of an arbitrary number of Collections of the same type.
+
+\begin{lstlisting}[title=example]
+auto a = range(3);
+auto b = range(3);
+auto c = range(3);
+std::cout << concat(a, b, c) << std::endl;
+
+# [0,1,2,0,1,2,0,1,2]
+\end{lstlisting}
+
+
+
+
+
+\subsubsection{\code{range(T size)}}
+
+Return Collection of numeric types over the range \code{[0, size)}.
+
+\begin{lstlisting}[title=example]
+auto a = range(5);
+std::cout << a << std::endl;
+
+# [0,1,2,3,4]
+\end{lstlisting}
+
+
+
+
+\subsubsection{range(T low, T high)}
+
+Return Collection of numeric types over the range \code{[low, high)}.
+
+\begin{lstlisting}[title=example]
+auto a = range(5, 10);
+std::cout << a << std::endl;
+
+# [5,6,7,8,9]
+\end{lstlisting}
+
+
+
+
+
+\subsubsection{zip(Collection<U>... other)}
+
+Return a Collection of tuples, where each tuple contains the elements of the zipped Collections that occur at the same position.
+
+\begin{lstlisting}[title=example]
+auto a = range(3);
+auto b = range(3.0);
+auto c = Collection(std::vector<char> {'a','b','c'});
+
+auto d = zip(a, b, c);
+
+assert(d[0] == std::make_tuple(0, 0.0, 'a'));
+\end{lstlisting}
+
+
+
+
+\subsubsection{zipWith(Function func, Collection<U>... other)}
+Generalizes \code{zip} by zipping with the function given as the first argument instead of a tupling function.
+
+\begin{lstlisting}[title=example]
+auto a = range(3);
+auto b = range(3);
+std::cout << zipWith([](int x, int y) { return x+y; }, a, b) << std::endl;
+
+# [0,2,4]
+\end{lstlisting}
+
+

@@ -1,0 +1,79 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{alltt,epsfig,amsmath,amssymb}
+\usepackage{fullpage} % one inch margins
+
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+% inline code
+\def\code#1{\texttt{#1}}
+% block code
+\usepackage{listings}
+\lstset{
+  numbers=none,
+  showstringspaces=false,
+  frame=L,
+  language=c++,
+  xleftmargin=\parindent,
+  breaklines=true,
+  keepspaces=true
+  basicstyle=\ttfamily,
+}
+
+% block quotes
+\usepackage{csquotes}
+
+\usepackage{fancyhdr}
+\fancypagestyle{plain}{
+  \fancyhf{}% Clear header/footer
+  \fancyhead[L]{}
+  \fancyfoot[C]{\thepage}
+  \fancyhead[R]{C++ Functional Collections}
+}
+
+\pagestyle{plain}   % Set page style to plain.
+
+\author{Ian Zapolsky, Nate Brennand and Uday Singh}
+\title{Functional Collections in C++}
+
+
+\begin{document}
+\setlength{\parskip}{.1 in}
+
+\maketitle
+\newpage
+
+\section{Introduction}
+\input{intro}
+
+\section{Collections}
+\input{collections}
+
+\section{Streams}
+\input{streams}
+
+\section{Pipelines}
+\input{pipelines}
+
+\section{Collections Methods}
+\input{collections_methods}
+
+\section{Stream Methods}
+\input{stream_methods}
+
+\section{Development Support}
+If you are interested in contributing, please fork our repository and submit a pull request on Github \cite{github}.
+
+\section{Testing}
+\input{testing}
+
+
+
+% citations
+\bibliographystyle{abbrv}
+\bibliography{bibliography}
+
+\end{document}
+

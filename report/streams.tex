@@ -1,0 +1,74 @@
+
+The Stream class is used to represent potentially infinite lists of data.
+This is a fairly common concept in functional programming languages but is rare in C++.
+Streams can be converted to finite Collections via the \code{take()} function.
+
+Observe the following example, again computing the sum of the numbers 1 to 100.
+
+\begin{lstlisting}
+Stream<int> ints = from(1);
+Collection<int> ints_1_100 = ints.take(100);
+int sum = ints_1_100.reduceLeft([](int x, int y) {return x + y;});
+\end{lstlisting}
+
+...or...
+
+\begin{lstlisting}
+int sum = from(1).take(100).reduceLeft([](int x, int y) {return x + y;});
+\end{lstlisting}
+
+Here, we define the infinite Stream with the \code{from()} function, which by default returns a Stream of elements of its argument's type where each element is incremented by 1.
+We then use the \code{take()} function to convert our Stream into a finite Collection.
+We then reduce this Collection with an addition function.
+
+Note that Streams can be arbitrarily complex.
+Below, we define a Stream to generate the Fibonacci sequence with the help of one of the macros provided by the C++ Collections library.
+
+\begin{lstlisting}
+def_generator(fibs, int, int prev, int curr) {
+    return Stream<int>(curr, [=]() -> Stream<int> {
+        return fibs(curr, prev + curr);
+    });
+};
+
+std::cout << fibs(0, 1).take(10) << std::endl;
+# [1,1,2,3,5,8,13,21,34,55]
+\end{lstlisting}
+
+
+
+
+
+\subsection{Implementation Details}
+
+The Stream class is a self-referential data structure, meaning that in addition to the head, or the first value in the list, the class stores a pointer to a function that returns another Stream at all times.
+Recall the definition of the Fibonacci Stream generator from above.
+Written without the macro, the definition is as follows:
+
+\begin{lstlisting}
+std::function<Stream<int>(int, int)> fibs = [&](int prev, int curr) -> Stream<int> {
+    return Stream<int>(curr, [=]() -> Stream<int> {
+        return fibs(curr, prev + curr);
+    });
+};
+
+Stream<int> tenfibs = fibs(0, 1).take(3);
+\end{lstlisting}
+
+The Stream generator \code{fibs}, when called with arguments \code{0} and \code{1}, creates a new Stream that has a head value of 1 and an internal pointer to the function `fibs(1, 1)`.
+Then, when we ask to \code{take(3)} elements from the Stream, the structure returns its head, and then lazily computes the remainder of the elements it needs to satisfy our request.
+It does this by returning the result of its stored function pointer.
+In this case, `tenfibs` would first return 1 becuase that is its head.
+It would then return the head of the Stream that results from the evaluation of the function it stores a pointer to, namely \code{fibs(1, 1)}, which is 1.
+The result of \code{fibs(1, 1)} also stores a pointer to another function, \code{fibs(1, 2)}.
+To find the third and final value, the Stream will evaluate this function and return the resulting Stream's head, which is 2.
+For a step-by-step visual depiction of the underlying state of our Stream during the \code{take(3)} function call, see the graphic below:
+
+\begin{lstlisting}
+tenfibs.head      tenfibs.gen
+     1             fibs(0,1)
+     1             fibs(1,1)
+     2             fibs(1,2)
+     3             fibs(2,3)
+\end{lstlisting}
+

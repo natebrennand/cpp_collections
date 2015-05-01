@@ -1,0 +1,21 @@
+
+
+The Collection and Stream classes are exciting because they allow C++ developers to construct complex pipelines of functions.
+These functions consist of of three main types:
+
+\begin{enumerate}
+  \item{Source operators: methods that instantiate or create a Collection or Stream.}
+  \item{Intermediate operators: methods that take a Collection or Stream as input and output a new Collection or Stream.}
+  \item{Terminal operators: methods that take a Collection or Stream as input and output something that is not another Collection or Stream.}
+\end{enumerate}
+
+Pipelines can be formed by combining a source operator, one or more intermediate operators, and a terminal operator.
+For example, summing the squares from 1 to 100 can be easily represented by the following pipeline:
+
+\begin{lstlisting}
+int sum = range(1, 101).map([](int x) { return x * x; }).reduceLeft([](int x, int y) { return x+y; });
+\end{lstlisting}
+
+Here, \code{range} is the source operator, \code{map} is an intermediate operator, and \code{reduceLeft} is a terminal operator.
+Note how these pipelines can become arbitrarily complex by adding more intermediate operators.
+
