@@ -104,10 +104,6 @@ namespace cpp_collections {
         int
         size();
 
-        // Print the Collection
-        void
-        print();
-
         // Return the first element
         T
         head();
@@ -207,13 +203,6 @@ namespace cpp_collections {
     int
     Collection<T>::size() {
         return Data.size();
-    }
-
-    // Print the Collection
-    template<typename T>
-    void
-    Collection<T>::print() {
-        std::cout << *this << std::endl;
     }
 
     // Return the first element

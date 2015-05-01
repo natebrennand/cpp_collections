@@ -106,7 +106,7 @@ Below, we define a Stream to generate the Fibonacci sequence with the help of on
 auto fibs = recurrence([](std::tuple<int,int> t) {
     return std::get<0>(t) + std::get<1>(t);
 }, std::make_tuple(0, 1));
-fibs.take(5).print();
+std::cout << fibs.take(5) << std::endl;
 
 >>> [0,1,1,2,3]
 ```
@@ -635,7 +635,7 @@ The Stream is then constructed as `x, f(x), f(f(x)), f(f(f(x)))...`.
 
 *Example:*
 ```cpp
-iterate(0, [](int x) { return x+1; }).take(5).print();
+std::cout << iterate(0, [](int x) { return x+1; }).take(5) << std::endl;
 
 >>> [0,1,2,3,4]
 ```
@@ -648,7 +648,7 @@ A generalized version of `iterate()`, which allows the user to define an infinit
 auto fibs = recurrence([](std::tuple<int,int> t) {
     return std::get<0>(t) + std::get<1>(t);
 }, std::make_tuple(0, 1));
-fibs.take(5).print();
+std::cout << fibs.take(5) << std::endl;
 
 >>> [0,1,1,2,3]
 ```

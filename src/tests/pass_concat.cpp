@@ -18,7 +18,7 @@ int main() {
 
     Collection<int> d = concat(a, b, c);
     
-    d.print();
+    std::cout << d << std::endl;
 
     assert(d == range(21));
 }

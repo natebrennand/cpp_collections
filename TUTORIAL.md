@@ -285,8 +285,7 @@ The `filter()` function is similar to the `each()` function, except that the fun
 Similar to the example above, let's attempt to print a list of odd numbers with `filter()`.
 
 ```cpp
-auto s = range(20);
-s.filter([](int x) { return x % 2 != 0; }).print();
+std::cout << range(20).filter([](int x) { return x % 2 != 0; }) << std::endl;
 
 // [1,3,5,7,9,11,13,15,17,19]
 ```
@@ -295,8 +294,7 @@ Let's assume we only want the fourth and fifth odd numbers in our Collection.
 The `slice()` method returns a new Collection with the elements whose indices are within the range `[low, high)`.
 
 ```cpp
-auto s = range(20);
-std::cout << s.filter([](int x) { return x % 2 != 0; }).slice(3,5).print();
+std::cout << range(20).filter([](int x) { return x % 2 != 0; }).slice(3,5) << std::endl;
 
 // [7,9]
 ```
@@ -307,8 +305,7 @@ One of the key concepts in functional programming is the `map()` function.
 `map()` allows us to apply an arbitrary transformation (passed as a C++11 lambda) to all the elements of the Collection.
 
 ```cpp
-auto a = range(3);
-a.map([](int x) { return x+1; }).print();
+std::cout << range(3).map([](int x) { return x+1; }) << std::endl;
 
 // [1,2,3]
 ```
@@ -317,8 +314,7 @@ The `tmap()` function achieves the same effect as `map()`, but uses multiple con
 You can pass the number of threads you would like to execute your transformation with as the second argument to `tmap()` (default is set to `std::thread::hardware_concurrency()`, or, if that returns 0, 4).
 
 ```cpp
-auto a = range(3);
-std::cout << a.tmap([](int x) { return x+1; }, 3) << std::endl;
+std::cout << range(3).tmap([](int x) { return x+1; }, 3) << std::endl;
 
 // [1,2,3]
 ```
@@ -459,7 +455,7 @@ In order to ease the syntactic pain of this process, we implemented a series of 
 `repeat()` is the simplest of these functions. It creates an infinite Stream of whatever value it is passed.
 
 ```cpp
-repeat(1).take(5).print();
+std::cout << repeat(1).take(5) << std::endl;
 
 // [1,1,1,1,1]
 ```
@@ -469,13 +465,13 @@ It then constructs a Stream starting at the initial value, incrementing by the s
 If the step is omitted from the function call, it defaults to 1.
 
 ```cpp
-from(1).take(5).print();
+std::cout << from(1).take(5) << std::endl;
 
 // [1,2,3,4,5]
 ```
 
 ```cpp
-from(1,2).take(5).print();
+std::cout << from(1,2).take(5) << std::endl;
 
 // [1,3,5,7,9]
 ```
@@ -484,7 +480,7 @@ from(1,2).take(5).print();
 The Stream is then constructed as `x, f(x), f(f(x)), f(f(f(x)))...`.
 
 ```cpp
-iterate(0, [](int x) { return x+1; }).take(5).print();
+std::cout << iterate(0, [](int x) { return x+1; }).take(5) << std::endl;
 
 // [0,1,2,3,4]
 ```
@@ -496,7 +492,7 @@ Here is how we use `recurrence()` to rewrite our verbose definition of the Fibon
 auto fibs = recurrence([](std::tuple<int,int> t) {
     return std::get<0>(t) + std::get<1>(t);
 }, std::make_tuple(0, 1));
-fibs.take(5).print();
+std::cout << fibs.take(5) << std::endl;
 
 // [0,1,1,2,3]
 ```

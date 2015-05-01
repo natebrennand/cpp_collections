@@ -16,5 +16,5 @@ int main() {
     
     auto c = concat(a, b);
     
-    c.print();
+    std::cout << c << std::endl;
 }
