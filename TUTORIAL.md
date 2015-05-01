@@ -15,7 +15,7 @@ Index:
   - [Fold and scan Functions](#fold-and-scan-functions)
 - [Creating Streams](#creating-streams)
 - [Non-Member Functions for Streams](#non-member-functions-for-streams)
-  - [Alternative Generating Tactics](#alternative-generating-tactics)
+  - [Alternative Stream Creation Tactics](#alternative-stream-creation-tactics)
   - [Prepend Values](#prepend-values)
   - [Zipping Streams](#zipping-streams)
 - [Member Functions for Streams](#member-functions-for-streams)
