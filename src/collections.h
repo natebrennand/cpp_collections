@@ -320,7 +320,7 @@ namespace cpp_collections {
         for (int i = 0; i < threads; i++) {
             int end = start + indices[i];
 
-            thread_pool[i] = std::thread ([=]() {
+            thread_pool[i] = std::thread ([=, &NewData]() {
                 tmap_thread(start, end, func, NewData);
             });
 
