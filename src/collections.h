@@ -42,7 +42,7 @@ namespace cpp_collections {
         };
 
         // std::list constructor
-        Collection<T>(std::list<T> d) {
+        Collection<T>(const std::list<T>& d) {
             Data = std::vector<T>(d.size());
             int index = 0;
             for (auto i : d)
@@ -140,13 +140,13 @@ namespace cpp_collections {
         // element in the original Collection
         template<typename Function>
         Collection<typename std::result_of<Function(T)>::type>
-        map(Function func);
+        map(Function func) const;
 
         // An alternative implementation of map that uses multiple concurrent
         // std::threads to speed up processing
         template<typename Function>
         Collection<typename std::result_of<Function(T)>::type>
-        tmap(Function func, int threads=detectedThreads);
+        tmap(Function func, int threads=detectedThreads) const;
 
         // Return the result of the application of the same binary operator on
         // adjacent pairs of elements in the Collection, starting from the left
@@ -283,7 +283,7 @@ namespace cpp_collections {
     template<typename T>
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
-    Collection<T>::map(Function func) {
+    Collection<T>::map(Function func) const {
         using return_type = typename std::result_of<Function(T)>::type;
 
         std::vector<return_type> list(Data.size());
@@ -304,7 +304,7 @@ namespace cpp_collections {
     template<typename T>
     template<typename Function>
     Collection<typename std::result_of<Function(T)>::type>
-    Collection<T>::tmap(Function func, int threads) {
+    Collection<T>::tmap(Function func, int threads) const {
         std::vector<std::thread> thread_pool(threads);
 
         // TODO: add bounds checking
@@ -314,12 +314,14 @@ namespace cpp_collections {
         std::vector<int> normal(threads-extra, chunk);
         indices.insert(indices.end(), normal.begin(), normal.end());
 
+        std::vector<T> NewData = Data;
+
         int start = 0;
         for (int i = 0; i < threads; i++) {
             int end = start + indices[i];
 
             thread_pool[i] = std::thread ([=]() {
-                tmap_thread(start, end, func, Data);
+                tmap_thread(start, end, func, NewData);
             });
 
             start = end;
@@ -328,7 +330,8 @@ namespace cpp_collections {
         for (int i = 0; i < threads; i++)
             thread_pool[i].join();
 
-        return Collection<T>(Data);
+        std::cout << NewData[0] << std::endl;
+        return Collection<T>(NewData);
     }
 
     // Return the result of the application of the same binary operator on
@@ -508,7 +511,7 @@ namespace cpp_collections {
 
     // Return Collection of numeric types over the range [0, size)
     template<typename T>
-    const Collection<T>&
+    const Collection<T>
     range(T size) {
         static_assert(std::is_arithmetic<T>::value,
             "You must pass range arithmetic type parameters");
@@ -517,21 +520,23 @@ namespace cpp_collections {
         for (int i = 0; i < size; i++)
             v[i] = T(i);
 
-        static const auto tmp = Collection<T>(v);
+        const auto tmp = Collection<T>(v);
         return tmp;
     }
 
     // Return Collection of numeric types over the range [low, high)
     template<typename T>
-    Collection<T>
+    const Collection<T>
     range(T low, T high) {
         static_assert(std::is_arithmetic<T>::value,
             "You must pass range arithmetic type parameters");
 
-        std::vector<T> list(high-low);
+        std::vector<T> v(high-low);
         for (int i = 0; i < high-low; i++)
-            list[i] = T(low + i);
-        return Collection<T>(list);
+            v[i] = T(low + i);
+
+        const auto tmp = Collection<T>(v);
+        return tmp;
     }
 
 
