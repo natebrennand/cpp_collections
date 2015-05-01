@@ -4,30 +4,15 @@
 #include <type_traits>
 #include <tuple>
 
-#include "cpp_collections.h"
-
-/*  A class template to obtain the type and value of the
-    the subsequence [First,Last) of a tuple type TupleType
-
-    First:- The start of the subsequence [First,Last)
-    Last:- The end of the subsequence [First,Last)
-    TupleType: - The std::tuple type to be queried.
-    Enable:- SFINAE parameter
-
-    The public member `type` is defined as the type of the
-    subsequence [First,Last) of `TupleType`.
-
-    The static member function:
-
-    `type get(TupleType const & tup)`
-
-    returns the `std::tuple` of the subsequence [First,Last) of `tup`.
-    `std::tuple<>` is returned when `First`
-    is out of range. The terminal sub-tuple indexed by `First` is
-    returned if only `Last` is out of range.
-*/
+// Note: All credit for this code goes to Mike Kinghan, Stack Overflow user.
+// This code was taken and adapted from his answer on the following Stack 
+// Overflow post: "How to obtain a part of a tuple?"
+// http://stackoverflow.com/questions/17508129/how-to-obtain-a-part-of-a-tuple
 
 namespace cpp_collections {
+
+    // A class template to obtain the type and value of the subsequence 
+    // [First,Last) of a tuple type TupleType
 
     template<
         unsigned First, unsigned Last, typename TupleType, typename Enable = void
