@@ -18,18 +18,27 @@ using namespace cpp_collections;
 
 int main() {
     // timing map on a vector of size 100,000
-    auto coll_input = []() { 
-      return std::make_tuple(range(csize),range(csize),range(csize));
-    };
-
-    auto vec_input = []() {
+    random_generator rand_gen;
+    auto coll_input = [&]() { 
       std::vector<int> a(csize);
       std::vector<int> b(csize);
       std::vector<int> c(csize);
       for (int i = 0; i < csize; i++) {
-          a[i] = i;
-          b[i] = i;
-          c[i] = i;
+          a[i] = rand_gen(csize);
+          b[i] = rand_gen(csize);
+          c[i] = rand_gen(csize);
+      }
+      return std::make_tuple(Collection<int>(a),Collection<int>(b),Collection<int>(c));
+    };
+
+    auto vec_input = [&]() {
+      std::vector<int> a(csize);
+      std::vector<int> b(csize);
+      std::vector<int> c(csize);
+      for (int i = 0; i < csize; i++) {
+          a[i] = rand_gen(csize);
+          b[i] = rand_gen(csize);
+          c[i] = rand_gen(csize);
       }
       return std::make_tuple(a,b,c);
     };
@@ -44,10 +53,10 @@ int main() {
         for (int i = 0; i < dsize; i++)
             data[i] = std::make_tuple(std::get<0>(t)[i],std::get<1>(t)[i],std::get<2>(t)[i]);
         auto c = data;
-    }, trials, "make_tuple of " + std::to_string(csize));
+    }, trials, "make_tuple of " + std::to_string(csize) + " with random data");
 
     bench(coll_input, [](std::tuple<Collection<int>,Collection<int>,Collection<int>> t) {
         auto c = zip(std::get<0>(t),std::get<1>(t),std::get<2>(t));
-    }, trials, "zip of " + std::to_string(csize));
+    }, trials, "zip of " + std::to_string(csize) + " with random data");
 }
 
