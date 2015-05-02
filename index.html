@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Cpp collections by natebrennand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Cpp collections</h1>
+      <h2 class="project-tagline"></h2>
+      <a href="https://github.com/natebrennand/cpp_collections" class="btn">View on GitHub</a>
+      <a href="https://github.com/natebrennand/cpp_collections/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/natebrennand/cpp_collections/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="tutorial" class="anchor" href="#tutorial" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tutorial</h1>
+
+<p>Index:</p>
+
+<ul>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#creating-collections">Creating Collections</a></li>
+<li><a href="#non-member-functions-for-collections">Non-Member Functions for Collections</a></li>
+<li>
+<a href="#simple-member-functions-for-collections">Simple Member Functions for Collections</a>
+
+<ul>
+<li><a href="#returning-collections">Returning Collections</a></li>
+<li><a href="#list-processing">List Processing</a></li>
+</ul>
+</li>
+<li>
+<a href="#advanced-member-functions-for-collections">Advanced Member Functions for Collections</a>
+
+<ul>
+<li><a href="#mapping-functions">Mapping functions</a></li>
+<li><a href="#reduction-functions">Reduction functions</a></li>
+<li><a href="#fold-and-scan-functions">Fold and scan Functions</a></li>
+</ul>
+</li>
+<li><a href="#creating-streams">Creating Streams</a></li>
+<li>
+<a href="#non-member-functions-for-streams">Non-Member Functions for Streams</a>
+
+<ul>
+<li><a href="#alternative-stream-creation-tactics">Alternative Stream Creation Tactics</a></li>
+<li><a href="#prepend-values">Prepend Values</a></li>
+<li><a href="#zipping-streams">Zipping Streams</a></li>
+</ul>
+</li>
+<li>
+<a href="#member-functions-for-streams">Member Functions for Streams</a>
+
+<ul>
+<li><a href="#list-processing-functions">List Processing Functions</a></li>
+<li><a href="#filtering-function">Filtering Function</a></li>
+<li><a href="#mapping-function">Mapping function</a></li>
+</ul>
+</li>
+<li><a href="#youre-done">Conclusion</a></li>
+</ul>
+
+<p>We begin with a swift introduction to C++ Collections.
+Our goal is to show the main elements of this library as quickly as possible.
+Rather than getting caught up in details, rules, exceptions - we want to allow users to make useful programs as quickly as possible.</p>
+
+<p>Unlike the standard design documentation, which provides a list of all methods available and their uses, we prefer brevity over depth here.
+This is completely intentional, and we encourage more experienced programmers to refer to our design document to cement their understanding of C++ Collections.</p>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>In order to run C++ Collections, <a href="https://github.com/natebrennand/cpp_collections/archive/master.zip">download</a> and <code>#include cpp_collections.h</code>.</p>
+
+<p>You can then start by creating either a Collection or a Stream object.
+The difference between a Collection and a Stream object is:</p>
+
+<ul>
+<li>Collections are traditional functional abstractions on lists are used to define finite lists.</li>
+<li>Streams are self-referential lazily-evaluated data structures that allow for the definition of infinite lists.</li>
+</ul>
+
+<h2>
+<a id="creating-collections" class="anchor" href="#creating-collections" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Collections</h2>
+
+<p>(We assume that we are using namespace <code>std</code> for all examples.)</p>
+
+<p>The Collection is used to represent a finite list. Let's create an empty one.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> empty_collection = Collection&lt;<span class="pl-k">int</span>&gt;();</pre></div>
+
+<p>With this empty collection we can demonstrate a number of member functions.
+Let's call the <code>size()</code> method.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">int</span> x = empty_collection.size();
+
+std::cout &lt;&lt; x &lt;&lt; std::endl
+<span class="pl-c">// 0</span></pre></div>
+
+<p>Now, rather than instantiating an empty list, we can instantiate a list with a predetermined size.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> presized_collection = Collection&lt;<span class="pl-k">int</span>&gt;(<span class="pl-c1">5</span>);
+
+std::cout &lt;&lt; presized_collection &lt;&lt; std::endl;
+<span class="pl-c">// [0,0,0,0,0]</span></pre></div>
+
+<p>This can be validated immediately by running the following:</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; presized_collection.size() &lt;&lt; std::endl;
+<span class="pl-c">// 5</span></pre></div>
+
+<p>Because Collections use a <code>std::vector</code> to store its data internally, the <code>size()</code> method of a Collection simply calls <code>size()</code> on its internal <code>std::vector</code>.
+Moreover, this implementation detail means that we can easily create a Collection from a <code>std::vector</code>.</p>
+
+<div class="highlight highlight-cpp"><pre>vector&lt;<span class="pl-k">int</span>&gt; v {<span class="pl-c1">1</span>,<span class="pl-c1">2</span>,<span class="pl-c1">3</span>,<span class="pl-c1">5</span>,<span class="pl-c1">7</span>};
+<span class="pl-k">auto</span> vector_collection = Collection&lt;<span class="pl-k">int</span>&gt;(v);</pre></div>
+
+<p>In addition to <code>std::vector</code>, we can also create a Collection from a <code>std::list</code>.</p>
+
+<div class="highlight highlight-cpp"><pre>list&lt;<span class="pl-k">int</span>&gt; l = {<span class="pl-c1">1</span>,<span class="pl-c1">2</span>,<span class="pl-c1">3</span>,<span class="pl-c1">4</span>};
+<span class="pl-k">auto</span> list_collection = Collection&lt;<span class="pl-k">int</span>&gt;(l); </pre></div>
+
+<p>We can also use <code>std::array</code> and C-style arrays.</p>
+
+<div class="highlight highlight-cpp"><pre>array&lt;<span class="pl-k">int</span>, <span class="pl-c1">6</span>&gt; foo  = {<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">5</span>, <span class="pl-c1">8</span>};
+<span class="pl-k">auto</span> array_collection = Collection&lt;<span class="pl-k">int</span>&gt;(foo);  <span class="pl-c">// std::array</span>
+
+<span class="pl-k">int</span> foo [<span class="pl-c1">5</span>] = { <span class="pl-c1">16</span>, <span class="pl-c1">2</span>, <span class="pl-c1">77</span>, <span class="pl-c1">40</span>, <span class="pl-c1">12071</span> };
+<span class="pl-k">auto</span> c_array_collection = Collection&lt;<span class="pl-k">int</span>&gt;(foo, <span class="pl-c1">5</span>); <span class="pl-c">// C-style array</span>
+</pre></div>
+
+<p>As mentioned above, the Collection class uses a <code>std::vector</code> to store data internally.
+This allows Collections to not only remain fast, but reliable.
+Although we use integers for most of our examples here, the Collection can handle any type due to the type agnosticism of vectors. </p>
+
+<h2>
+<a id="non-member-functions-for-collections" class="anchor" href="#non-member-functions-for-collections" aria-hidden="true"><span class="octicon octicon-link"></span></a>Non-Member Functions for Collections</h2>
+
+<p>Although the Collection constructor provides a simple way to instantiate a Collection, the C++ Collections library contains several non-member functions that make this process easier.</p>
+
+<p>If you want to return a Collection of numeric types over the range <code>[0, size)</code> use the <code>range()</code> function.
+Note that the Collection returned by <code>range()</code> contains whatever type you passed to <code>range()</code> initially.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> a = range(<span class="pl-c1">5</span>);
+cout &lt;&lt; a &lt;&lt; endl;
+
+<span class="pl-c">// [0,1,2,3,4]</span>
+
+
+<span class="pl-k">auto</span> f = range(<span class="pl-k">float</span>(<span class="pl-c1">5</span>));
+cout &lt;&lt; f &lt;&lt; endl;
+
+<span class="pl-c">// [0.0,1.0,2.0,3.0,4.0]</span></pre></div>
+
+<p><code>range()</code> can also be used with lower and upper bounds, returning a Collection over the range <code>[low, high)</code>.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> b = range(<span class="pl-c1">5</span>, <span class="pl-c1">10</span>);
+cout &lt;&lt; b &lt;&lt; endl;
+
+<span class="pl-c">// [5,6,7,8,9]</span></pre></div>
+
+<p>We can also concatenate an arbitrary number of Collections together by using the <code>concat()</code> function.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> a = range(<span class="pl-c1">5</span>);
+<span class="pl-k">auto</span> b = range(<span class="pl-c1">5</span>,<span class="pl-c1">10</span>);
+<span class="pl-k">auto</span> c = range(<span class="pl-c1">5</span>);
+cout &lt;&lt; concat(a, b, c) &lt;&lt; endl;
+
+<span class="pl-c">// [0,1,2,3,4,5,6,7,8,9,0,1,2,3,4]</span></pre></div>
+
+<p>Need to use multiple Collections together for an operation?
+The <code>zip()</code> function combines multiple Collections into a single Collection of tuples.
+A <a href="http://www.cplusplus.com/reference/tuple/">tuple</a> is a dynamically created object that can hold multiple different types.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> a = range(<span class="pl-c1">5</span>);
+<span class="pl-k">auto</span> b = range(<span class="pl-c1">5</span>,<span class="pl-c1">10</span>);
+<span class="pl-k">auto</span> ab = zip(a, b);
+
+cout &lt;&lt; ab &lt;&lt; endl;
+<span class="pl-c">// [(0,5), (1,6), (2,7), (3,8), (4,9)]</span></pre></div>
+
+<p>Tuples can also hold elements with different types, meaning that <code>zip()</code> can be called on Collections of different types as well.
+In the following example we see that <code>zip()</code> returns a new Collection of tuples that include an <code>int</code>, <code>float</code>, and <code>char</code>.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> e = range(<span class="pl-c1">3</span>);
+<span class="pl-k">auto</span> f = range(<span class="pl-k">float</span>(<span class="pl-c1">3.0</span>));
+<span class="pl-k">auto</span> g = Collection(std::vector&lt;<span class="pl-k">char</span>&gt; {<span class="pl-s"><span class="pl-pds">'</span>e<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>f<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>g<span class="pl-pds">'</span></span>});
+
+<span class="pl-k">auto</span> efg = zip(e, f, g);
+cout &lt;&lt; efg &lt;&lt; endl;
+<span class="pl-c">// [(0,0.0,'e'), (1,1.0,'f'), (2,2.0,'g')]</span></pre></div>
+
+<p><code>zipWith()</code> generalizes the functionality provided by <code>zip()</code> by allowing us to pass any function to be applied to the members of the zipped lists.
+Here we zip two Collections together, <em>with</em> a lambda function that adds the members of the Collections together.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> a = range(<span class="pl-c1">3</span>);
+<span class="pl-k">auto</span> b = range(<span class="pl-c1">3</span>);
+<span class="pl-k">auto</span> sums = zipWith([](<span class="pl-k">int</span> x, <span class="pl-k">int</span> y) { <span class="pl-k">return</span> x+y; }, a, b)
+
+std::cout &lt;&lt; sums &lt;&lt; std::endl;
+<span class="pl-c">// [0,2,4]</span></pre></div>
+
+<h2>
+<a id="simple-member-functions-for-collections" class="anchor" href="#simple-member-functions-for-collections" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple Member Functions for Collections</h2>
+
+<h3>
+<a id="returning-collections" class="anchor" href="#returning-collections" aria-hidden="true"><span class="octicon octicon-link"></span></a>Returning Collections</h3>
+
+<p>Now that we understand the different ways we can create a Collection, how can we return the data from a Collection?
+Since Collections are stored as vectors, the <code>vector()</code> method simply returns the internal data object.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-c">// returns a std::vector of size 5 with elements 0,1,2,3,4 </span>
+<span class="pl-k">auto</span> c = range(<span class="pl-c1">5</span>);
+std::vector&lt;<span class="pl-k">int</span>&gt; v = c.vector();</pre></div>
+
+<p>What happens if we want to return a list?</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-c">// returns a std::list of size 5 with elements 0,1,2,3,4 </span>
+std::list&lt;<span class="pl-k">int</span>&gt; l = Collection&lt;<span class="pl-k">int</span>&gt;(<span class="pl-c1">5</span>).list();</pre></div>
+
+<h3>
+<a id="list-processing" class="anchor" href="#list-processing" aria-hidden="true"><span class="octicon octicon-link"></span></a>List Processing</h3>
+
+<p>For processing Collections, the C++ Collections library exposes a set of operations that are common in functional langauges.
+Firstly, in order to maintain consistency with the list data structures of Haskell and Scala, we implement the <code>head()</code>, <code>last()</code>, <code>init()</code>, and <code>tail()</code> functions.</p>
+
+<p>The <code>head()</code> function returns the first element in the Collection.
+The <code>last()</code> function returns the last element in the Collection</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> col = range(<span class="pl-c1">1</span>,<span class="pl-c1">11</span>);
+
+cout &lt;&lt; col.head(); &lt;&lt; endl;
+<span class="pl-c">// 1</span>
+
+cout &lt;&lt; col.last(); &lt;&lt; endl;
+<span class="pl-c">// 10</span></pre></div>
+
+<p>The <code>init()</code> function returns a new Collection with all elements except the last.
+The <code>tail()</code> function returns a new Collection with all elements except the head.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> col = range(<span class="pl-c1">1</span>,<span class="pl-c1">11</span>);
+cout &lt;&lt; col.init() &lt;&lt; endl;
+
+<span class="pl-c">// [1,2,3,4,5,6,7,8,9]</span></pre></div>
+
+<p>What would happen if we called <code>init()</code> on our Collection <em>before</em> printing it?</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> col = range(<span class="pl-c1">1</span>,<span class="pl-c1">11</span>);
+
+col.init()
+cout &lt;&lt; col &lt;&lt; endl;
+<span class="pl-c">// [1,2,3,4,5,6,7,8,9,10]</span>
+
+<span class="pl-k">auto</span> new_col = col.init()
+cout &lt;&lt; new_col &lt;&lt; endl;
+<span class="pl-c">// [1,2,3,4,5,6,7,8,9]</span></pre></div>
+
+<p>This example might be confusing initially, but the concept it illustrates is central to functional programming. 
+<code>init()</code> does not mutate the internal <code>std::vector</code> of the Collection is is called on but instead returns a new Collection with a new <code>std::vector</code> inside.
+In fact, both <code>init()</code> and <code>tail()</code> return modified <em>copies</em> of the original Collection object, as do <code>zip()</code>, <code>zipWith()</code>, and other, more advanced functions we will see a little later.</p>
+
+<p>This means that we can use all these functions together to do create arbitrarily complex Collections.
+Here, we create a list of ten odd numbers.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> s = range(<span class="pl-c1">11</span>);
+s = zipWith([](<span class="pl-k">int</span> x, <span class="pl-k">int</span> y) {<span class="pl-k">return</span> x+y;}, s, s.tail());
+std::cout &lt;&lt; s &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,3,5,7,9,11,13,15,17,19]</span></pre></div>
+
+<h2>
+<a id="advanced-member-functions-for-collections" class="anchor" href="#advanced-member-functions-for-collections" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Member Functions for Collections</h2>
+
+<p>Now that we have covered basic member functions of Collections we can move on to more advanced member functions.</p>
+
+<p>C++11 lambdas allow us to pass functions as parameters, giving us lots of interesting functionality for advanced member functions.
+One of the most basic examples of this is the <code>each()</code> function, which allows us to pass a function to be executed once for every element in the Collection.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">int</span> sum = <span class="pl-c1">0</span>;
+<span class="pl-k">auto</span> a = range(<span class="pl-c1">5</span>);
+a.each([&amp;](<span class="pl-k">int</span> x) {
+    sum += x;
+});
+std::cout &lt;&lt; sum &lt;&lt; std::endl;
+
+<span class="pl-c">// 10</span></pre></div>
+
+<p>The <code>filter()</code> function is similar to the <code>each()</code> function, except that the function passed to it must return a boolean value.
+<code>filter()</code> will test each element with this predicate function and return a subset of the original Collection with the elements that pass the predicate.
+Similar to the example above, let's attempt to print a list of odd numbers with <code>filter()</code>.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; range(<span class="pl-c1">20</span>).filter([](<span class="pl-k">int</span> x) { <span class="pl-k">return</span> x % <span class="pl-c1">2</span> != <span class="pl-c1">0</span>; }) &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,3,5,7,9,11,13,15,17,19]</span></pre></div>
+
+<p>Let's assume we only want the fourth and fifth odd numbers in our Collection.
+The <code>slice()</code> method returns a new Collection with the elements whose indices are within the range <code>[low, high)</code>.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; range(<span class="pl-c1">20</span>).filter([](<span class="pl-k">int</span> x) { <span class="pl-k">return</span> x % <span class="pl-c1">2</span> != <span class="pl-c1">0</span>; }).slice(<span class="pl-c1">3</span>,<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [7,9]</span></pre></div>
+
+<h3>
+<a id="mapping-functions" class="anchor" href="#mapping-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mapping functions</h3>
+
+<p>One of the key concepts in functional programming is the <code>map()</code> function.
+<code>map()</code> allows us to apply an arbitrary transformation (passed as a C++11 lambda) to all the elements of the Collection.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; range(<span class="pl-c1">3</span>).map([](<span class="pl-k">int</span> x) { <span class="pl-k">return</span> x+<span class="pl-c1">1</span>; }) &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,2,3]</span></pre></div>
+
+<p>The <code>tmap()</code> function achieves the same effect as <code>map()</code>, but uses multiple concurrent <code>std::threads</code> to speed up processing.
+You can pass the number of threads you would like to execute your transformation with as the second argument to <code>tmap()</code> (default is set to <code>std::thread::hardware_concurrency()</code>, or, if that returns 0, 4).</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; range(<span class="pl-c1">3</span>).tmap([](<span class="pl-k">int</span> x) { <span class="pl-k">return</span> x+<span class="pl-c1">1</span>; }, <span class="pl-c1">3</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,2,3]</span></pre></div>
+
+<p>All functions that are prefixed with the character 't' are multithreaded and can be passed the number of threads to execute with as their final parameter.</p>
+
+<h3>
+<a id="reduction-functions" class="anchor" href="#reduction-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reduction functions</h3>
+
+<p>In an example above, we used the <code>each()</code> function with an external variable to sum the values in a Collection.
+This was not the traditionally functional way of achieving this.
+Reduction functions return a single value which is the result of the application of the same binary operator on adjacent pairs of elements in the Collection.
+<code>reduceLeft()</code> applies the binary operator starting from the left, and <code>reduceRight()</code> applies the binary operator starting from the right (or last element).</p>
+
+<p>Here we use <code>reduceLeft()</code> to find the sum of the integers 0 - 4. </p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">int</span> sum = range(<span class="pl-c1">5</span>).reduceLeft([](<span class="pl-k">int</span> x, <span class="pl-k">int</span> y) { <span class="pl-k">return</span> x+y; });
+std::cout &lt;&lt; sum &lt;&lt; std::endl;
+
+<span class="pl-c">// 10</span></pre></div>
+
+<p>It is worth diving into this a little bit more, and inspecting the state of the Collection at each step of the reduction.</p>
+
+<div class="highlight highlight-cpp"><pre>begin : <span class="pl-c1">0</span>,<span class="pl-c1">1</span>,<span class="pl-c1">2</span>,<span class="pl-c1">3</span>,<span class="pl-c1">4</span>
+step <span class="pl-c1">1</span>:   <span class="pl-c1">1</span>,<span class="pl-c1">2</span>,<span class="pl-c1">3</span>,<span class="pl-c1">4</span>
+step <span class="pl-c1">2</span>:     <span class="pl-c1">3</span>,<span class="pl-c1">3</span>,<span class="pl-c1">4</span>
+step <span class="pl-c1">3</span>:       <span class="pl-c1">6</span>,<span class="pl-c1">4</span>
+step <span class="pl-c1">4</span>:        <span class="pl-c1">10</span></pre></div>
+
+<p>Reduction functions move pairwise across the Collection, applying the same binary operator on each pair that it finds. </p>
+
+<p>Similar to <code>tmap()</code>, we also have <code>treduce()</code>, an alternative implementation of reduce that uses multiple concurrent threads to speed up processing.
+Note that the function passed to <code>treduce()</code> must be commutative to achieve accurate results, becuase we cannot guarantee that all binary reductions will occurr in the expected order when working with multiple threads.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">int</span> sum = range(<span class="pl-c1">5</span>).treduce([](<span class="pl-k">int</span> x, <span class="pl-k">int</span> y) { <span class="pl-k">return</span> x+y; }, <span class="pl-c1">3</span>);
+std::cout &lt;&lt; sum &lt;&lt; std::endl;
+
+<span class="pl-c">// 10</span></pre></div>
+
+<h3>
+<a id="foldscan-functions" class="anchor" href="#foldscan-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fold/Scan Functions</h3>
+
+<p>We have two fold functions: <code>foldLeft()</code> and <code>foldRight()</code>.</p>
+
+<p>This returns the result of the application of the same binary operator on all elements in the Collection as well as an initial value, starting from the left.
+Folds are just the same as reductions, except that they start with an initial value, meaning that a fold can return a type different from that stored in the original Collection, while a reduction cannot.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">int</span> sum = range(<span class="pl-c1">5</span>).foldLeft([](<span class="pl-k">int</span> x, <span class="pl-k">int</span> y) { <span class="pl-k">return</span> x+y; }, <span class="pl-c1">0</span>);
+std::cout &lt;&lt; sum &lt;&lt; std::endl;
+
+<span class="pl-c">// 10</span></pre></div>
+
+<p>In addition to the fold functions, we can also return the intermediate results of the binary accumulation of elements in a Collection with <code>scanLeft()</code> and <code>scanRight()</code>.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> ints = range(<span class="pl-c1">1</span>,<span class="pl-c1">5</span>);
+<span class="pl-k">auto</span> ints2 = ints.scanLeft([](<span class="pl-k">int</span> x, <span class="pl-k">int</span> y) { <span class="pl-k">return</span> x+y; }, <span class="pl-c1">1</span>);
+std::cout &lt;&lt; ints2 &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,2,4,7,11]</span></pre></div>
+
+<h2>
+<a id="creating-streams" class="anchor" href="#creating-streams" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Streams</h2>
+
+<p>Creating Streams is a different from creating Collections.
+The key differentiating factor between Streams and Collections is that Streams can be used to represent potentially infinite lists of data.
+These infinite Streams can then be converted to finite Collections using the <code>take()</code> function. </p>
+
+<p>First, let's create an infinite Stream of 1s.</p>
+
+<div class="highlight highlight-cpp"><pre>std::function&lt;Stream&lt;<span class="pl-k">int</span>&gt;()&gt; ones_gen = [&amp;]() { <span class="pl-k">return</span> Stream&lt;<span class="pl-k">int</span>&gt;(<span class="pl-c1">1</span>, ones_gen) };
+Stream&lt;<span class="pl-k">int</span>&gt; ones = Stream&lt;<span class="pl-k">int</span>&gt;(<span class="pl-c1">1</span>, ones_gen);</pre></div>
+
+<p>Let's break down what is happening here. 
+Streams are self-referential data structures, meaning that in addition to the head, or the first value in the list, the class stores a pointer to a function that returns another Stream.
+Here, we define a function <code>ones_gen()</code> that return a new Stream with a head of 1 and a generator function <code>ones_gen()</code>.
+We then construct the new Stream <code>ones</code> with the default Stream constructor, passing the initial head value of 1, and the generator function <code>ones_gen()</code>.</p>
+
+<p>Now, we can take an arbitrary number of elements out of this Stream with the <code>take()</code> function.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; ones.take(<span class="pl-c1">3</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,1,1]</span></pre></div>
+
+<p>Note that <code>take()</code> returns a Collection, so we could also use any of the Collection manipulation methods on the result.
+The <code>take()</code> method converts the Stream into a Collection by repeatedly requesting the head of the Stream, and if it doesn't exist, returning the head of the Stream constructed by the generator function.</p>
+
+<p>Let's try a more complex example.
+Here we generate the Fibonacci sequence.</p>
+
+<div class="highlight highlight-cpp"><pre>std::function&lt;Stream&lt;<span class="pl-k">int</span>&gt;(<span class="pl-k">int</span>, <span class="pl-k">int</span>)&gt; fibs = [&amp;](<span class="pl-k">int</span> prev, <span class="pl-k">int</span> curr) -&gt; Stream&lt;<span class="pl-k">int</span>&gt; {
+    <span class="pl-k">return</span> Stream&lt;<span class="pl-k">int</span>&gt;(curr, [=]() -&gt; Stream&lt;<span class="pl-k">int</span>&gt; {
+        <span class="pl-k">return</span> <span class="pl-c1">fibs</span>(curr, prev + curr);
+    });
+};
+Collection&lt;<span class="pl-k">int</span>&gt; tenfibs = fibs(<span class="pl-c1">0</span>, <span class="pl-c1">1</span>).take(<span class="pl-c1">3</span>);
+
+<span class="pl-c">// [1,1,2]</span></pre></div>
+
+<p>The Stream generator <code>fibs</code>, when called with arguments <code>0</code> and <code>1</code>, creates a new Stream that has a head value of 1 and an internal pointer to the function <code>fibs(1, 1)</code>.
+Then, when we ask to <code>take(3)</code> elements from the Stream, the structure returns its head, and then lazily computes the remainder of the elements it needs to satisfy our request.
+It does this by returning the result of its stored function pointer.
+In this case, <code>tenfibs</code> would first return 1 becuase that is its head.
+It would then return the head of the Stream that results from the evaluation of the function it stores a pointer to, namely <code>fibs(1, 1)</code>, which is 1.
+The result of <code>fibs(1, 1)</code> also stores a pointer to another function, <code>fibs(1, 2)</code>.
+To find the third and final value, the Stream will evaluate this function and return the resulting Stream's head, which is 2.
+For a step-by-step visual depiction of the underlying state of our Stream during the <code>take(3)</code> function call, see the graphic below:</p>
+
+<pre><code>tenfibs.head      tenfibs.gen
+     1             fibs(0,1)
+     1             fibs(1,1)
+     2             fibs(1,2)
+     3             fibs(2,3)
+</code></pre>
+
+<h2>
+<a id="non-member-functions-for-streams" class="anchor" href="#non-member-functions-for-streams" aria-hidden="true"><span class="octicon octicon-link"></span></a>Non-Member Functions for Streams</h2>
+
+<h3>
+<a id="alternative-stream-creation-tactics" class="anchor" href="#alternative-stream-creation-tactics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alternative Stream Creation Tactics</h3>
+
+<p>Unfortunately, both examples above are rather verbose. 
+C++11 does not allow the definition of recursive lambdas, so we have to define our Stream generators as <code>std::function</code> intead.
+This creates a lot of syntax overhead to the definition of arbtrary Stream generator functions.
+In order to ease the syntactic pain of this process, we implemented a series of helper functions to make this process more straightforward.</p>
+
+<p><code>repeat()</code> is the simplest of these functions. It creates an infinite Stream of whatever value it is passed.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; repeat(<span class="pl-c1">1</span>).take(<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,1,1,1,1]</span></pre></div>
+
+<p>The <code>from()</code> function takes two parameters, an initial value, and a step. 
+It then constructs a Stream starting at the initial value, incrementing by the step each time.
+If the step is omitted from the function call, it defaults to 1.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; from(<span class="pl-c1">1</span>).take(<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,2,3,4,5]</span></pre></div>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; from(<span class="pl-c1">1</span>,<span class="pl-c1">2</span>).take(<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,3,5,7,9]</span></pre></div>
+
+<p><code>iterate()</code> allows users to define an infinite Stream in terms of an initial value <code>x</code>, and a function <code>f</code>.
+The Stream is then constructed as <code>x, f(x), f(f(x)), f(f(f(x)))...</code>.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; iterate(<span class="pl-c1">0</span>, [](<span class="pl-k">int</span> x) { <span class="pl-k">return</span> x+<span class="pl-c1">1</span>; }).take(<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [0,1,2,3,4]</span></pre></div>
+
+<p>Finally, <code>recurrence()</code> is a generalized version of <code>iterate()</code>, which allows the user to define an infinite Stream in terms of any number of arguments, stored in a tuple, and a function that takes that tuple.
+Here is how we use <code>recurrence()</code> to rewrite our verbose definition of the Fibonacci Stream above.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> fibs = recurrence([](std::tuple&lt;<span class="pl-k">int</span>,<span class="pl-k">int</span>&gt; t) {
+    <span class="pl-k">return</span> std::get&lt;<span class="pl-c1">0</span>&gt;(t) + std::get&lt;<span class="pl-c1">1</span>&gt;(t);
+}, std::make_tuple(<span class="pl-c1">0</span>, <span class="pl-c1">1</span>));
+std::cout &lt;&lt; fibs.take(<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [0,1,1,2,3]</span></pre></div>
+
+<h3>
+<a id="prepend-values" class="anchor" href="#prepend-values" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prepend Values</h3>
+
+<p>Assume you want to add values to a Stream. 
+<code>cons(T value, Stream&lt;T&gt; other)</code> prepends a value to a Stream.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> ints = from(<span class="pl-c1">1</span>);
+std:cout &lt;&lt; cons(<span class="pl-c1">10</span>, ints).take(<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [10,1,2,3,4]</span></pre></div>
+
+<p>This can also be done with the <code>&amp;</code> operator.
+However, note that parentheses must be used appropriately because the operator is not defined as a member operator.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> ints = from(<span class="pl-c1">1</span>);
+std:cout &lt;&lt; (<span class="pl-c1">10</span> &amp; (<span class="pl-c1">20</span> &amp; ints)).take(<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [10,20,1,2,3]</span></pre></div>
+
+<h3>
+<a id="zipping-streams" class="anchor" href="#zipping-streams" aria-hidden="true"><span class="octicon octicon-link"></span></a>Zipping Streams</h3>
+
+<p><code>zip()</code> returns a Stream of tuples, where each tuple contains the elements of the zipped Streams that occur at the same position.
+<code>zipWith()</code> generalizes <code>zip()</code> by taking the function for zipping as the first argument instead of a tupling function.</p>
+
+<p>These methods work in the exact same way as their Collection counterparts, except that they operatee on Streams instead.</p>
+
+<h2>
+<a id="member-functions-for-streams" class="anchor" href="#member-functions-for-streams" aria-hidden="true"><span class="octicon octicon-link"></span></a>Member Functions for Streams</h2>
+
+<h3>
+<a id="list-processing-functions" class="anchor" href="#list-processing-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>List Processing Functions</h3>
+
+<p>Similar to Collections, we can call <code>head()</code> to return the first element of the Stream.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; from(<span class="pl-c1">1</span>).head() &lt;&lt; std::endl;
+
+<span class="pl-c">// 1</span></pre></div>
+
+<p><code>tail()</code> returns the Stream without the current head.</p>
+
+<div class="highlight highlight-cpp"><pre>std::cout &lt;&lt; from(<span class="pl-c1">1</span>).tail().head() &lt;&lt; std::endl;
+
+<span class="pl-c">// 2</span></pre></div>
+
+<h3>
+<a id="filtering-function" class="anchor" href="#filtering-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Filtering Function</h3>
+
+<p>Just like Collections, we can also <code>filter()</code> Streams.
+<code>filter()</code> simply returns a sub-Stream of elements of the Stream that match the predicate function provided.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> odds = from(<span class="pl-c1">1</span>).filter([](<span class="pl-k">int</span> x) { <span class="pl-k">return</span> x % <span class="pl-c1">2</span> != <span class="pl-c1">0</span>; }).take(<span class="pl-c1">5</span>);
+std::cout &lt;&lt; odds &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,3,5,7,9]</span></pre></div>
+
+<h3>
+<a id="mapping-function" class="anchor" href="#mapping-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mapping function</h3>
+
+<p>Again, like Collections, <code>map()</code> allows us to return a Stream transformed according to the function we pass it.</p>
+
+<p>Let's create a list of the first five squares.</p>
+
+<div class="highlight highlight-cpp"><pre><span class="pl-k">auto</span> squares = from(<span class="pl-c1">1</span>).map([](<span class="pl-k">int</span> x) { <span class="pl-k">return</span> x * x; });
+std::cout &lt;&lt; squares.take(<span class="pl-c1">5</span>) &lt;&lt; std::endl;
+
+<span class="pl-c">// [1,4,9,16,25]</span></pre></div>
+
+<h2>
+<a id="youre-done" class="anchor" href="#youre-done" aria-hidden="true"><span class="octicon octicon-link"></span></a>You're Done!</h2>
+
+<p>You've made it!
+Thank you so much for reading through our tutorial highlighting the features, syntax, and code that drives our library.
+By piping together the Collection and Stream methods you find here, you will be able to easily write complex, functional list operations in C++ with readability of a language like Scala.</p>
+
+<p>We hope that C++ Collections will make functional programming concepts with both finite and infinite data structures more accessible and understandable to C++ programmers.
+If you would like to contribute to the project it can be found <a href="https://github.com/natebrennand/cpp_collections/">here</a>. </p>
+
+<p>Thank you and stay posted for updates.</p>
+
+
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/natebrennand/cpp_collections">Cpp collections</a> is maintained by <a href="https://github.com/natebrennand">natebrennand</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-36737775-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
+
