@@ -11,7 +11,7 @@
 #define csize 100
 #endif
 
-#define trials 100
+#define trials 5
 
 using namespace cpp_collections;
 

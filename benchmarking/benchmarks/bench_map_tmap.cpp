@@ -19,6 +19,12 @@
 
 using namespace cpp_collections;
 int main() {
+    auto inputVector = [](){
+        std::vector<int> v(size);
+        for (int i = 0; i < size; i++)
+            v[i] = i;
+        return v;
+    };
     auto input = [](){ return range(0, size); };
     auto inc = [](int x) {return x+1;};
     random_generator rand_gen;
@@ -34,6 +40,12 @@ int main() {
         << "with size: " << size
         << ", and trials: " << trials << std::endl;
 
+
+    bench(inputVector, [&](std::vector<int> v) {
+        for (int i = 0; i < size; i++)
+            v[i] = v[i]+1;
+        return v;
+    }, trials, "for loop iteration");
 
     bench(input, [&](Collection<int> i) {
         return i.map(inc);
