@@ -13,7 +13,7 @@
 #endif
 
 
-#define trials 100
+#define trials 10
 
 using namespace cpp_collections;
 

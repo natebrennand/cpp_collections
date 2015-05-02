@@ -10,13 +10,19 @@
 #define size 100
 #endif
 
-#define trials 50
+#define trials 10
 
 using namespace cpp_collections;
 
 
 int main() {
     // timing reduce on a vector of size 100,000
+    auto inputVector = [](){
+        std::vector<int> v(size);
+        for (int i = 0; i < size; i++)
+            v[i] = i;
+        return v;
+    };
     auto input = [](){ return range(0, size); };
     auto add = [](int x, int y) {return x+y;};
     random_generator rand_gen;
@@ -32,6 +38,10 @@ int main() {
         << "with size: " << size
         << ", and trials: " << trials << std::endl;
 
+    bench(inputVector, [](std::vector<int> v){
+        return std::accumulate(v.begin(), v.end(), 0,
+            [](const int& sum, int i) { return sum + i; });
+    }, trials, "accumulate");
 
     bench(input, [&](Collection<int> i){
         return i.reduceLeft(add);
@@ -45,6 +55,11 @@ int main() {
         return i.preduce(add, 4);
     }, trials, "preduce: parallel reduce");
 
+
+    bench(rand_input, [&](std::vector<int> v){
+        return std::accumulate(v.begin(), v.end(), 0,
+            [](const int& sum, int i) { return sum + i; });
+    }, trials, "accumulate w/ random data");
 
     bench(rand_input, [&](Collection<int> i){
         return i.reduceLeft(add);
