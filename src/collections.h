@@ -548,15 +548,9 @@ namespace cpp_collections {
         // TODO: list size checking
         using return_type = std::tuple<U...>;
 
-        auto size_ilist = {other_list.size()...};
-        int size = std::min(size_ilist);
-        std::vector<return_type> list(size);
-        std::allocator<return_type> alloc;
-        for (int i = 0; i < size; i++) {
-            return_type *tmp = alloc.allocate(1);
-            alloc.construct(tmp, std::move(other_list.head())...);
-            list[i] = *tmp;
-            [](...){} ((other_list.pop_head(), 0)...);
+        std::vector<return_type> list(std::min({other_list.size()...}));
+        for (int i = 0; i < list.size(); i++) {
+            list[i] = std::make_tuple(other_list[i]...);
         }
         return Collection<return_type>(list);
     }
@@ -565,20 +559,14 @@ namespace cpp_collections {
     // instead of a tupling function
     template<typename Function, typename ...U>
     Collection<typename std::result_of<Function(U...)>::type>
-    zipWith(Function func, Collection<U>... other_list) {
+    zipWith(Function func, Collection<U>&... other_list) {
         // TODO: list size checking
         // TODO: check that func takes as many arguments as there are lists
         using return_type = typename std::result_of<Function(U...)>::type;
 
-        auto size_ilist = {other_list.size()...};
-        int size = std::min(size_ilist);
-        std::vector<return_type> list(size);
-        std::allocator<return_type> alloc;
-        for (int i = 0; i < size; i++) {
-            return_type *tmp = alloc.allocate(1);
-            alloc.construct(tmp, func(other_list.head()...));
-            list[i] = *tmp;
-            [](...){} ((other_list.pop_head(), 0)...);
+        std::vector<return_type> list(std::min({other_list.size()...}));
+        for (int i = 0; i < list.size(); i++) {
+            list[i] = func(other_list[i]...);
         }
         return Collection<return_type>(list);
     }
