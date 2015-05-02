@@ -120,10 +120,6 @@ namespace cpp_collections {
         Collection<T>
         tail();
 
-        // Remove the head
-        void
-        pop_head();
-
         // Apply a function to all the elements in the Collection
         void
         each(std::function<void(T)> func);
@@ -235,14 +231,6 @@ namespace cpp_collections {
     Collection<T>::tail() {
         // TODO: add emptiness checking
         return Collection<T>(std::vector<T>(Data.begin() + 1, Data.end()));
-    }
-
-    // Remove the head
-    template<typename T>
-    void
-    Collection<T>::pop_head() {
-        // TODO: add emptiness checking
-        Data.erase(Data.begin());
     }
 
     // --------------------------

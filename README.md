@@ -282,19 +282,6 @@ std::cout << a.tail() << std::endl;
 >>> [1,2,3,4]
 ```
 
-#### Collection\<T\>::pop_head()
-
-Remove the head of the collection.
-
-*Example:*
-```cpp
-auto a = range(5);
-a.pop_head();
-std::cout << a << std::endl;
-
->>> [1,2,3,4]
-```
-
 #### Collection\<T\>::each(std::function\<void(T)\> func)
 
 Apply a function to all the elements in the Collection

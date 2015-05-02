@@ -20,27 +20,27 @@ int main() {
     // timing map on a vector of size 100,000
     random_generator rand_gen;
     auto coll_input = [&]() { 
-      std::vector<int> a(csize);
-      std::vector<int> b(csize);
-      std::vector<int> c(csize);
-      for (int i = 0; i < csize; i++) {
-          a[i] = rand_gen(csize);
-          b[i] = rand_gen(csize);
-          c[i] = rand_gen(csize);
-      }
-      return std::make_tuple(Collection<int>(a),Collection<int>(b),Collection<int>(c));
+        std::vector<int> a(csize);
+        std::vector<int> b(csize);
+        std::vector<int> c(csize);
+        for (int i = 0; i < csize; i++) {
+            a[i] = rand_gen(csize);
+            b[i] = rand_gen(csize);
+            c[i] = rand_gen(csize);
+        }
+        return std::make_tuple(Collection<int>(a),Collection<int>(b),Collection<int>(c));
     };
 
     auto vec_input = [&]() {
-      std::vector<int> a(csize);
-      std::vector<int> b(csize);
-      std::vector<int> c(csize);
-      for (int i = 0; i < csize; i++) {
-          a[i] = rand_gen(csize);
-          b[i] = rand_gen(csize);
-          c[i] = rand_gen(csize);
-      }
-      return std::make_tuple(a,b,c);
+        std::vector<int> a(csize);
+        std::vector<int> b(csize);
+        std::vector<int> c(csize);
+        for (int i = 0; i < csize; i++) {
+            a[i] = rand_gen(csize);
+            b[i] = rand_gen(csize);
+            c[i] = rand_gen(csize);
+        }
+        return std::make_tuple(a,b,c);
     };
 
     std::cout << "Comparing zip & make_tuple "
