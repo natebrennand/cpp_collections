@@ -1,7 +1,17 @@
 #!/bin/bash
-success="TEST_SUCCESS"
-had_failures="0"
-tmp_file=".tmp_err_output"  # stderr of parser stored here
+
+sizes=(
+    10
+    100
+    1000
+    10000
+    100000
+    1000000
+    10000000
+    100000000
+)
+# stderr of parser stored here
+tmp_file=".tmp_err_output"
 
 reduce_path_to_test_name () {
     local fullpath=$1
@@ -10,20 +20,23 @@ reduce_path_to_test_name () {
 }
 
 run_bench() {
-    # stdout of parser
-    $(g++ -std=c++0x -O2 $file &> $tmp_file)
-    outcome=`cat $tmp_file`
-    # empty if compiled, errors otherwise
-
-    if [[ ! $outcome ]]
-    then
-        $(./a.out &> $tmp_file)
+    for n in "${sizes[@]}"
+    do
+        # stdout of parser
+        $(g++ -std=c++0x -pthread -O2 -D COLLECTION_SIZE="$n" $file &> $tmp_file)
         outcome=`cat $tmp_file`
-        echo "$test_name: $outcome"
-    else
-        echo "$test_name: didn't compile"
-        echo "$outcome"
-    fi
+        # empty if compiled, errors otherwise
+
+        if [[ ! $outcome ]]
+        then
+            $(./a.out &> $tmp_file)
+            outcome=`cat $tmp_file`
+            echo "$test_name: $outcome"
+        else
+            echo "$test_name: didn't compile"
+            echo "$outcome"
+        fi
+    done
 }
 
 

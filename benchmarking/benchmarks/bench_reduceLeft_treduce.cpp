@@ -1,10 +1,15 @@
 #include <iostream>
 #include <vector>
 
-#include "../collections.h"
+#include "collections.h"
 #include "benchmark.h"
 
-#define size 1000000
+#if defined COLLECTION_SIZE
+#define size COLLECTION_SIZE
+#else
+#define size 100
+#endif
+
 #define trials 50
 
 using namespace cpp_collections;
@@ -23,7 +28,9 @@ int main() {
         return data;
     };
 
-    std::cout << "Comparing reduceLeft & treduce" << std::endl;
+    std::cout << "Comparing reduceLeft & treduce"
+        << "with size: " << size
+        << ", and trials: " << trials << std::endl;
 
 
     bench(input, [&](Collection<int> i){
@@ -34,6 +41,11 @@ int main() {
         return i.treduce(add, 4);
     }, trials, "treduce: parallel reduce");
 
+    bench(input, [&](Collection<int> i){
+        return i.preduce(add, 4);
+    }, trials, "preduce: parallel reduce");
+
+
     bench(rand_input, [&](Collection<int> i){
         return i.reduceLeft(add);
     }, trials, "reduceLeft: linear reduceLeft w/ random data");
@@ -41,4 +53,8 @@ int main() {
     bench(rand_input, [&](Collection<int> i){
         return i.treduce(add, 4);
     }, trials, "treduce: parallel reduce w/ random data");
+
+    bench(rand_input, [&](Collection<int> i){
+        return i.preduce(add, 4);
+    }, trials, "preduce: parallel reduce w/ random data");
 }
