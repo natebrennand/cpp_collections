@@ -11,7 +11,7 @@
 #define size 100
 #endif
 
-#define trials 50
+#define trials 10
 
 
 
