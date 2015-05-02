@@ -1,0 +1,140 @@
+bench_map_tmap: Comparing map & tmap with size: 10, and trials: 10
+	0.0023678 milliseconds | for loop iteration | 10 trials
+	0.0010409 milliseconds | map: linear map | 10 trials
+	0.15612 milliseconds | tmap: parallel map | 10 trials
+	0.1363 milliseconds | pmap: linear map | 10 trials
+	0.0016692 milliseconds | map: linear map w/ random data | 10 trials
+	0.13389 milliseconds | tmap: parallel map w/ random data | 10 trials
+	0.12001 milliseconds | pmap: parallel map w/ random data | 10 trials
+bench_map_tmap: Comparing map & tmap with size: 100, and trials: 10
+	0.0029833 milliseconds | for loop iteration | 10 trials
+	0.0018403 milliseconds | map: linear map | 10 trials
+	0.16465 milliseconds | tmap: parallel map | 10 trials
+	0.16111 milliseconds | pmap: linear map | 10 trials
+	0.0021664 milliseconds | map: linear map w/ random data | 10 trials
+	0.14365 milliseconds | tmap: parallel map w/ random data | 10 trials
+	0.15018 milliseconds | pmap: parallel map w/ random data | 10 trials
+bench_map_tmap: Comparing map & tmap with size: 1000, and trials: 10
+	0.0052704 milliseconds | for loop iteration | 10 trials
+	0.0055742 milliseconds | map: linear map | 10 trials
+	0.15254 milliseconds | tmap: parallel map | 10 trials
+	0.14418 milliseconds | pmap: linear map | 10 trials
+	0.0073076 milliseconds | map: linear map w/ random data | 10 trials
+	0.15074 milliseconds | tmap: parallel map w/ random data | 10 trials
+	0.14337 milliseconds | pmap: parallel map w/ random data | 10 trials
+bench_map_tmap: Comparing map & tmap with size: 10000, and trials: 10
+	0.022891 milliseconds | for loop iteration | 10 trials
+	0.11691 milliseconds | map: linear map | 10 trials
+	0.22506 milliseconds | tmap: parallel map | 10 trials
+	0.23773 milliseconds | pmap: linear map | 10 trials
+	0.15904 milliseconds | map: linear map w/ random data | 10 trials
+	0.25523 milliseconds | tmap: parallel map w/ random data | 10 trials
+	0.28176 milliseconds | pmap: parallel map w/ random data | 10 trials
+bench_map_tmap: Comparing map & tmap with size: 100000, and trials: 10
+	0.46183 milliseconds | for loop iteration | 10 trials
+	1.123 milliseconds | map: linear map | 10 trials
+	1.0822 milliseconds | tmap: parallel map | 10 trials
+	1.1778 milliseconds | pmap: linear map | 10 trials
+	2.5711 milliseconds | map: linear map w/ random data | 10 trials
+	2.5609 milliseconds | tmap: parallel map w/ random data | 10 trials
+	2.6634 milliseconds | pmap: parallel map w/ random data | 10 trials
+bench_map_tmap: Comparing map & tmap with size: 1000000, and trials: 10
+	7.4976 milliseconds | for loop iteration | 10 trials
+	19.968 milliseconds | map: linear map | 10 trials
+	11.886 milliseconds | tmap: parallel map | 10 trials
+	11.319 milliseconds | pmap: linear map | 10 trials
+	37.609 milliseconds | map: linear map w/ random data | 10 trials
+	31.292 milliseconds | tmap: parallel map w/ random data | 10 trials
+	31.36 milliseconds | pmap: parallel map w/ random data | 10 trials
+bench_map_tmap: Comparing map & tmap with size: 10000000, and trials: 10
+	89.171 milliseconds | for loop iteration | 10 trials
+	302.27 milliseconds | map: linear map | 10 trials
+	232.28 milliseconds | tmap: parallel map | 10 trials
+	232.32 milliseconds | pmap: linear map | 10 trials
+	372.36 milliseconds | map: linear map w/ random data | 10 trials
+	301.24 milliseconds | tmap: parallel map w/ random data | 10 trials
+	301.53 milliseconds | pmap: parallel map w/ random data | 10 trials
+bench_map_tmap: Comparing map & tmap with size: 100000000, and trials: 10
+	867.43 milliseconds | for loop iteration | 10 trials
+	2970.9 milliseconds | map: linear map | 10 trials
+	2263.9 milliseconds | tmap: parallel map | 10 trials
+	2264.4 milliseconds | pmap: linear map | 10 trials
+	3684 milliseconds | map: linear map w/ random data | 10 trials
+	2977.6 milliseconds | tmap: parallel map w/ random data | 10 trials
+	2973.9 milliseconds | pmap: parallel map w/ random data | 10 trials
+
+
+running benchmarks matching 'reduce'
+==========================
+bench_reduceLeft_treduce: Comparing reduceLeft & treducewith size: 10, and trials: 10
+	0.0021943 milliseconds | accumulate | 10 trials
+	0.0008966 milliseconds | reduceLeft: linear reduceLeft | 10 trials
+	0.15778 milliseconds | treduce: parallel reduce | 10 trials
+	0.15039 milliseconds | preduce: parallel reduce | 10 trials
+	0.0008303 milliseconds | accumulate w/ random data | 10 trials
+	0.0011049 milliseconds | reduceLeft: linear reduceLeft w/ random data | 10 trials
+	0.13896 milliseconds | treduce: parallel reduce w/ random data | 10 trials
+	0.12839 milliseconds | preduce: parallel reduce w/ random data | 10 trials
+bench_reduceLeft_treduce: Comparing reduceLeft & treducewith size: 100, and trials: 10
+	0.0026406 milliseconds | accumulate | 10 trials
+	0.0014024 milliseconds | reduceLeft: linear reduceLeft | 10 trials
+	0.15534 milliseconds | treduce: parallel reduce | 10 trials
+	0.16105 milliseconds | preduce: parallel reduce | 10 trials
+	0.0011121 milliseconds | accumulate w/ random data | 10 trials
+	0.0015106 milliseconds | reduceLeft: linear reduceLeft w/ random data | 10 trials
+	0.14917 milliseconds | treduce: parallel reduce w/ random data | 10 trials
+	0.14691 milliseconds | preduce: parallel reduce w/ random data | 10 trials
+bench_reduceLeft_treduce: Comparing reduceLeft & treducewith size: 1000, and trials: 10
+	0.003316 milliseconds | accumulate | 10 trials
+	0.0047866 milliseconds | reduceLeft: linear reduceLeft | 10 trials
+	0.15508 milliseconds | treduce: parallel reduce | 10 trials
+	0.16066 milliseconds | preduce: parallel reduce | 10 trials
+	0.0015657 milliseconds | accumulate w/ random data | 10 trials
+	0.0067473 milliseconds | reduceLeft: linear reduceLeft w/ random data | 10 trials
+	0.12816 milliseconds | treduce: parallel reduce w/ random data | 10 trials
+	0.14072 milliseconds | preduce: parallel reduce w/ random data | 10 trials
+bench_reduceLeft_treduce: Comparing reduceLeft & treducewith size: 10000, and trials: 10
+	0.01278 milliseconds | accumulate | 10 trials
+	0.05115 milliseconds | reduceLeft: linear reduceLeft | 10 trials
+	0.19132 milliseconds | treduce: parallel reduce | 10 trials
+	0.24642 milliseconds | preduce: parallel reduce | 10 trials
+	0.0099763 milliseconds | accumulate w/ random data | 10 trials
+	0.057279 milliseconds | reduceLeft: linear reduceLeft w/ random data | 10 trials
+	0.19259 milliseconds | treduce: parallel reduce w/ random data | 10 trials
+	0.22594 milliseconds | preduce: parallel reduce w/ random data | 10 trials
+bench_reduceLeft_treduce: Comparing reduceLeft & treducewith size: 100000, and trials: 10
+	0.47296 milliseconds | accumulate | 10 trials
+	0.49052 milliseconds | reduceLeft: linear reduceLeft | 10 trials
+	0.40573 milliseconds | treduce: parallel reduce | 10 trials
+	1.0991 milliseconds | preduce: parallel reduce | 10 trials
+	0.075097 milliseconds | accumulate w/ random data | 10 trials
+	1.1401 milliseconds | reduceLeft: linear reduceLeft w/ random data | 10 trials
+	1.3654 milliseconds | treduce: parallel reduce w/ random data | 10 trials
+	2.0857 milliseconds | preduce: parallel reduce w/ random data | 10 trials
+bench_reduceLeft_treduce: Comparing reduceLeft & treducewith size: 1000000, and trials: 10
+	6.0967 milliseconds | accumulate | 10 trials
+	5.7337 milliseconds | reduceLeft: linear reduceLeft | 10 trials
+	4.0469 milliseconds | treduce: parallel reduce | 10 trials
+	15.76 milliseconds | preduce: parallel reduce | 10 trials
+	1.6717 milliseconds | accumulate w/ random data | 10 trials
+	18.493 milliseconds | reduceLeft: linear reduceLeft w/ random data | 10 trials
+	16.853 milliseconds | treduce: parallel reduce w/ random data | 10 trials
+	29.479 milliseconds | preduce: parallel reduce w/ random data | 10 trials
+bench_reduceLeft_treduce: Comparing reduceLeft & treducewith size: 10000000, and trials: 10
+	73.165 milliseconds | accumulate | 10 trials
+	112.79 milliseconds | reduceLeft: linear reduceLeft | 10 trials
+	90.202 milliseconds | treduce: parallel reduce | 10 trials
+	244.88 milliseconds | preduce: parallel reduce | 10 trials
+	73.435 milliseconds | accumulate w/ random data | 10 trials
+	182.09 milliseconds | reduceLeft: linear reduceLeft w/ random data | 10 trials
+	161.38 milliseconds | treduce: parallel reduce w/ random data | 10 trials
+	318.34 milliseconds | preduce: parallel reduce w/ random data | 10 trials
+bench_reduceLeft_treduce: Comparing reduceLeft & treducewith size: 100000000, and trials: 10
+	713.79 milliseconds | accumulate | 10 trials
+	1091.9 milliseconds | reduceLeft: linear reduceLeft | 10 trials
+	833.96 milliseconds | treduce: parallel reduce | 10 trials
+	2357.9 milliseconds | preduce: parallel reduce | 10 trials
+	713.43 milliseconds | accumulate w/ random data | 10 trials
+	1797.8 milliseconds | reduceLeft: linear reduceLeft w/ random data | 10 trials
+	1538.2 milliseconds | treduce: parallel reduce w/ random data | 10 trials
+	3069.2 milliseconds | preduce: parallel reduce w/ random data | 10 trials

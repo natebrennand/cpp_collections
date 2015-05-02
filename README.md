@@ -1,6 +1,8 @@
 Download
 --------
 
+[TUTORIAL](http://natebrennand.github.io/cpp_collections)
+
 [C++ Collections][zip_download] (18 KB) -- 10 April 2015
 
 [norvig]:http://www.norvig.com/21-days.html
@@ -18,7 +20,7 @@ Collections are fundamental to most programming tasks because they allow the use
 However, when it comes to expressing moderately complex collection manipulations, C++ is markedly behind some of its more modern counterparts with respect to code clarity and efficiency of space.
 This is the problem we set out to solve.
 
-![Image of Kesiev](intro_comic)
+![Image of Kesiev](report/images/comic.png)
 
 Languages are used as tools to communicate, and consequently, the structure and limitations of the languages we use determine the way we think.
 This idea, known in the field of linguistic relativity as the [Sapir-Whorf hypothesis][linguistic_relativity], has critical implications when applied to programming languages, namely that the ability of a programmer to reason about a problem can be limited by the languages he or she has learned (or has yet to learn).
